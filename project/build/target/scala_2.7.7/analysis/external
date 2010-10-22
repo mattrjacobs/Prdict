@@ -1,6 +1,0 @@
-#External Dependencies
-#Thu Oct 21 20:45:05 EDT 2010
-/Users/matthewjacobs/Projects/prdct/project/boot/scala-2.7.7/org.scala-tools.sbt/sbt/0.7.4/sbt_2.7.7-0.7.4.jar=LiftProject.scala
-/Users/matthewjacobs/Projects/prdct/project/boot/scala-2.7.7/org.scala-tools.sbt/sbt/0.7.4/ivy_2.7.7-0.7.4.jar=LiftProject.scala
-/Users/matthewjacobs/Projects/prdct/project/boot/scala-2.7.7/lib/scala-library.jar=LiftProject.scala
-/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar=LiftProject.scala
