@@ -1,4 +1,4 @@
-package com.woo.foo {
+package com.prdct.server {
 package model {
 
 import _root_.net.liftweb.mapper._

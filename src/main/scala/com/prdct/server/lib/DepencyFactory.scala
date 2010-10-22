@@ -1,4 +1,4 @@
-package com.woo.foo {
+package com.prdct.server {
 package lib {
 
 import net.liftweb._

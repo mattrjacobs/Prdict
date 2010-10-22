@@ -1,4 +1,4 @@
-package com.woo.foo {
+package com.prdct.server {
 package snippet {
 
 import _root_.scala.xml.{NodeSeq, Text}
