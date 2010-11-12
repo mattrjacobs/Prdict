@@ -1,36 +1,36 @@
 RESTful URLs
 
-* /data/users - all users in system
+* /api/users - all users in system
  - GET (admin only)
  - POST (all) - register
  - PUT - N/A
  - DELETE - N/A
 
-* /data/user/{id} - specific user
+* /api/user/{id} - specific user
  - GET (admin/{id}) - user info
  - POST - N/A
  - PUT - (admin/{id}) - user edit
  - DELETE - (admin/{id}) - user delete
 
-* /data/events - all events in system
+* /api/events - all events in system
  - GET (admin only)
  - POST (admin only) - add event
  - PUT - N/A
  - DELETE - N/A
 
-* /data/event/{id} - specific event
+* /api/event/{id} - specific event
  - GET (all)
  - POST - N/A
  - PUT - (admin only) - edit event
  - DELETE - (admin only) - delete event 
 
-* /data/user/{id}/events - all events a user is interested in
+* /api/user/{id}/events - all events a user is interested in
  - GET (admin, {id}, {id} friends)
  - POST (admin, {id}, {id} friends?) - add event
  - PUT (admin, {id}) - add/edit/remove event
  - DELETE (admin only) - delete all events
 
-* /data/user/{id}/friends - all friends of a user
+* /api/user/{id}/friends - all friends of a user
  - GET (admin, {id}, {id} friends)
  - POST (admin, {id}) - add friend
  - PUT (admin, {id}) - edit friend list
@@ -44,4 +44,4 @@ UI URLs
 
 * /event/{name} - event page
 
-* /event/{name}/chat - chat pge for event
+* /event/{name}/chat - chat page for event
