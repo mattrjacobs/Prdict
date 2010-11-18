@@ -1,0 +1,12 @@
+application: prdictapi
+version: 0-1-1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /static-%BUILD%
+  static_dir: static-%BUILD%
+  expiration: "365d"
+
+- url: /.*
+  script: prdictapi.py

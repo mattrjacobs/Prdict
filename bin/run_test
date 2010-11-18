@@ -1,0 +1,28 @@
+#!/bin/bash
+# usage: run_test <test_dir> [<test_file_name>]
+
+BIN=`dirname $0`
+if [ -z "$PYTHONPATH" ]; then
+    export PYTHONPATH=$BIN/../src/main/python
+else
+    export PYTHONPATH=$PYTHONPATH:$BIN/../src/main/python
+fi
+TEST_DIR=$1
+TEST_FILE=$2
+rc=0
+for atest in `find $TEST_DIR -type f -name "*.py"`; do
+    if [ -n "$TEST_FILE" ]; then
+	if [ "`basename $atest`" != "$TEST_FILE" ]; then
+	    continue
+	fi
+    fi
+    if [ -x $atest ]; then
+	echo "Running $atest..."
+	$atest
+	if [ $? != 0 ]; then
+	    rc=1
+	    break
+	fi
+    fi
+done
+exit $rc

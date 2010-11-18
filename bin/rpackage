@@ -1,0 +1,10 @@
+#!/bin/bash
+# recursive package copy: rpackage $src $dest
+
+bn=`basename $1`
+for d in `(cd $1; find . -type d)`; do
+    mkdir -p $2/$d
+done
+for f in `(cd $1; find . -type f) | grep -v .svn`; do
+    cp $1/$f $2/$f
+done

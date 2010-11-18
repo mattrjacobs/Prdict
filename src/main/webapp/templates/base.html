@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>{% block title %}Prdict{% endblock %}</title>
+    <link rel="stylesheet" href="/static-{{ build }}/prdict.css" type="text/css"/>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/static-{{ build }}/prdict.ico"/>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <div id="main">
+      <div id="header">
+	<div id="user_area">
+	  <nobr>
+	    {% if user %}
+	    <span class="username">{{ user.email|escape }}</span> |
+	    {% endif %}
+	    {% if login_link %}
+	    <a class="login_link" href="{{ login_link }}">Admin Login</a>
+	    {% endif %}
+	    {% if logout_link %}
+	    <a class="logout_link" href="{{ logout_link }}">Log out</a>
+	    {% endif %}
+	  </nobr>
+	</div>
+	<div class="clear"></div>
+      </div>
+      <div id="content">
+        {% block message %}
+	{% if msg %}
+	<p>{{ msg|escape }}</p>
+	{% endif %}
+	{% endblock %}
+	{% block content %}
+	{% endblock %}
+      </div>
+      <div id="footer">
+	<center>
+	  &copy; 2010 Prdict LLC
+	</center>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+body {
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+}
+
+#header {
+    position:absolute;
+    top: 0; 
+    width: 100%;
+}
+
+#user_area {
+    float: right;
+    padding: 10px;
+}
+
+#content {
+    margin: 10px;
+    margin-top:70px;
+}
+
+.clear {
+    clear: both;
+}
+
+.username {
+    font-weight: bold;
+}
+
+#banner {
+    margin-top: 100px;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 24pt;
+}
+
+#footer {
+    font-size: 10pt;
+}
+
+.hidden {
+    display: none;
+}

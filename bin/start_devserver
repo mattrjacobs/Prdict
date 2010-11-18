@@ -1,0 +1,22 @@
+#!/bin/bash
+# usage: start_devserver <webapp_dir> <appserver_pid_file>
+
+BIN=`dirname $0`
+
+# start local appserver with clean db and wait for it to come up
+curl -s http://localhost:8080/ > /dev/null
+if [ $? = 0 ]; then
+    echo "Dev server is already running!"
+    exit 0
+fi
+
+dev_appserver.py -c $1 &
+pid=$!
+while true; do
+    sleep 1
+    curl -s http://localhost:8080/ >/dev/null
+    if [ $? = 0 ]; then
+	echo $pid > $2
+        break
+    fi
+done

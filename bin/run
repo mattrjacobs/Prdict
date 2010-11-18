@@ -1,0 +1,4 @@
+#!/bin/bash
+
+BIN=`dirname $0`
+dev_appserver.py $* $BIN/../target/webapp

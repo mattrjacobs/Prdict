@@ -1,0 +1,13 @@
+#!/bin/bash
+# usage: summarize_test_results <test_results_file>
+
+BIN=`dirname $0`
+
+# summarize result
+echo "*** Tests done, shutting down ***"
+rc=`cat $1`
+rm $1
+if [ $rc != 0 ]; then
+    echo "INTEGRATION TESTS FAILED"
+fi
+exit $rc

@@ -1,0 +1,49 @@
+RESTful URLs
+api.prdict.com
+
+* /users - all users in system
+ - GET (admin only)
+ - POST (all) - register
+ - PUT - N/A
+ - DELETE - N/A
+
+* /user/{id} - specific user
+ - GET (admin/{id}) - user info
+ - POST - N/A
+ - PUT - (admin/{id}) - user edit
+ - DELETE - (admin/{id}) - user delete
+
+* /events - all events in system
+ - GET (admin only)
+ - POST (admin only) - add event
+ - PUT - N/A
+ - DELETE - N/A
+
+* /event/{id} - specific event
+ - GET (all)
+ - POST - N/A
+ - PUT - (admin only) - edit event
+ - DELETE - (admin only) - delete event 
+
+* /user/{id}/events - all events a user is interested in
+ - GET (admin, {id}, {id} friends)
+ - POST (admin, {id}, {id} friends?) - add event
+ - PUT (admin, {id}) - add/edit/remove event
+ - DELETE (admin only) - delete all events
+
+* /user/{id}/friends - all friends of a user
+ - GET (admin, {id}, {id} friends)
+ - POST (admin, {id}) - add friend
+ - PUT (admin, {id}) - edit friend list
+ - DELETE (admin only) - delete all events
+
+UI URLs
+
+www.prdict.com
+* /, /home - homepage
+
+* /user/{name} - user page
+
+* /event/{name} - event page
+
+* /event/{name}/chat - chat pge for event

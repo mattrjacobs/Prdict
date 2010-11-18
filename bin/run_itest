@@ -1,0 +1,12 @@
+#!/bin/bash
+# usage: run_itest <itest_dir> <test_results_file>
+
+BIN=`dirname $0`
+
+# run any executable tests
+$BIN/run_test $1
+rc=$?
+
+echo $rc > $2
+
+exit 0
