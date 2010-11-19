@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ user.email|escape }}</title>
+  <updated>{{ user.isoformat_updated }}</updated>
+  <published>{{ user.isoformat_created }}</published>
+  <id>{{ base_url }}{{ user.relative_url }}</id>
+  <link rel="alternate" href="{{ base_url }}{{ user.relative_url }}" title="{{ user.email|escape }}" type="text/html"/>
+  <content type="text">
+  </content>
+</entry>

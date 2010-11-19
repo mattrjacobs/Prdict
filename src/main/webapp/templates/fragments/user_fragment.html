@@ -1,0 +1,14 @@
+<h1>User: {{ user.email|escape }}</h1>
+<p><a href="{{ user.relative_url }}">self link</a></p>
+<dl>
+<dt>Created:</dt>
+<dd>{{ user.isoformat_created }}</dd>
+<dt>Updated:</dt>
+<dd>{{ user.isoformat_updated }}</dd>
+<dt>Etag:</dt>
+<dd>{{ user.etag }}</dd>
+</dl>
+<form action="{{ user.relative_url }}" method="POST">
+<input type="hidden" name="_method" value="DELETE"/>
+<input type="submit" name="submit" value="Delete User"/>
+</form>

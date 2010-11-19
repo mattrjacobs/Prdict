@@ -2,6 +2,7 @@
 import cgi
 import dateutil
 import httplib
+import logging
 import os
 import urlparse
 
@@ -12,6 +13,7 @@ from google.appengine.ext.webapp import template
 
 import build
 import release_number
+from models import prdict_user
 from utils.constants import Constants
 
 class AbstractHandler(webapp.RequestHandler):
@@ -35,7 +37,7 @@ class AbstractHandler(webapp.RequestHandler):
         args['build'] = "%s" % self.get_build_number()
         user = users.get_current_user()
         if not user:
-            args['login_link'] = users.create_login_url("/login-receiver")
+            args['login_link'] = users.create_login_url("/")
         else:
             args['logout_link'] = users.create_logout_url(self.request.uri)
         self.response.out.write(template.render(path, args))
@@ -124,6 +126,32 @@ class AbstractHandler(webapp.RequestHandler):
         hdr = self.request.headers['Accept']
         return (self._prefers_atom_by_accept_header(hdr), True)
 
+    def is_json_request(self):
+        """Return a pair (is_json, vary_accept) where is_json is true if
+        the request has selected a JSON representation, and vary_accept is
+        true if this was selected via the 'Accept' header (in which case
+        we need to add 'Vary: Accept' to the response)."""
+        query_params = cgi.parse_qs(self.request.query_string)
+        if 'alt' in query_params:
+            return (query_params["alt"][0] == "xml", False)
+        if 'Accept' not in self.request.headers:
+            return (False, False)
+        #Implement this later - Accept:Vary header for JSON response
+        #hdr = self.request.headers['Accept']
+        #return (self._prefers_json_by_accept_header(hdr), True)
+        return (False, False)
+
+    def get_request_type(self):
+        """Returns 'atom/json/html', depending on request made"""
+        (is_atom, atom_vary) = self.is_atom_request()
+        if is_atom:
+            return ("atom", atom_vary)
+        (is_json, json_vary) = self.is_json_request()
+        if is_json:
+            return ("json", json_vary)
+        else:
+            return ("html", False)
+
     def _etag_matches(self, etag):
         """Determines if given etag matches HTTP Request etag"""
         req_etags = map(lambda s: s.strip(),
@@ -159,36 +187,41 @@ class AbstractHandler(webapp.RequestHandler):
             return (not self._last_modified_matches(lm_date))
         return True
 
-    #@staticmethod
-    #def get_prdict_user():
-    #    """Examine the current user (based upon cookie), and return it,
-    #    if found.  Otherwise, return None."""
-    #    cookie_user = users.get_current_user()
-    #    if not cookie_user:
-    #        return None
-    #    else:
-    #        return prdictuser.lookup_user(cookie_user)
+    @staticmethod
+    def get_prdict_user():
+        """Examine the current user (based upon cookie), and return it,
+        if found.  Otherwise, return None."""
+        cookie_user = users.get_current_user()
+        if not cookie_user:
+            return None
+        else:
+            return prdict_user.lookup_user(cookie_user)
 
-    #def get_authorized_entry(self, key):
-    #    """Retrieve the entry in question from the datastore, and check
-    #    permissions. If not found, render a 404 error view.
-    #    If not permitted, render a 403 view.
-    #    Otherwise, return the entry in question."""
-    #    user = self.get_prdict_user()
-    #    if not user:
-    #        self.set_403()
-    #        return None
-    #    try:
-    #        entry = db.get(db.Key(encoded=key))
-    #    except db.BadKeyError:
-    #        entry = None
-    #    if not entry:
-    #        self.set_404()
-    #        return None
-    #    if not self.is_user_authorized_for_entry(user, entry):
-    #        self.set_403()
-    #        return None
-    #    return entry
+    def get_authorized_entry(self, key, access_mode):
+        """Retrieve the entry in question from the datastore, and check
+        permissions. If not found, render a 404 error view.
+        If not permitted, render a 403 view.
+        Otherwise, return the entry in question."""
+        user = self.get_prdict_user()
+        if not user:
+            self.set_403()
+            return None
+        try:
+            entry = db.get(db.Key(encoded=key))
+        except db.BadKeyError:
+           entry = None
+        if not entry:
+            self.set_404()
+            return None
+        if access_mode == "read":
+            if not self.is_user_authorized_to_read(user, entry):
+                self.set_403()
+                return None
+        if access_mode == "write":
+            if not self.is_user_authorized_to_write(user, entry):
+                self.set_403()
+                return None
+        return entry
 
     def allow_overloaded_post_of_put_or_delete(self, key):
         """Lets a subclass handle overloaded POST of PUT or DELETE"""

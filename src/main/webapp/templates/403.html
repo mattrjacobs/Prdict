@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <link rel="login" href="{{ login_url }}" title="login"/>
+{% endblock %}
+
+{% block content %}
+<p>Authentication required. Click <a href="{{ login_url }}">here</a>
+to log in with your Google account.
+</p>
+{% endblock %}
