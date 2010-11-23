@@ -15,7 +15,7 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
     def get(self):
         """Renders a template for adding a new event"""
         user = self.get_prdict_user()
-        if not self.is_user_authorized_to_write(user):
+        if not self.is_user_authorized_to_write(user, None):
             self.set_403()
             return None
         self.render_template('events.html')
@@ -23,7 +23,7 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
     def post(self):
         """Attempts to respond to a POST by adding a new event"""
         user = self.get_prdict_user()
-        if not self.is_user_authorized_to_write(user):
+        if not self.is_user_authorized_to_write(user, None):
             self.set_403()
             return None
         if self.get_header('Content-Type') != Constants.FORM_ENCODING:

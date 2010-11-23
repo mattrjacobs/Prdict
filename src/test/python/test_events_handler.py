@@ -6,7 +6,6 @@ import mox
 import unittest
 import urllib
 
-#from google.appengine.api.users import User
 from google.appengine.ext import db
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 

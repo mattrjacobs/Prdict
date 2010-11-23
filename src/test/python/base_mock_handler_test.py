@@ -59,6 +59,7 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.non_friend_username = "non_friend@prdict.com"
         self.non_friend_user = self._create_user('Non-Friend User', self.non_friend_username)
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
+        self.event_key = str(self.event.key())
 
     def tearDown(self):
         apiproxy_stub_map.apiproxy = self.original_apiproxy

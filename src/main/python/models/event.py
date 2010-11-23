@@ -2,6 +2,8 @@ from google.appengine.ext import db
 
 from datetime import datetime
 
+import build
+import dateutil
 from prdict_user import PrdictUser
 
 class Event(db.Model):

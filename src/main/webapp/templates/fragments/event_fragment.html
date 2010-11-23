@@ -1,12 +1,12 @@
 <h1>Event: {{ event.title|escape }}</h1>
 <p><a href="{{ event.relative_url }}">self link</a></p>
-<form action="{{ board.relative_url }}" method="POST">
-Update board title:
+<form action="{{ event.relative_url }}" method="POST">
+Update event:<br/>
 <input type="hidden" name="_method" value="PUT"/>
-<input type="text" name="title" maxlength="80" value="{{ event.title|escape }}"/>
-<input type="textarea" name="description" maxlength="1000" value="{{ event.description|escape }}"/>
-<input type="text" name="start_date" value="{{ event.start_date|escape }}"/>
-<input type="text" name="end_date" value="{{ event.end_date|escape }}"/>
+Title: <input type="text" name="title" maxlength="80" value="{{ event.title|escape }}"/><br/>
+Description: <input type="textarea" name="description" maxlength="1000" value="{{ event.description|escape }}"/><br/>
+Start date: <input type="text" name="start_date" value="{{ event.start_date|escape }}"/><br/>
+End date: <input type="text" name="end_date" value="{{ event.end_date|escape }}"/><br/>
 <input type="submit" name="submit" value="Update event"/>
 </form>
 <dl>

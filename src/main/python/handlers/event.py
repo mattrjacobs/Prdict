@@ -35,7 +35,7 @@ class EventHandler(EntryHandler, EventAuthorizationHandler):
                 messages.append(msg)
 
         if 'description' in params:
-            board.description = params['description'][0]
+            description = params['description'][0]
             (desc_valid, msg) = Event.validate_description(description)
             if not desc_valid:
                 messages.append(msg)
@@ -54,13 +54,13 @@ class EventHandler(EntryHandler, EventAuthorizationHandler):
 
         if title_valid and desc_valid and start_date_valid and end_date_valid:
             if title:
-                board.title = title
+                event.title = title
             if description:
-                board.description = description
+                event.description = description
             if start_date:
-                board.start_date = Event.convert_date_format(start_date)
+                event.start_date = Event.convert_date_format(start_date)
             if end_date:
-                board.end_date = Event.convert_date_format(end_date)
+                event.end_date = Event.convert_date_format(end_date)
             return (httplib.OK, "Event updated.")
         else:
             return (httplib.BAD_REQUEST, ','.join(messages))

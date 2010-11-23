@@ -203,9 +203,6 @@ class AbstractHandler(webapp.RequestHandler):
         If not permitted, render a 403 view.
         Otherwise, return the entry in question."""
         user = self.get_prdict_user()
-        if not user:
-            self.set_403()
-            return None
         try:
             entry = db.get(db.Key(encoded=key))
         except db.BadKeyError:
