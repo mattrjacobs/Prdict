@@ -14,17 +14,19 @@ class UsersHandler(AbstractHandler):
     def get(self):
         """Renders a template for adding a new user"""
         user = self.get_prdict_user()
-        #if not user:
-        #    self.set_403()
-        #    return None
+        #for now, only permit admin users to access
+        if not users.is_current_user_admin():
+            self.set_403()
+            return None
         self.render_template('users.html')
 
     def post(self):
         """Attempts to respond to a POST by adding a new user"""
+        #for now, only permit admin users to create
         user = self.get_prdict_user()
-        #if not user:
-        #    self.set_403()
-        #    return None
+        if not users.is_current_user_admin():
+            self.set_403()
+            return None
         if self.get_header('Content-Type') != Constants.FORM_ENCODING:
             msg = "Must POST in %s format." % Constants.FORM_ENCODING
             self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
