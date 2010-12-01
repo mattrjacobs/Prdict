@@ -5,6 +5,9 @@
   <published>{{ user.isoformat_created }}</published>
   <id>{{ base_url }}{{ user.relative_url }}</id>
   <link rel="alternate" href="{{ base_url }}{{ user.relative_url }}" title="{{ user.email|escape }}" type="text/html"/>
+  <link rel="friends HTML" href="{{ base_url }}{{ user.relative_url }}/friends" title="{{ user.email|escape }} friends" type="text/html"/>
+  <link rel="friends ATOM" href="{{ base_url }}{{ user.relative_url }}/friends?alt=xml" title="{{ user.email|escape }} friends" type="application/atom+xml"/>
+  <link rel="friends JSON" href="{{ base_url }}{{ user.relative_url }}/friends?alt=json" title="{{ user.email|escape }} friends" type="application/json"/>
   <content type="text">
   </content>
 </entry>

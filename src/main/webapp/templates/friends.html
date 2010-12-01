@@ -1,0 +1,22 @@
+{% extends "base_feed.html" %}
+
+{% block parent %}
+{% if user %}
+<h1>Friends of User: {{ user.email|escape }}</h1>
+<p><a href="{{ self_link }}">self link</a></p>
+<hr/>
+{% endif %}
+{% endblock %}
+
+{% block entries %}
+{% if friends %}
+{% for user in friends %}
+  {% include "fragments/user_fragment.html" %}
+  <hr/>
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block new_entry %}
+{% include "forms/add_user_friend_form.html" %}
+{% endblock %}

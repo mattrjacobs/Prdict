@@ -51,7 +51,6 @@ class EntryHandler(AbstractHandler):
     def get(self, key):
         """Handles an HTTP GET by checking authorization and rendering
         the entry according to HTTP request, if authorized"""
-        logging.error("CALLED")
         entry = self.get_authorized_entry(key, "read")
         if not entry:
             return

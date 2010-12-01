@@ -10,6 +10,7 @@ class PrdictUser(db.Model):
     user = db.UserProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     updated = db.DateTimeProperty(auto_now=True)
+    friends = db.ListProperty(users.User)
 
     #add friends
     #add events user is interested in

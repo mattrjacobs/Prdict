@@ -51,13 +51,13 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.impl.response = self.mock_resp
 
         self.username = LOGGED_IN_USER
-
-        self.user = self._create_user("Prdict User", self.username)
-
         self.friend_username = "friend@prdict.com"
-        self.friend_user = self._create_user('Prdict Friend', self.friend_username)
         self.non_friend_username = "non_friend@prdict.com"
+
+        self.user = self._create_user("Prdict User", self.username, [users.User(self.friend_username)])
+        self.friend_user = self._create_user('Prdict Friend', self.friend_username)
         self.non_friend_user = self._create_user('Non-Friend User', self.non_friend_username)
+
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
         self.event_key = str(self.event.key())
 
@@ -94,8 +94,8 @@ class BaseMockHandlerTest(unittest.TestCase):
     def remove_user(self):
         del os.environ["USER_EMAIL"]
 
-    def _create_user(self, name, email):
-        user = PrdictUser(name = name, user = users.User(email))
+    def _create_user(self, name, email, friends = []):
+        user = PrdictUser(name = name, user = users.User(email), friends = friends)
         user_key = str(user.put())
         return user
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% block parent %} 
+{% endblock %}
+{% if prev_link %}
+<p><a class="prev" href="{{ prev_link }}">Previous</a></p>
+{% endif %}
+{% if next_link %}
+<p><a class="next" href="{{ next_link }}">Next</a></p>
+{% endif %}
+{% block entries %}
+{% endblock %}
+{% block new_entry %}
+{% endblock %}
+{% endblock content %}

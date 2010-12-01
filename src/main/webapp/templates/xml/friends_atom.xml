@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ user.email|escape }}</title>
+  <updated>{{ user.isoformat_updated }}</updated>
+  <published>{{ user.isoformat_created }}</published>
+  <id>{{ base_url }}{{ self_link }}</id>
+  <link rel="alternate" href="{{ base_url }}{{ self_link }}" title="{{ user.email|escape }}" type="text/html"/>
+  <link rel="HTML user" href="{{ base_url }}{{ user.relative_url}}" title="{{ user.email|escape }}" type="text/html"/>
+  <link rel="ATOM user" href="{{ base_url }}{{ user.relative_url}}?alt=xml" title="{{ user.email|escape }}" type="application/atom+xml"/>
+  <link rel="JSON user" href="{{ base_url }}{{ user.relative_url}}?alt=json" title="{{ user.email|escape }}" type="application/json"/>
+{% if prev_link %}
+  <link rel="prev" href="{{ prev_link }}" type="application/atom+xml"/>
+{% endif %}
+{% if next_link %}
+  <link rel="next" href="{{ next_link }}" type="application/atom+xml"/>
+{% endif %}
+  <author><name>{{ user.email|escape }}</name></author>
+  {% for friend in friends %}
+    <entry>
+      <title>{{ friend.email|escape }}</title>
+      <id>{{ base_url }}{{ friend.relative_url }}</id>
+      <updated>{{ friend.isoformat_updated }}</updated>
+      <published>{{ friend.isoformat_created }}</published>
+      <content type="text"></content>
+      <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}" title="{{ friend.email|escape }}" type="text/html"/>
+      <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}?alt=xml" title="{{ friend.email|escape }}" type="application/atom+xml"/>
+      <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}?alt=json" title="{{ friend.email|escape }}" type="application/json"/>
+    </entry>
+  {% endfor %}
+</feed>
