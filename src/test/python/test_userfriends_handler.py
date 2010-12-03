@@ -63,25 +63,25 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
     def testIsPostDataValidFalse(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : ''}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        (is_valid, _) = self.impl.is_post_data_valid()
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertFalse(is_valid)
 
     def testIsPostDataValidUnregistered(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : 'unregistered_user@random.com'}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        (is_valid, _) = self.impl.is_post_data_valid()
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertFalse(is_valid)
 
     def testIsPostDataValidMyself(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.username}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        (is_valid, _) = self.impl.is_post_data_valid()
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertFalse(is_valid)
 
     def testIsPostDataValidRegistered(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_username}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        (is_valid, _) = self.impl.is_post_data_valid()
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertTrue(is_valid)
 
     def testHandlePostUserNotAFriendYet(self):

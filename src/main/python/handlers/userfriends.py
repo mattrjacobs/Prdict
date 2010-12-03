@@ -22,7 +22,8 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
     def render_html(self, parent, entries, prev_link=None, next_link=None,
                     msg = None):
         self.render_template('friends.html',
-                             { 'user' : parent,
+                             { 'current_user' : self.get_prdict_user(),
+                               'user' : parent,
                                'friends' : entries,
                                'self_link' : self.request.url,
                                'prev_link' : prev_link,
@@ -49,14 +50,13 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
                                'prev_link' : prev_link,
                                'next_link' : next_link})
 
-    def is_post_data_valid(self):
+    def is_post_data_valid(self, parent):
         """Checks if request parameters contain a valid user to add"""
         email = self.request.get("email")
         (is_valid, error_message) = prdict_user.PrdictUser.validate_params(email)
         if not is_valid:
             return (False, error_message)
-        user = self.get_prdict_user()
-        if user.email == email:
+        if parent.email == email:
             return (False, "Can not add yourself as a friend")
         already_registered = prdict_user.PrdictUser.user_registered(email)
         if not already_registered:

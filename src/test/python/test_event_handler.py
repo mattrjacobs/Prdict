@@ -36,7 +36,7 @@ class TestEventHandler(BaseMockHandlerTest):
 
     def testGetNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().AndReturn(None)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.mock_handler.render_template("event.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -44,7 +44,7 @@ class TestEventHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testGetWithNonAdminUser(self):
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.mock_handler.render_template("event.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -53,7 +53,7 @@ class TestEventHandler(BaseMockHandlerTest):
 
     def testGetWithAdminUser(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.mock_handler.render_template("event.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 

@@ -108,7 +108,7 @@ class FeedHandler(AbstractHandler):
                              msg = "Must POST in %s format." % \
                              Constants.FORM_ENCODING)
             return
-        (is_valid, error_message) = self.is_post_data_valid()
+        (is_valid, error_message) = self.is_post_data_valid(parent_entry)
         if not is_valid:
             self.response.set_status(httplib.BAD_REQUEST)
             self.render_html(parent = parent_entry,

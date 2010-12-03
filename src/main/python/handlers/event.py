@@ -11,8 +11,11 @@ class EventHandler(EntryHandler, EventAuthorizationHandler):
     EventAuthorizationHandler has logic for authorization."""
     def render_html(self, entry, msg=None):
         """Renders an HTML Event"""
+        current_user = self.get_prdict_user()
         self.render_template("event.html",
-                             { 'msg': msg, 'event' : entry})
+                             { 'msg': msg,
+                               'current_user' : current_user,
+                               'event' : entry})
 
     def render_atom(self, entry):
         self.render_template('xml/event_atom.xml',

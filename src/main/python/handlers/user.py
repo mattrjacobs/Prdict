@@ -9,15 +9,20 @@ class UserHandler(EntryHandler, UserAuthorizationHandler):
     EntryHandler handles request parsing
     UserAuthorizationHandler handles authorization logic"""
     def render_html(self, entry, msg=None):
-        self.render_template('user.html', { 'msg' : msg, 'user' : entry })
+        current_user = self.get_prdict_user()
+        self.render_template('user.html', { 'msg' : msg,
+                                            'current_user' : current_user,
+                                            'user' : entry })
 
     def render_atom(self, entry):
         self.render_template('xml/user_atom.xml',
-                             { 'user' : entry, 'base_url' : self.baseurl() } )
+                             { 'user' : entry,
+                               'base_url' : self.baseurl() } )
 
     def render_json(self, entry):
         self.render_template('json/user_json.xml',
-                             { 'user' : entry, 'base_url' : self.baseurl() } )
+                             { 'user' : entry,
+                               'base_url' : self.baseurl() } )
         
     def post(self, key):
         self.allow_overloaded_post_of_delete(key)

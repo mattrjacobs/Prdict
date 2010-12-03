@@ -12,7 +12,7 @@ body {
     width: 100%;
 }
 
-#user_area {
+#current_user {
     float: right;
     padding: 10px;
 }
