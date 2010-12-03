@@ -16,10 +16,10 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
     def setUp(self):
         BaseMockHandlerTest.setUp(self)
 
-        self.set_user(self.username, False)
+        self.set_user(self.email, False)
 
-        self.user_2_username = "user_2@prdict.com"
-        self.user_2 = self._create_user("Prdict User 2", self.user_2_username, [User(self.username), User(self.friend_username)])
+        self.user_2_email = "user_2@prdict.com"
+        self.user_2 = self._create_user("Prdict_User_2", self.user_2_email, [User(self.email), User(self.friend_email)])
 
     def tearDown(self):
         BaseMockHandlerTest.tearDown(self)
@@ -73,19 +73,19 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.assertFalse(is_valid)
 
     def testIsPostDataValidMyself(self):
-        self.impl.request = self.req(urllib.urlencode({ 'email' : self.username}), "POST")
+        self.impl.request = self.req(urllib.urlencode({ 'email' : self.email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertFalse(is_valid)
 
     def testIsPostDataValidRegistered(self):
-        self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_username}), "POST")
+        self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertTrue(is_valid)
 
     def testHandlePostUserNotAFriendYet(self):
-        self.impl.request = self.req(urllib.urlencode({ 'email' : self.non_friend_username}), "POST")
+        self.impl.request = self.req(urllib.urlencode({ 'email' : self.non_friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(201)
         self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithNewMember), mox.IgnoreArg())
@@ -99,7 +99,7 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
     def testHandlePostGAEReadOnlyErrorPropagatesUp(self):
         self.mox.StubOutWithMock(self.impl, "add_to_friends")
         
-        self.impl.request = self.req(urllib.urlencode({ 'email' : self.non_friend_username}), "POST")
+        self.impl.request = self.req(urllib.urlencode({ 'email' : self.non_friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.add_to_friends(self.user, mox.IsA(User)).AndRaise(CapabilityDisabledError)
         self.mox.ReplayAll()
@@ -113,7 +113,7 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testHandlePostUserAlreadyFriend(self):
-        self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_username}), "POST")
+        self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(302)
         self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithOldMembersOnly), mox.IgnoreArg())

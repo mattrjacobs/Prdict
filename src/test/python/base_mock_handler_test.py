@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from cStringIO import StringIO
 from datetime import datetime
+import logging
 import mox
 import os
 import unittest
@@ -50,13 +51,16 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.impl.request = self.stub_req
         self.impl.response = self.mock_resp
 
-        self.username = LOGGED_IN_USER
-        self.friend_username = "friend@prdict.com"
-        self.non_friend_username = "non_friend@prdict.com"
+        self.email = LOGGED_IN_USER
+        self.username = "test"
+        self.friend_email = "friend@prdict.com"
+        self.friend_username = "friend"
+        self.non_friend_email = "non_friend@prdict.com"
+        self.non_friend_username = "non_friend"
 
-        self.user = self._create_user("Prdict User", self.username, [users.User(self.friend_username)])
-        self.friend_user = self._create_user('Prdict Friend', self.friend_username)
-        self.non_friend_user = self._create_user('Non-Friend User', self.non_friend_username)
+        self.friend_user = self._create_user(self.friend_username, self.friend_email)
+        self.non_friend_user = self._create_user(self.non_friend_username, self.non_friend_email)
+        self.user = self._create_user(self.username, self.email, [users.User(self.friend_email)])
 
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
         self.event_key = str(self.event.key())
@@ -84,8 +88,8 @@ class BaseMockHandlerTest(unittest.TestCase):
         req.method = method
         return req
 
-    def set_user(self, username, is_admin):
-        os.environ["USER_EMAIL"] = username
+    def set_user(self, email, is_admin):
+        os.environ["USER_EMAIL"] = email
         if is_admin:
             os.environ["USER_IS_ADMIN"] = "1"
         else:
@@ -95,7 +99,7 @@ class BaseMockHandlerTest(unittest.TestCase):
         del os.environ["USER_EMAIL"]
 
     def _create_user(self, name, email, friends = []):
-        user = PrdictUser(name = name, user = users.User(email), friends = friends)
+        user = PrdictUser(username = name, user = users.User(email), friends = friends)
         user_key = str(user.put())
         return user
 

@@ -2,7 +2,7 @@
 
 {% block parent %}
 {% if user %}
-<h1>Friends of User: {{ user.email|escape }}</h1>
+<h1>Friends of User: {{ user.username|escape }}</h1>
 <p><a href="{{ self_link }}">self link</a></p>
 <hr/>
 {% endif %}

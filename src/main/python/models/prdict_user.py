@@ -8,15 +8,15 @@ from google.appengine.ext import db
 class PrdictUser(db.Model):
 
     user = db.UserProperty(required=True)
+    username = db.StringProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     updated = db.DateTimeProperty(auto_now=True)
     friends = db.ListProperty(users.User)
 
-    #add friends
     #add events user is interested in
 
     @staticmethod
-    def validate_params(email):
+    def validate_email(email):
         """Given an email, can a valid User be constructed?
         Return a (is_valid, error_message) tuple"""
         if not email or not email.strip():
@@ -28,6 +28,25 @@ class PrdictUser(db.Model):
         user = users.User(email)
         if not user:
             return (False, "Email parameter must be valid.")
+        return (True, None)
+
+    @staticmethod
+    def validate_params(username, email):
+        (is_email_valid, error_message) = PrdictUser.validate_email(email)
+        if not is_email_valid:
+            return (False, error_message)
+        lookup_username = db.GqlQuery(
+            "SELECT * FROM PrdictUser WHERE username = :1", username)
+        if not username or not email.strip():
+            return (False, "Must specify a non-empty 'username' parameter.")
+        if len(username.split()) > 1:
+            return (False, "Username must not contain whitespace")
+        if lookup_username.get() is not None:
+            return (False, "Username already taken")
+        if len(username) < 4:
+            return (False, "Username length must be greater than or equal to 4 chars")
+        if len(username) > 20:
+            return (False, "Username length must be less than or equal to 20 chars")
         return (True, None)
 
     @staticmethod

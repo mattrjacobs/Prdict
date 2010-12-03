@@ -1,7 +1,9 @@
-<h1>User: {{ user.email|escape }}</h1>
+<h1>User: {{ user.username|escape }}</h1>
 <p><a href="{{ user.relative_url }}">self link</a></p>
 <p><a href="{{ user.relative_url}}/friends">friends</a></p>
 <dl>
+<dt>Email:</dt>
+<dd>{{ user.email }}</dd>
 <dt>Created:</dt>
 <dd>{{ user.isoformat_created }}</dd>
 <dt>Updated:</dt>

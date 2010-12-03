@@ -32,7 +32,8 @@ class UsersHandler(AbstractHandler):
             self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
             return self.render_template('users.html', { 'msg': msg })
         email = self.request.get("email")
-        (is_valid, error_message) = prdict_user.PrdictUser.validate_params(email)
+        username = self.request.get("username")
+        (is_valid, error_message) = prdict_user.PrdictUser.validate_params(username, email)
         if not is_valid:
             return self.__bad_request_template(error_message)
         email_user = users.User(email)
@@ -41,7 +42,7 @@ class UsersHandler(AbstractHandler):
             self.response.set_status(httplib.FOUND)
         else:
             try:
-                user = self.create_user(email_user)
+                user = self.create_user(username, email_user)
             except CapabilityDisabledError:
                 self.handle_transient_error()
                 return
@@ -49,9 +50,9 @@ class UsersHandler(AbstractHandler):
         self.response.headers['Content-Location'] = user_url
         self.render_template('user.html', { 'user' : user })
 
-    def create_user(self, email_user):
+    def create_user(self, username, email_user):
         """Adds a new user to datastore and sets HTTP status"""
-        user = prdict_user.PrdictUser(user = email_user)
+        user = prdict_user.PrdictUser(username = username, user = email_user)
         user.put()
         self.response.set_status(httplib.CREATED)
         return user

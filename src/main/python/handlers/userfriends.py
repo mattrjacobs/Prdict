@@ -1,5 +1,6 @@
 """Handles a request for a user's friends resource"""
 import httplib
+import logging
 
 from google.appengine.api import users
 
@@ -53,7 +54,7 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
     def is_post_data_valid(self, parent):
         """Checks if request parameters contain a valid user to add"""
         email = self.request.get("email")
-        (is_valid, error_message) = prdict_user.PrdictUser.validate_params(email)
+        (is_valid, error_message) = prdict_user.PrdictUser.validate_email(email)
         if not is_valid:
             return (False, error_message)
         if parent.email == email:

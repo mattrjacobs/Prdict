@@ -17,7 +17,7 @@ class TestUsersHandler(BaseMockHandlerTest):
     def setUp(self):
         BaseMockHandlerTest.setUp(self)
 
-        self.set_user(self.username, False)
+        self.set_user(self.email, False)
 
     def tearDown(self):
         BaseMockHandlerTest.tearDown(self)
@@ -51,7 +51,7 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testGetWithAdminUser(self):
-        self.set_user(self.username, True)
+        self.set_user(self.email, True)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mock_handler.render_template("users.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -63,7 +63,9 @@ class TestUsersHandler(BaseMockHandlerTest):
     def testPostWithNoUser(self):
         self.remove_user()
         self.mock_handler.get_prdict_user().AndReturn(None)
-        self.impl.request = self.req(urllib.urlencode({ 'email' : 'new_user@prdict.com'}), "POST")
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : 'new_user'}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(403)
         self.mock_handler.render_template("403.html", mox.IgnoreArg())
@@ -73,9 +75,11 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testPostInvalidContentType(self):
-        self.set_user(self.username, True)
+        self.set_user(self.email, True)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
-        self.impl.request = self.req(urllib.urlencode({ 'email' : 'new_user@prdict.com'}), "POST")
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : 'new_user' }), "POST")
         self.impl.request.headers["Content-Type"] = "invalid content type"
         self.impl.response.set_status(415)
         self.mock_handler.render_template("users.html", mox.IgnoreArg())
@@ -84,10 +88,136 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.impl.post()
         self.mox.VerifyAll()
 
-    def testPostInvalidPostParam(self):
-        self.set_user(self.username, True)
+    def testPostInvalidPostParamEmptyEmail(self):
+        self.set_user(self.email, True)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
-        self.impl.request = self.req(urllib.urlencode({ 'email' : ''}), "POST")
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : '',
+              'username' : 'new_user' }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamMissingEmail(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'username' : 'new_user' }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamTooLongEmail(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : "%s@toolong.com" % ['a' for x in range(1, 80)],
+              'username' : 'new_user' }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamEmailNotValid(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user',
+              'username' : 'new_user' }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamEmptyUsername(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : '' }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamMissingUsername(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com' }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamTooShortUsername(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : 'a' }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamTooLongUsername(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : ['a' for x in range(1, 21)] }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamUsernameAlreadyTaken(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : self.username }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("users.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.mox.VerifyAll()
+
+    def testPostInvalidPostParamUsernameContainsWhitespace(self):
+        self.set_user(self.email, True)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : "aaa bbb" }), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(400)
         self.mock_handler.render_template("users.html", mox.IgnoreArg())
@@ -97,9 +227,11 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testPostValidPostParamAlreadyExistsAsAdmin(self):
-        self.set_user(self.username, True)
+        self.set_user(self.email, True)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
-        self.impl.request = self.req(urllib.urlencode({ 'email' : self.username}), "POST")
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : self.email,
+              'username' : 'some_new_username' }), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
         self.impl.response.set_status(302)
@@ -109,18 +241,20 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.impl.post()
         self.assertTrue(len(self.impl.response.headers["Content-Location"]) > 0)
         url = self.impl.response.headers["Content-Location"]
-        self.verifyReturnedUser(url, self.username)
+        self.verifyReturnedUser(url, self.email)
         self.mox.VerifyAll()
 
     def testPostValidPostParamGAEReadOnly(self):
-        self.set_user(self.username, True)
+        self.set_user(self.email, True)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mox.StubOutWithMock(self.impl, "create_user") 
 
-        self.impl.request = self.req(urllib.urlencode({ 'email' : 'new_user@prdict.com'}), "POST")
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : 'new_user' }), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.impl.create_user(mox.IsA(User)).AndRaise(CapabilityDisabledError)
+        self.impl.create_user("new_user", mox.IsA(User)).AndRaise(CapabilityDisabledError)
         self.impl.response.set_status(503)
         self.mock_handler.render_template("503.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -130,7 +264,9 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testPostValidPostParamAsNonAdmin(self):
-        self.impl.request = self.req(urllib.urlencode({ 'email' : 'new_user@prdict.com'}), "POST")
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : 'new_user' }), "POST")
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
@@ -142,9 +278,11 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testPostValidPostParamCreateNewUserAsAdmin(self):
-        self.set_user(self.username, True)
+        self.set_user(self.email, True)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
-        self.impl.request = self.req(urllib.urlencode({ 'email' : 'new_user@prdict.com'}), "POST")
+        self.impl.request = self.req(urllib.urlencode(
+            { 'email' : 'new_user@prdict.com',
+              'username' : 'new_user' }), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
         self.impl.response.set_status(201)

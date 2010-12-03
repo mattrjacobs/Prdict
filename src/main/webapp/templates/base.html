@@ -15,7 +15,7 @@
 	<div id="current_user">
 	  <nobr>
 	    {% if current_user %}
-	    <span class="username">{{ current_user.email|escape }}</span> |
+	    <span class="username">{{ current_user.username|escape }}</span> |
 	    {% endif %}
 	    {% if login_link %}
 	    <a class="login_link" href="{{ login_link }}">Admin Login</a>
