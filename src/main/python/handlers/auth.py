@@ -30,6 +30,20 @@ class EventAuthorizationHandler(AuthorizationHandler):
     def is_user_authorized_to_write(self, prdict_user, event):
         return users.is_current_user_admin()
 
+class FriendsAuthorizationHandler(AuthorizationHandler):
+    """Authorization for user friends resource"""
+    def __init__(self):
+        AuthorizationHandler.__init__(self)
+
+    def is_user_authorized_to_read(self, prdict_user, entry):
+        return prdict_user and (entry.key() == prdict_user.key() or \
+                                prdict_user.user in entry.friends or \
+                                users.is_current_user_admin())
+
+    def is_user_authorized_to_write(self, prdict_user, entry):
+        return prdict_user and (entry.key() == prdict_user.key() or \
+                                users.is_current_user_admin())
+
 class UserAuthorizationHandler(AuthorizationHandler):
     """Authorization for user resource"""
     def __init__(self):

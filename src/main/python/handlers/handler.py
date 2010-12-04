@@ -197,19 +197,22 @@ class AbstractHandler(webapp.RequestHandler):
         else:
             return prdict_user.lookup_user(cookie_user)
 
+    def get_entry(self, key):
+        try:
+            return db.get(db.Key(encoded=key))
+        except db.BadKeyError:
+           return None
+
     def get_authorized_entry(self, key, access_mode):
         """Retrieve the entry in question from the datastore, and check
         permissions. If not found, render a 404 error view.
         If not permitted, render a 403 view.
         Otherwise, return the entry in question."""
         user = self.get_prdict_user()
-        try:
-            entry = db.get(db.Key(encoded=key))
-        except db.BadKeyError:
-           entry = None
+        entry = self.get_entry(key)
         if not entry:
             self.set_404()
-            return None
+            return
         if access_mode == "read":
             if not self.is_user_authorized_to_read(user, entry):
                 self.set_403()

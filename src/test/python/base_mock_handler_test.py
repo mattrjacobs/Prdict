@@ -57,9 +57,12 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.friend_username = "friend"
         self.non_friend_email = "non_friend@prdict.com"
         self.non_friend_username = "non_friend"
+        self.admin_email = "admin@prdict.com"
+        self.admin_username = "admin"
 
         self.friend_user = self._create_user(self.friend_username, self.friend_email)
         self.non_friend_user = self._create_user(self.non_friend_username, self.non_friend_email)
+        self.admin_user = self._create_user(self.admin_username, self.admin_email) 
         self.user = self._create_user(self.username, self.email, [users.User(self.friend_email)])
 
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")

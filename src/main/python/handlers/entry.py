@@ -54,12 +54,18 @@ class EntryHandler(AbstractHandler):
         entry = self.get_authorized_entry(key, "read")
         if not entry:
             return
+        self.handle_http_caching_headers(entry)
+        self.handle_output(entry)
+
+    def handle_http_caching_headers(self, entry):
         self.set_header('Etag', entry.etag)
         self.set_header('Last-Modified', dateutil.http_header(entry.updated))
         self.set_header('Cache-Control', 'private, max-age=0')
         if not self.in_dev_mode() and \
            not self.modified(entry.etag, entry.updated):
             return self.response.set_status(httplib.NOT_MODIFIED)
+
+    def handle_output(self, entry):
         request_type, vary = self.get_request_type()
         if vary:
             self.set_header("Vary","Accept")
