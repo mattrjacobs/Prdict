@@ -2,6 +2,9 @@
 import httplib
 import logging
 
+from google.appengine.ext import db
+from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
+
 from handlers.auth import FriendsAuthorizationHandler
 from handlers.entry import EntryHandler
 
@@ -10,8 +13,7 @@ def delete_txn(handler, user, friend):
     if not user or not friend:
         return (None, None, None)
     if not handler.precondition_passes(user):
-        status = httplib.PRECONDITION_FAILED
-        msg = "User was out of date"
+        return (user, httplib.PRECONDITION_FAILED, "User was out of date")
     user.friends.remove(friend.user)
     user.put()
     return (user, httplib.OK, "Deleted friend %s" % friend.username)
@@ -62,17 +64,19 @@ class UserSpecificFriendHandler(EntryHandler, FriendsAuthorizationHandler):
         user_before_membership_delete = self.get_authorized_entry(user_key, "write")
         if not user_before_membership_delete:
             return
-        friend = self.get_authorized_entry(friend_key, "read")
+        friend = self.get_entry(friend_key)
         if not friend:
+            self.set_404()
             return
         
-        if not friend.user in user.friends:
+        if not friend.user in user_before_membership_delete.friends:
             self.set_404()
             return
         try:
             entry, status, msg = \
                    db.run_in_transaction(delete_txn, self,
                                          user_before_membership_delete, friend)
+            user = user_before_membership_delete
         except db.TransactionFailedError:
             user = user_before_membership_delete
             status = httplib.CONFLICT
@@ -80,7 +84,7 @@ class UserSpecificFriendHandler(EntryHandler, FriendsAuthorizationHandler):
         except CapabilityDisabledError:
             user = user_before_membership_delete
             status = httplib.SERVICE_UNAVAILABLE
-            msg = "Unabled to write data."
+            msg = "Temporarily unable to write data"
         if status is None:
             return
         self.response.set_status(status)
