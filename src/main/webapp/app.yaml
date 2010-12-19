@@ -8,6 +8,10 @@ handlers:
   static_dir: static-%BUILD%
   expiration: "365d"
 
+- url : /robots.txt
+  static_files: static-%BUILD%/robots.txt
+  upload: static-%BUILD%/robots.txt
+
 - url: /google76098d9def48f10d.html
   static_files: static-%BUILD%/google76098d9def48f10d.html
   upload: static-%BUILD%/google76098d9def48f10d.html
