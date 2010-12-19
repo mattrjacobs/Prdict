@@ -8,5 +8,9 @@ handlers:
   static_dir: static-%BUILD%
   expiration: "365d"
 
+- url: /google76098d9def48f10d.html
+  static_files: static-%BUILD%/google76098d9def48f10d.html
+  upload: static-%BUILD%/google76098d9def48f10d.html
+
 - url: /.*
   script: prdictapi.py
