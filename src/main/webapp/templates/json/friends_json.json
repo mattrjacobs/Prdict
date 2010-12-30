@@ -1,5 +1,8 @@
 {
- "friends" : [{% for friend in user.friends %}
-    "email" : "{{ friend.email|escape }}"{% if not forloop.last %},{% endif %} 
+ "friends" : [{% for friend in friends %}
+    { "email" : "{{ friend.email|escape }}",
+      "username" : "{{ friend.username|escape }}",
+      "key" : "{{ friend.key }}"
+    }{% if not forloop.last %},{% endif %} 
  {% endfor %}]
 }

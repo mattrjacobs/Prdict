@@ -36,6 +36,7 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
         self.render_template('xml/friends_atom.xml',
                              { 'user' : parent,
                                'friends' : entries,
+                               'self_link' : self.request.url,
                                'base_url' : self.baseurl(),
                                'prev_link' : prev_link,
                                'next_link' : next_link})

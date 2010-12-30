@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ event.title|escape }}</title>
+  <updated>{{ event.isoformat_updated }}</updated>
+  <published>{{ event.isoformat_created }}</published>
+  <id>{{ base_url }}{{ event.relative_url }}</id>
+  <start_date>{{ event.start_date }}</start_date>
+  <end_date>{{ event.end_date }}</end_date>
+  <description>{{ event.description|escape }}</description>
+  <link rel="alternate HTML" href="{{ base_url }}{{ event.relative_url }}" title="{{ event.title|escape }}" type="text/html"/>
+  <link rel="alternate JSON" href="{{ base_url }}{{ event.relative_url }}?alt=json" title="{{ event.title|escape }} JSON" type="application/json"/>
+  <content type="text">{{ event.description|escape }}</content>
+</entry>

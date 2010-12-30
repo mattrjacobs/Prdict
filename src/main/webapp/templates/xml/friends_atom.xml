@@ -4,7 +4,8 @@
   <updated>{{ user.isoformat_updated }}</updated>
   <published>{{ user.isoformat_created }}</published>
   <id>{{ base_url }}{{ self_link }}</id>
-  <link rel="alternate" href="{{ base_url }}{{ self_link }}" title="{{ user.email|escape }}" type="text/html"/>
+  <link rel="alternate" href="{{ base_url }}{{ user.relative_url }}/friends" title="{{ user.email|escape }} Friends" type="text/html"/>
+  <link rel="alternate JSON" href="{{ base_url }}{{ user.relative_url }}/friends?alt=json" title="{{ user.email|escape }} Friends JSON" type="text/html"/>
   <link rel="HTML user" href="{{ base_url }}{{ user.relative_url}}" title="{{ user.email|escape }}" type="text/html"/>
   <link rel="ATOM user" href="{{ base_url }}{{ user.relative_url}}?alt=xml" title="{{ user.email|escape }}" type="application/atom+xml"/>
   <link rel="JSON user" href="{{ base_url }}{{ user.relative_url}}?alt=json" title="{{ user.email|escape }}" type="application/json"/>
@@ -21,10 +22,11 @@
       <id>{{ base_url }}{{ friend.relative_url }}</id>
       <updated>{{ friend.isoformat_updated }}</updated>
       <published>{{ friend.isoformat_created }}</published>
-      <content type="text"></content>
+      <username>{{ friend.username|escape }}</username>
+      <content type="text">{{ friend.username|escape }}</content>
       <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}" title="{{ friend.email|escape }}" type="text/html"/>
-      <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}?alt=xml" title="{{ friend.email|escape }}" type="application/atom+xml"/>
-      <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}?alt=json" title="{{ friend.email|escape }}" type="application/json"/>
+      <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}?alt=xml" title="{{ friend.email|escape }} ATOM" type="application/atom+xml"/>
+      <link rel="alternate" href="{{ base_url }}{{ friend.relative_url }}?alt=json" title="{{ friend.email|escape }} JSON" type="application/json"/>
     </entry>
   {% endfor %}
 </feed>
