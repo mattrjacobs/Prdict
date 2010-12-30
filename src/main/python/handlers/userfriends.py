@@ -36,21 +36,15 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
         self.render_template('xml/friends_atom.xml',
                              { 'user' : parent,
                                'friends' : entries,
-                               'self_link' : self.request.path,
                                'base_url' : self.baseurl(),
                                'prev_link' : prev_link,
                                'next_link' : next_link})
 
     def render_json(self, parent, entries, prev_link=None, next_link=None,
                     msg=None):
-        self.render_template('json/friends_json.xml',
+        self.render_template('json/friends_json.json',
                              { 'user' : parent,
-                               'friends' : entries,
-                               'self_link' : self.request.path,
-                               'base_url' : self.baseurl(),
-                               'prev_link' : prev_link,
-                               'next_link' : next_link})
-
+                               'friends' : entries })
     def is_post_data_valid(self, parent):
         """Checks if request parameters contain a valid user to add"""
         email = self.request.get("email")

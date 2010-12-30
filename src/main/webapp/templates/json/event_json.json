@@ -1,0 +1,9 @@
+{
+ "name" : "{{ event.title|escape }}",
+ "description" : "{{ event.description|escape }}",
+ "key" : "{{ event.key }}",
+ "start_date" : "{{ event.start_date }}",
+ "end_date" : "{{ event.end_date }}",
+ "created" : "{{ event.created }}",
+ "updated" : "{{ event.updated }}"
+}

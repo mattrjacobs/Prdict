@@ -133,7 +133,7 @@ class AbstractHandler(webapp.RequestHandler):
         we need to add 'Vary: Accept' to the response)."""
         query_params = cgi.parse_qs(self.request.query_string)
         if 'alt' in query_params:
-            return (query_params["alt"][0] == "xml", False)
+            return (query_params["alt"][0] == "json", False)
         if 'Accept' not in self.request.headers:
             return (False, False)
         #Implement this later - Accept:Vary header for JSON response

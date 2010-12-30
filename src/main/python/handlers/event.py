@@ -22,8 +22,8 @@ class EventHandler(EntryHandler, EventAuthorizationHandler):
                              { 'event' : entry, 'base_url' : self.baseurl() })
 
     def render_json(self, entry):
-        self.render_template('json/event_json.xml',
-                             { 'event' : entry, 'base_url' : self.baseurl() })
+        self.render_template('json/event_json.json',
+                             { 'event' : entry })
 
     @staticmethod
     def _update_entry_from_params(event, params):

@@ -1,0 +1,5 @@
+{
+ "friends" : [{% for friend in user.friends %}
+    "email" : "{{ friend.email|escape }}"{% if not forloop.last %},{% endif %} 
+ {% endfor %}]
+}

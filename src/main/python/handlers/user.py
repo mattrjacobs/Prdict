@@ -20,9 +20,8 @@ class UserHandler(EntryHandler, UserAuthorizationHandler):
                                'base_url' : self.baseurl() } )
 
     def render_json(self, entry):
-        self.render_template('json/user_json.xml',
-                             { 'user' : entry,
-                               'base_url' : self.baseurl() } )
+        self.render_template('json/user_json.json',
+                             { 'user' : entry })
         
     def post(self, key):
         self.allow_overloaded_post_of_delete(key)
