@@ -38,7 +38,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testGetNoUser(self):
         self.remove_user()
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html")
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
         
         self.impl.get(self.user_key, self.friend_key)
@@ -46,7 +46,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testGetInvalidUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get("abc", self.friend_key)
@@ -54,7 +54,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testGetInvalidFriendKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.user_key, "abc")
@@ -63,7 +63,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testGetByNonFriendUnauthorized(self):
         self.set_user(self.non_friend_email, False)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html")
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.user_key, self.friend_key)
@@ -94,7 +94,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testGetNonFriend404(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.user_key, self.non_friend_key)
@@ -103,7 +103,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testDeleteAnonymous(self):
         self.remove_user()
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html")
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
         
         self.impl.delete(self.user_key, self.friend_key)
@@ -111,7 +111,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteEmptyUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete("", self.friend_key)
@@ -119,7 +119,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteInvalidUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete("abc", self.friend_key)
@@ -127,7 +127,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteEmptyFriendKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, "")
@@ -135,7 +135,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteEmptyUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, "abc")
@@ -165,7 +165,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testDeleteFailsForNonAdminFriend(self):
         self.set_user(self.friend_email, False)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html")
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, self.friend_key)
@@ -175,7 +175,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testDeleteFailsForNonAdminNonFriend(self):
         self.set_user(self.non_friend_email, False)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html")
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, self.friend_key)
@@ -184,7 +184,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteFailsWhenNonFriendIsDeleted(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("404.html")
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, self.non_friend_key)
@@ -232,8 +232,8 @@ class MockUserSpecificFriendHandler(UserSpecificFriendHandler):
     def render_html(self, friend, msg=None):
         self.handler.render_html(friend, msg)
 
-    def render_template(self, template):
-        self.handler.render_template(template)
+    def render_template(self, template, args=None):
+        self.handler.render_template(template, args)
 
 if __name__ == '__main__':
     unittest.main()

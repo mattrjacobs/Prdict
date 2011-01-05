@@ -18,19 +18,20 @@ class UsersHandler(AbstractHandler):
         if not users.is_current_user_admin():
             self.set_403()
             return None
-        self.render_template('users.html')
+        self.render_template('users.html', {'current_user' : user})
 
     def post(self):
         """Attempts to respond to a POST by adding a new user"""
         #for now, only permit admin users to create
-        user = self.get_prdict_user()
+        current_user = self.get_prdict_user()
         if not users.is_current_user_admin():
             self.set_403()
             return None
         if self.get_header('Content-Type') != Constants.FORM_ENCODING:
             msg = "Must POST in %s format." % Constants.FORM_ENCODING
             self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
-            return self.render_template('users.html', { 'msg': msg })
+            return self.render_template('users.html', { 'msg': msg,
+                                                        'current_user' : current_user})
         email = self.request.get("email")
         username = self.request.get("username")
         (is_valid, error_message) = prdict_user.PrdictUser.validate_params(username, email)
@@ -48,7 +49,8 @@ class UsersHandler(AbstractHandler):
                 return
         user_url = "%s/%s" % (self.request.url, user.key())
         self.response.headers['Content-Location'] = user_url
-        self.render_template('user.html', { 'user' : user })
+        self.render_template('user.html', { 'user' : user,
+                                            'current_user' : current_user})
 
     def create_user(self, username, email_user):
         """Adds a new user to datastore and sets HTTP status"""
@@ -60,4 +62,5 @@ class UsersHandler(AbstractHandler):
     def __bad_request_template(self, message):
         """Returns an HTML template explaining why user add failed"""
         self.response.set_status(httplib.BAD_REQUEST)
-        return self.render_template('users.html', { 'msg' : message })
+        return self.render_template('users.html', { 'msg' : message,
+                                                    'current_user' : self.get_prdict_user()})

@@ -36,7 +36,7 @@ class TestEventsHandler(BaseMockHandlerTest):
 
     def testGetNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().AndReturn(None)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.response.set_status(403)
         self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -45,7 +45,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testGetWithNonAdminUser(self):
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(403)
         self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -64,7 +64,7 @@ class TestEventsHandler(BaseMockHandlerTest):
 
     def testPostWithNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().AndReturn(None)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(403)
@@ -95,7 +95,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -112,7 +112,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -128,7 +128,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -145,7 +145,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -161,7 +161,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -178,7 +178,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -194,7 +194,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -212,7 +212,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(400)
         self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -222,7 +222,7 @@ class TestEventsHandler(BaseMockHandlerTest):
 
     def testPostValidPostParamGAEReadOnly(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.mox.StubOutWithMock(self.impl, "create_event") 
 
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
@@ -239,7 +239,7 @@ class TestEventsHandler(BaseMockHandlerTest):
 
     def testPostValidPostParamAsNonAdmin(self):
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
         self.impl.response.set_status(403)

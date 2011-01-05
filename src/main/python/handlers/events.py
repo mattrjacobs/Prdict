@@ -18,7 +18,7 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
         if not self.is_user_authorized_to_write(user, None):
             self.set_403()
             return None
-        self.render_template('events.html')
+        self.render_template('events.html', { 'current_user' : user })
 
     def post(self):
         """Attempts to respond to a POST by adding a new event"""
@@ -29,7 +29,8 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
         if self.get_header('Content-Type') != Constants.FORM_ENCODING:
             msg = "Must POST in %s format." % Constants.FORM_ENCODING
             self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
-            return self.render_template('events.html', { 'msg': msg })
+            return self.render_template('events.html', { 'msg': msg,
+                                                         'current_user' : user})
         title = self.request.get("title")
         description = self.request.get("description")
         start_date = self.request.get("start_date")
@@ -45,7 +46,8 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
             return
         event_url = "%s/%s" % (self.request.url, new_event.key())
         self.response.headers['Content-Location'] = event_url
-        self.render_template('event.html', { 'event' : new_event })
+        self.render_template('event.html', { 'event' : new_event,
+                                             'current_user' : user})
 
     def create_event(self, title, description, start_date_str, end_date_str):
         start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")
@@ -59,4 +61,5 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
     def __bad_request_template(self, message):
         """Returns an HTML template explaining why user add failed"""
         self.response.set_status(httplib.BAD_REQUEST)
-        return self.render_template('events.html', { 'msg' : message })
+        return self.render_template('events.html', { 'msg' : message,
+                                                     'current_user' : self.get_prdict_user()})

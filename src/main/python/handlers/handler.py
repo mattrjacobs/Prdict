@@ -53,17 +53,17 @@ class AbstractHandler(webapp.RequestHandler):
     def set_403(self):
         """Handle a HTTP 403 - Forbidden"""
         self.response.set_status(httplib.FORBIDDEN)
-        self.render_template('403.html')
+        self.render_template('403.html', {'current_user' : self.get_prdict_user()})
 
     def set_404(self):
         """Handle a HTTP 404 - Not Found"""
         self.response.set_status(httplib.NOT_FOUND)
-        self.render_template('404.html')
+        self.render_template('404.html', {'current_user' : self.get_prdict_user()})
 
     def handle_transient_error(self):
         """Handle a HTTP 503 - Service Unavailable"""
         self.response.set_status(httplib.SERVICE_UNAVAILABLE)
-        self.render_template('503.html')
+        self.render_template('503.html', {'current_user' : self.get_prdict_user()})
 
     def set_header(self, header_key, header_value):
         """helper method to set an HTTP header"""

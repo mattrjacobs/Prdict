@@ -32,7 +32,7 @@ class TestUsersHandler(BaseMockHandlerTest):
     #CLOSEDBETA : Eventually we want a 200 for anonymous users
     def testGetNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().AndReturn(None)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.response.set_status(403)
         self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -42,7 +42,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     #CLOSEDBETA : Eventually we want a 200 for non-admin users
     def testGetWithNonAdminUser(self):
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(403)
         self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -62,7 +62,7 @@ class TestUsersHandler(BaseMockHandlerTest):
     #CLOSEDBETA : Eventually we want a 201 for anonymous users
     def testPostWithNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().AndReturn(None)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com',
               'username' : 'new_user'}), "POST")
@@ -90,7 +90,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamEmptyEmail(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : '',
               'username' : 'new_user' }), "POST")
@@ -104,7 +104,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamMissingEmail(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'username' : 'new_user' }), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
@@ -117,7 +117,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamTooLongEmail(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : "%s@toolong.com" % ['a' for x in range(1, 80)],
               'username' : 'new_user' }), "POST")
@@ -131,7 +131,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamEmailNotValid(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user',
               'username' : 'new_user' }), "POST")
@@ -145,7 +145,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamEmptyUsername(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com',
               'username' : '' }), "POST")
@@ -159,7 +159,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamMissingUsername(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com' }), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
@@ -172,7 +172,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamTooShortUsername(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com',
               'username' : 'a' }), "POST")
@@ -186,7 +186,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamTooLongUsername(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com',
               'username' : ['a' for x in range(1, 21)] }), "POST")
@@ -200,7 +200,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamUsernameAlreadyTaken(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com',
               'username' : self.username }), "POST")
@@ -214,7 +214,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostInvalidPostParamUsernameContainsWhitespace(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com',
               'username' : "aaa bbb" }), "POST")
@@ -246,7 +246,7 @@ class TestUsersHandler(BaseMockHandlerTest):
 
     def testPostValidPostParamGAEReadOnly(self):
         self.set_user(self.email, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.mox.StubOutWithMock(self.impl, "create_user") 
 
         self.impl.request = self.req(urllib.urlencode(
@@ -267,7 +267,7 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(
             { 'email' : 'new_user@prdict.com',
               'username' : 'new_user' }), "POST")
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
         self.impl.response.set_status(403)
