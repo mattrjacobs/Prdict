@@ -15,6 +15,7 @@ from google.appengine.ext.webapp import Request
 from google.appengine.ext.webapp import Response 
 
 from models.event import Event
+from models.message import Message
 from models.prdict_user import PrdictUser
 
 APP_ID = 'Prdict API'
@@ -68,6 +69,11 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
         self.event_key = str(self.event.key())
 
+        self.message_1 = self._create_message("This is a message posted by user", self.user, self.event)
+        self.message_1_key = str(self.message_1.key())
+        self.message_2 = self._create_message("This is a message posted by friend", self.friend_user, self.event)
+        self.message_2_key = str(self.message_2.key())
+
     def tearDown(self):
         apiproxy_stub_map.apiproxy = self.original_apiproxy
 
@@ -113,6 +119,11 @@ class BaseMockHandlerTest(unittest.TestCase):
                       start_date = start_date, end_date = end_date)
         event_key = str(event.put())
         return event
+
+    def _create_message(self, content, author, event):
+        message = Message(content = content, author = author, event = event)
+        message_key = str(message.put())
+        return message
 
     def expect_auth(self, value):
         self.mock_auth_handler.is_user_authorized_for_entry(mox.Func(self.SameUserKey),

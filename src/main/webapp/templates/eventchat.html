@@ -1,0 +1,20 @@
+{% extends "base_feed.html" %}
+
+{% block parent %}
+{% if event %}
+<h1>Chat for {{ event.title|escape }}</h1>
+<hr/>
+{% endif %}
+{% endblock %}
+
+{% block entries %}
+{% if messages %}
+{% for message in messages %}
+  {% include "fragments/msg_fragment.html" %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block new_entry %}
+{% include "forms/add_chat_to_event_form.html" %}
+{% endblock %}

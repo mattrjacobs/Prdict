@@ -30,6 +30,17 @@ class EventAuthorizationHandler(AuthorizationHandler):
     def is_user_authorized_to_write(self, prdict_user, event):
         return users.is_current_user_admin()
 
+class EventChatAuthorizationHandler(AuthorizationHandler):
+    """Authorization for event chat resource"""
+    def __init__(self):
+        AuthorizationHandler.__init__(self)
+
+    def is_user_authorized_to_read(self, prdict_user, event):
+        return prdict_user
+
+    def is_user_authorized_to_write(self, prdict_user, event):
+        return prdict_user
+
 class FriendsAuthorizationHandler(AuthorizationHandler):
     """Authorization for user friends resource"""
     def __init__(self):
