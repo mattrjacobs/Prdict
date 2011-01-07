@@ -3,6 +3,9 @@ version: 0-1-15
 runtime: python
 api_version: 1
 
+builtins:
+- datastore_admin: on
+
 handlers:
 - url: /static-%BUILD%
   static_dir: static-%BUILD%

@@ -130,6 +130,7 @@ end
 
 desc "generate resources for inclusion in the package"
 task :process_resources => [ :initialize, "target/webapp/app.yaml", :static_dir ] do
+  sh "cp src/main/webapp/index.yaml target/webapp/index.yaml"
   sh "cp src/main/webapp/static/* target/webapp/static-`cat target/build.txt`"
 end
 
