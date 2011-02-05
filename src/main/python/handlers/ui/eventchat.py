@@ -1,6 +1,7 @@
 """Handles a request for an event's chat"""
 import httplib
 import logging
+import random
 
 from google.appengine.api import channel
 from google.appengine.api import memcache
@@ -29,13 +30,15 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
                     msg = None):
         client_id = self.get_prdict_user().user.user_id()
         cache_key = "listeners-%s" % str(parent.key())
-        token = channel.create_channel(client_id + str(parent.key()))
+        rand = random.randint(1000, 9999)
+        channel_id = "%s-%s-%s" % (client_id, str(parent.key()), rand)
+        token = channel.create_channel(channel_id)
         current_listeners = memcache.get(cache_key)
         if current_listeners:
-            if not client_id in current_listeners:
-                current_listeners.append(client_id)
+            if not channel_id in current_listeners:
+                current_listeners.append(channel_id)
         else:
-            current_listeners = [client_id]
+            current_listeners = [channel_id]
 
         memcache.set(cache_key, current_listeners)
 

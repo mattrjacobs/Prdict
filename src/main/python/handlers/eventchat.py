@@ -79,8 +79,7 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
         listeners = memcache.get(cache_key)
         if listeners:
             for listener in listeners:
-                channel_id = listener + str(parent.key())
-                channel.send_message(channel_id, channel_msg)
+                channel.send_message(listener, channel_msg)
 
     def get_channel_message(self, message):
         chat_message = { 'author' : message.author.username,
