@@ -1,4 +1,6 @@
 jQuery(document).ready(function(){
+    jQuery('input.newMsgContent').focus();
+
     jQuery('.newChatForm').submit( function() {
         $.ajax({
             url     : $(this).attr('action'),
@@ -9,6 +11,8 @@ jQuery(document).ready(function(){
                 console.debug("Failure sending new chat message");
             },
             success : function() {
+                jQuery('input.newMsgContent').attr('value', '');
+                jQuery('input.newMsgContent').focus();
                 console.debug("Success sending chat message");
             }
         });
