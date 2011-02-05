@@ -31,6 +31,10 @@ class Message(db.Model):
     def get_isoformat_created(self):
         return "%sZ" % (self.created.isoformat(),)
     isoformat_created = property(get_isoformat_created)
+
+    def get_created_nice(self):
+        return self.created.strftime("%I:%M:%S")
+    created_nice = property(get_created_nice)
     
     def get_relative_url(self):
         return "/api/messages/%s" % (self.key(),)

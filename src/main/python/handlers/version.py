@@ -1,4 +1,4 @@
-"""Handles a requset for th e Prdict API version"""
+"""Handles a requset for the Prdict API version"""
 from handlers.handler import AbstractHandler
 
 class VersionHandler(AbstractHandler):
@@ -6,6 +6,6 @@ class VersionHandler(AbstractHandler):
 
     def get(self):
         """Renders XML with the build number and version number"""
-        self.render_template('version.xml',
+        self.render_template('xml/version.xml',
                              { 'build_number' : self.get_build_number(),
                                'release_number' : self.get_release_number() })

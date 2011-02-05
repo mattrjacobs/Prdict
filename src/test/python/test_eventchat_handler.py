@@ -28,7 +28,7 @@ class TestEventChatHandler(BaseMockHandlerTest):
     def define_impl(self):
         self.mock_handler = self.mox.CreateMock(EventChatHandler)
         self.impl = MockEventChatHandler(self.mock_handler)
-
+        
     def SameEventKey(self, event):
         return str(event.key()) == self.event_key
 
@@ -110,11 +110,11 @@ class TestEventChatHandler(BaseMockHandlerTest):
         self.impl.handle_post(self.event)
         self.mox.VerifyAll()
 
-    def testHandlePostValidDatGAEReadOnly(self):
-        self.mox.StubOutWithMock(self.impl, "create_message")
+    def testHandlePostValidDataGAEReadOnly(self):
+        self.mox.StubOutWithMock(self.impl, "create_chat")
         self.impl.request = self.req(urllib.urlencode({'content' : self.new_message_content}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        self.impl.create_message(self.event).AndRaise(CapabilityDisabledError)
+        self.impl.create_chat(self.event).AndRaise(CapabilityDisabledError)
         self.impl.response.set_status(503)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mock_handler.render_template("503.html", mox.IgnoreArg())
@@ -126,6 +126,7 @@ class TestEventChatHandler(BaseMockHandlerTest):
     
 class MockEventChatHandler(EventChatHandler):
     def __init__(self, handler):
+        EventChatHandler.__init__(self)
         self.handler = handler
         
     def get_prdict_user(self):

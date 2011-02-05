@@ -1,0 +1,65 @@
+{% extends "base_feed.html" %}
+
+{% block scriptinclude %}
+<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script type="text/javascript" src="/static-{{ build }}/js/chat.js"></script>
+{% endblock %}
+
+{% block script %}
+<script type='text/javascript'>
+  onOpened = function() { }
+  
+  onMessage = function(msg) {
+    jsonMsg = JSON.parse(msg.data);
+    var newChatMsg = addChat(jsonMsg)
+  }
+
+  addChat = function(jsonMsg) {
+    var chatWindow = document.getElementById("chatWindow")
+
+    var chatDiv = document.createElement("div");
+    chatDiv.setAttribute("id", "chatMessage");
+    chatDiv.innerHTML = jsonMsg.message_time + " | <a href='" + jsonMsg.author_link + "'>" + jsonMsg.author + "</a> | " + jsonMsg.message;
+    chatWindow.insertBefore(chatDiv, chatWindow.firstChild);
+  }
+
+  openChannel = function() {
+    var token = '{{ token }}';
+    var channel = new goog.appengine.Channel(token);
+    var handler = {
+      'onopen' : onOpened,
+      'onmessage' : onMessage,
+      'onerror' : function() {},
+      'onclose' : function() {}
+    };
+    var socket = channel.open(handler);
+    socket.onopen = onOpened;
+    socket.onmessage = onMessage;
+  }
+
+  initialize = function() {
+    openChannel();
+  }
+  setTimeout(initialize, 100);
+</script>
+{% endblock %}
+
+{% block entries %}
+<div id="submitMsg">
+  <form action="/api/events/{{ event.key }}/chat" method="post" class="newChatForm">
+    <input type="text" maxlength="140" name="content"/>
+    <input type="submit" name="submit" value="Post Comment"/>
+  </form>
+</div>
+{% if messages %}
+<div id="chatWindow">
+{% for message in messages %}
+  <div id="chatMessage">
+    {{ message.created_nice }} | <a href="{{ message.author.relative_url }}">{{ message.author.username }}</a> | {{ message.content|escape }}
+  </div>
+{% endfor %}  
+</div>
+{% endif %}
+{% endblock %}
+

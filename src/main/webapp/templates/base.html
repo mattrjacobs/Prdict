@@ -3,6 +3,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
+    {% block scriptinclude %}
+    {% endblock %}
     <title>{% block title %}Prdict{% endblock %}</title>
     <link rel="stylesheet" href="/static-{{ build }}/prdict.css" type="text/css"/>
     <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/static-{{ build }}/prdict.ico"/>
@@ -10,6 +12,8 @@
     {% endblock %}
   </head>
   <body>
+    {% block script %}
+    {% endblock %}
     <div id="main">
       <div id="header">
 	<div id="current_user">

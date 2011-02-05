@@ -11,6 +11,7 @@ from google.appengine.api import apiproxy_stub_map
 from google.appengine.api import datastore_file_stub
 from google.appengine.api import user_service_stub
 from google.appengine.api import users
+from google.appengine.api.memcache import memcache_stub
 from google.appengine.ext.webapp import Request
 from google.appengine.ext.webapp import Response 
 
@@ -26,6 +27,7 @@ SERVER_PORT = '8080'
 URL_SCHEME = 'http'
 
 DATASTORE_STUB_NAME = 'datastore_v3'
+MEMCACHE_STUB_NAME = "memcache"
 USER_SERVICE_STUB_NAME = 'user'
 
 class BaseMockHandlerTest(unittest.TestCase):
@@ -45,6 +47,7 @@ class BaseMockHandlerTest(unittest.TestCase):
 
         self.original_apiproxy = apiproxy_stub_map.apiproxy
         self.clear_datastore()
+        self.clear_memcache()
         self.clear_userstore()
 
         self.define_impl()
@@ -84,6 +87,9 @@ class BaseMockHandlerTest(unittest.TestCase):
         apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
         stub = datastore_file_stub.DatastoreFileStub(APP_ID, None,  None)
         apiproxy_stub_map.apiproxy.RegisterStub(DATASTORE_STUB_NAME, stub)
+
+    def clear_memcache(self):
+        apiproxy_stub_map.apiproxy.RegisterStub(MEMCACHE_STUB_NAME, memcache_stub.MemcacheServiceStub())
 
     def clear_userstore(self):
         apiproxy_stub_map.apiproxy.RegisterStub(USER_SERVICE_STUB_NAME, user_service_stub.UserServiceStub())
