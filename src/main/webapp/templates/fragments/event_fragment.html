@@ -1,5 +1,6 @@
 <h1>Event: {{ event.title|escape }}</h1>
 <p><a href="{{ event.relative_url }}">self link</a></p>
+<p><a href="/events/{{ event.key }}/chat">chat about {{ event.title|escape }}</a></p>
 <form action="{{ event.relative_url }}" method="POST">
 Update event:<br/>
 <input type="hidden" name="_method" value="PUT"/>

@@ -21,7 +21,11 @@
     var chatDiv = document.createElement("div");
     chatDiv.setAttribute("id", "chatMessage");
     chatDiv.innerHTML = jsonMsg.message_time + " | <a href='" + jsonMsg.author_link + "'>" + jsonMsg.author + "</a> | " + jsonMsg.message;
-    chatWindow.insertBefore(chatDiv, chatWindow.firstChild);
+    if (chatWindow.hasChildNodes()) {
+      chatWindow.insertBefore(chatDiv, chatWindow.firstChild);
+    } else {
+      chatWindow.appendChild(chatDiv);
+    }
   }
 
   openChannel = function() {
@@ -52,14 +56,14 @@
     <input type="submit" name="submit" value="Post Comment"/>
   </form>
 </div>
-{% if messages %}
 <div id="chatWindow">
+{% if messages %}
 {% for message in messages %}
   <div id="chatMessage">
     {{ message.created_nice }} | <a href="{{ message.author.relative_url }}">{{ message.author.username }}</a> | {{ message.content|escape }}
   </div>
 {% endfor %}  
-</div>
 {% endif %}
+</div>
 {% endblock %}
 
