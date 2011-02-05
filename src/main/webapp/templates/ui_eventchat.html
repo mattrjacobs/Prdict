@@ -1,5 +1,9 @@
 {% extends "base_feed.html" %}
 
+{% block title %}
+Prdict | {{ event.title|escape }}
+{% endblock %}
+
 {% block scriptinclude %}
 <script type="text/javascript" src="/_ah/channel/jsapi"></script>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
@@ -50,6 +54,10 @@
 {% endblock %}
 
 {% block entries %}
+<h1>Event: {{ event.title|escape }}</h1>
+<p>Description : {{ event.description|escape }}</p>
+<p>Start date : {{ event.start_date|escape }}</p>
+<p>End date : {{ event.end_date|escape }}</p>
 <div id="submitMsg">
   <form action="/api/events/{{ event.key }}/chat" method="post" class="newChatForm">
     <input type="text" maxlength="140" name="content"/>
