@@ -12,13 +12,17 @@ from utils.constants import Constants
 
 class EventsHandler(AbstractHandler, EventAuthorizationHandler):
     """Handles requests for the resource of all events."""
+    DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
     def get(self):
         """Renders a template for adding a new event"""
         user = self.get_prdict_user()
         if not self.is_user_authorized_to_write(user, None):
             self.set_403()
             return None
-        self.render_template('events.html', { 'current_user' : user })
+        now = datetime.now().strftime(EventsHandler.DATE_FORMAT)
+        self.render_template('events.html', { 'current_user' : user,
+                                              'now' : now })
 
     def post(self):
         """Attempts to respond to a POST by adding a new event"""
@@ -50,8 +54,8 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
                                              'current_user' : user})
 
     def create_event(self, title, description, start_date_str, end_date_str):
-        start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")
-        end_date = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S")
+        start_date = datetime.strptime(start_date_str, EventsHandler.DATE_FORMAT)
+        end_date = datetime.strptime(end_date_str, EventsHandler.DATE_FORMAT)
         new_event = event.Event(title = title, description = description,
                                 start_date = start_date, end_date = end_date)
         new_event.put()

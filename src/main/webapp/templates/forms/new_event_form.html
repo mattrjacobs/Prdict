@@ -5,9 +5,9 @@
 <b>Event description:</b>
 <input type="textarea" name="description" maxlength="1000"/><br/>
 <b>Start date (Ex: 2010-01-01 01:00:00):</b>
-<input type="text" name="start_date"/><br/>
+<input type="text" name="start_date" value="{{ now }}"/><br/>
 <b>End date (Ex: 2010-01-01 01:00:00):</b>
-<input type="text" name="end_date"/><br/>
+<input type="text" name="end_date" value="{{ now }}"/><br/>
 <input type="submit" name="submit" value="Create Event"/>
 </form>
 </p>
