@@ -67,14 +67,14 @@ task :deploy => [:package, :init_deploy_password] do
 end
 
 desc "sample release task that checkpoints codebase and commits it, then deploys current codebase to GAE and confirms it works as expected"
-task :release, :release_size, :needs => [:git_check_local, :git_check_remote, :clean, "itest:run", :init_deploy_password, "target/itest"] do |t, args|
+task :release, :release_size, :needs => [:test, :git_check_local, :git_check_remote, :clean, "itest:run", :init_deploy_password, "target/itest"] do |t, args|
   if args[:release_size].nil?
      release_size = 'Minor'
   else
      release_size = args[:release_size]
   end
   Rake::Task[ "update_version" ].execute(:release_size => args[:release_size])
-  Rake::Task[ "package" ]
+  Rake::Task[ "package" ].execute
   Rake::Task[ "deploy" ].execute
   #Rake::Task[ "itest:release" ].execute
   print "DEPLOYMENT WORKED!\n"
