@@ -67,7 +67,7 @@ task :deploy => [:package, :init_deploy_password] do
 end
 
 desc "sample release task that checkpoints codebase and commits it, then deploys current codebase to GAE and confirms it works as expected"
-task :release, :release_size, :needs => [:git_check_local, :git_check_remote, :clean, :itest:run, :init_deploy_password, "target/itest"] do |t, args|
+task :release, :release_size, :needs => [:git_check_local, :git_check_remote, :clean, "itest:run", :init_deploy_password, "target/itest"] do |t, args|
   if args[:release_size].nil?
      release_size = 'Minor'
   else
