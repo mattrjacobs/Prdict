@@ -72,7 +72,7 @@ task :deploy => ["package", "target/deploy_password.txt"] do
 end
 
 desc "sample release task that checkpoints codebase and commits it, then deploys current codebase to GAE and confirms it works as expected"
-task :release, :release_size, :needs => ["git_check_local", "git_check_remote", "itest:run", "target/deploy_password.txt", "target/release_number.txt", "target/itest"] do |t, args|
+task :release, :release_size, :needs => ["git_check_local", "git_check_remote", :clean, "itest:run", "target/deploy_password.txt", "target/release_number.txt", "target/itest"] do |t, args|
   if args[:release_size].nil?
      release_size = 'Minor'
   else
@@ -97,7 +97,7 @@ directory "target/webapp"
 directory "target/webapp/templates"
 
 # create a file with the current Git commit hash rev in it
-file "target/build.txt" => ["target"] do
+task :init_build_number => ["target"] do
   sh "bin/getbuild.sh target/build.txt"
 end
 
@@ -107,7 +107,7 @@ file "target/release_number.txt" => ["target", "src/main/webapp/app.yaml"] do
 end
 
 # create a sed script to substitute %BUILD% for the current Git hash
-file "target/build.sed" => ["target/build.txt"] do
+file "target/build.sed" => [:init_build_number] do
   sh "awk '{print \"s/%BUILD%/\" $1 \"/\"}' target/build.txt > target/build.sed"
 end
 
@@ -124,7 +124,7 @@ file "target/webapp/app.yaml" => ["target/build.sed", "src/main/webapp/app.yaml"
   sh "sed -f target/build.sed src/main/webapp/app.yaml > target/webapp/app.yaml"
 end
 
-task :static_dir => ["target/webapp","target/build.txt"] do
+task :static_dir => ["target/webapp", :init_build_number] do
   sh "mkdir -p target/webapp/static-`cat target/build.txt`"
 end
 
