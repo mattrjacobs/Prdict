@@ -97,41 +97,26 @@ directory "target/webapp"
 directory "target/webapp/templates"
 
 # create a file with the current Git commit hash rev in it
-task :init_build_number => ["target"] do
+task :initialize => ["target", "target/webapp"] do
   sh "bin/getbuild.sh target/build.txt"
-end
-
-# create a file with the current Prdct API version in it
-file "target/release_number.txt" => ["target", "src/main/webapp/app.yaml"] do
-  sh "egrep '^version' src/main/webapp/app.yaml | awk '{ print $2 }' > target/release_number.txt"
-end
-
-# create a sed script to substitute %BUILD% for the current Git hash
-file "target/build.sed" => [:init_build_number] do
   sh "awk '{print \"s/%BUILD%/\" $1 \"/\"}' target/build.txt > target/build.sed"
-end
-
-# create a sed script to substitute %RELEASE_NUMBER% for the current release number
-file "target/release_number.sed" => ["target/release_number.txt"] do
+  sh "egrep '^version' src/main/webapp/app.yaml | awk '{ print $2 }' > target/release_number.txt"
   sh "awk '{print \"s/%RELEASE_NUMBER%/\" $1 \"/\"}' target/release_number.txt > target/release_number.sed"
-end
-
-desc "initialize build state"
-task :initialize => ["target","target/webapp","target/build.sed","target/release_number.sed"]
-
-# generate app.yaml (apply %BUILD%)
-file "target/webapp/app.yaml" => ["target/build.sed", "src/main/webapp/app.yaml"] do
   sh "sed -f target/build.sed src/main/webapp/app.yaml > target/webapp/app.yaml"
 end
 
-task :static_dir => ["target/webapp", :init_build_number] do
+task :static_dir => [:initialize] do
   sh "mkdir -p target/webapp/static-`cat target/build.txt`"
 end
 
 desc "generate resources for inclusion in the package"
-task :process_resources => [ :initialize, "target/webapp/app.yaml", :static_dir ] do
+task :package => [:static_dir] do
   sh "cp src/main/webapp/index.yaml target/webapp/index.yaml"
   sh "cp -r src/main/webapp/static/* target/webapp/static-`cat target/build.txt`"
+  sh "bin/rpackage src/main/python target/webapp"
+  sh "bin/rpackage src/main/webapp/templates target/webapp/templates"
+  sh "sed -f target/build.sed -i '' target/webapp/build.py"
+  sh "sed -f target/release_number.sed -i '' target/webapp/release_number.py"
 end
 
 desc "run unit tests; can specify an optional argument to only run one test"
@@ -143,25 +128,9 @@ task :test, :test_file do |t, args|
   end
 end
 
-task :instantiate_build_number => [ "target/build.sed" ] do
-  sh "sed -f target/build.sed -i '' target/webapp/build.py"
-end
-
-task :instantiate_release_number => [ "target/release_number.sed" ] do
-  sh "sed -f target/release_number.sed -i '' target/webapp/release_number.py"
-end
-
-desc "assemble app for deployment"
-task :package => [:test, "target/webapp/templates", "process_resources" ] do
-  sh "bin/rpackage src/main/python target/webapp"
-  sh "bin/rpackage src/main/webapp/templates target/webapp/templates"
-  Rake::Task[ "instantiate_build_number" ].execute
-  Rake::Task[ "instantiate_release_number" ].execute
-end
-
 namespace :devserver do
   desc "starts dev server"
-  task :start => [:process_resources] do
+  task :start => [:package] do
     sh "bin/start_devserver target/webapp target/appserver.pid"
   end
 
