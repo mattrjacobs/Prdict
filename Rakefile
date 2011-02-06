@@ -53,11 +53,6 @@ task :update_version, :release_size, :needs => ["package", "git_check_local", "g
   git_commit_cmd = "git commit src/main/webapp/app.yaml -m " + release_message
   sh git_commit_cmd
   sh "git push"
-  Rake::Task[ "target/release_number.txt" ].execute
-  Rake::Task[ "target/release_number.sed" ].execute
-  sh "rm target/webapp/release_number.py"
-  sh "cp src/main/python/release_number.py target/webapp/release_number.py"
-  Rake::Task[ "instantiate_release_number" ].execute
 end
 
 file "target/deploy_password.txt" => ["target"] do
