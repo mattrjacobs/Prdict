@@ -44,3 +44,25 @@ body {
 .hidden {
     display: none;
 }
+
+#submitMsg {
+    position: relative;
+    width: 300px;
+    height: 31px;
+}
+
+.messageText {
+    position: absolute;
+    height: 31px;
+    top: 0;
+    left: 0;
+}
+
+.messageLoading {
+    position: absolute;
+    height: 31px;
+    width: 31px;
+    top: 0;
+    right: 0;
+}
+

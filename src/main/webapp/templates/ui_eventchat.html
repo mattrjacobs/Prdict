@@ -60,10 +60,16 @@ Prdict | {{ event.title|escape }}
 <p>End date : {{ event.end_date|escape }}</p>
 <div id="submitMsg">
   <form action="/api/events/{{ event.key }}/chat" method="post" class="newChatForm">
-    <input type="text" maxlength="140" name="content" class="newMsgContent"/>
-    <input type="submit" name="submit" value="Post Comment"/>
+    <span class="messageText">
+      <input type="text" maxlength="140" name="content" class="newMsgContent"/>
+      <input type="submit" name="submit" value="Post Comment"/>
+    </span>
+    <span class="messageLoading">
+      <img class="spinner" src="/static-{{ build }}/img/spinner.gif">
+    </span>
   </form>
 </div>
+<div class="clear"></div>
 <div id="chatWindow">
 {% if messages %}
 {% for message in messages %}
