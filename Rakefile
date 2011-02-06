@@ -27,7 +27,7 @@ task :git_check_remote do
 end
 
 desc "updates version info in app.yaml and checks that in"
-task :update_version, :release_size, :needs => ["package", "git_check_local", "git_check_remote", "target/webapp/app.yaml", "target/release_number.txt"] do |t, args|
+task :update_version, :release_size, :needs => ["package", "git_check_local", "git_check_remote"] do |t, args|
   if args[:release_size].nil?
      release_size = 'Minor'
   else
@@ -55,25 +55,26 @@ task :update_version, :release_size, :needs => ["package", "git_check_local", "g
   sh "git push"
 end
 
-file "target/deploy_password.txt" => ["target"] do
+task :init_deploy_password => ["target"] do
   File.open("target/deploy_password.txt", 'w') do |file|
     file.write("ibb5SeyXecL4")
   end    				      				  
 end
 
 desc "deploys webapp to production"
-task :deploy => ["package", "target/deploy_password.txt"] do
+task :deploy => [:package, :init_deploy_password] do
   sh "appcfg.py update target/webapp --email=prdictapi.deployer@gmail.com --passin < target/deploy_password.txt"
 end
 
 desc "sample release task that checkpoints codebase and commits it, then deploys current codebase to GAE and confirms it works as expected"
-task :release, :release_size, :needs => ["git_check_local", "git_check_remote", :clean, "itest:run", "target/deploy_password.txt", "target/release_number.txt", "target/itest"] do |t, args|
+task :release, :release_size, :needs => [:git_check_local, :git_check_remote, :clean, :itest:run, :init_deploy_password, "target/itest"] do |t, args|
   if args[:release_size].nil?
      release_size = 'Minor'
   else
      release_size = args[:release_size]
   end
   Rake::Task[ "update_version" ].execute(:release_size => args[:release_size])
+  Rake::Task[ "package" ]
   Rake::Task[ "deploy" ].execute
   #Rake::Task[ "itest:release" ].execute
   print "DEPLOYMENT WORKED!\n"
