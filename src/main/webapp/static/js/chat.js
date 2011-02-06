@@ -19,7 +19,7 @@ jQuery(document).ready(function(){
         return false;
     });
 
-    jQuery('img.spinner')
+    jQuery('.spinner')
         .hide()  // hide it initially
         .ajaxStart(function() {
             $(this).show();

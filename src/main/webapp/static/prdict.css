@@ -48,13 +48,13 @@ body {
 #submitMsg {
     position: relative;
     width: 300px;
-    height: 31px;
+    height: 43x;
 }
 
 .messageText {
     position: absolute;
     height: 31px;
-    top: 0;
+    top: 6;
     left: 0;
 }
 
