@@ -8,6 +8,8 @@ from event import Event
 from prdict_user import PrdictUser
 
 class Message(db.Model):
+    DATE_FORMAT = "%I:%M:%S"
+
     content = db.StringProperty(required=True,multiline=False)
     created = db.DateTimeProperty(auto_now_add=True)
     author = db.ReferenceProperty(required=True, reference_class=PrdictUser)
@@ -33,7 +35,7 @@ class Message(db.Model):
     isoformat_created = property(get_isoformat_created)
 
     def get_created_nice(self):
-        return self.created.strftime("%I:%M:%S")
+        return self.created.strftime(Message.DATE_FORMAT)
     created_nice = property(get_created_nice)
     
     def get_relative_url(self):

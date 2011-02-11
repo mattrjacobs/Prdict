@@ -1,8 +1,10 @@
 """Handles a request for an event's chat"""
+from datetime import datetime
 import httplib
 import logging
 import random
 
+from django.utils import simplejson
 from google.appengine.api import channel
 from google.appengine.api import memcache
 from google.appengine.api import users
@@ -41,6 +43,9 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
             current_listeners = [channel_id]
 
         memcache.set(cache_key, current_listeners)
+        channel_msg = self.get_channel_message(self.get_prdict_user())
+        for listener in current_listeners:
+            channel.send_message(listener, channel_msg)
 
         self.render_template('ui_eventchat.html',
                              { 'current_user' : self.get_prdict_user(),
@@ -62,3 +67,11 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
                     msg=None):
         raise RuntimeError("JSON not valid for UI EventChat")
 
+    def get_channel_message(self, user):
+        """Create a message stating some user just signed in"""
+        chat_message = { 'author' : 'Admin',
+                         'message' : '%s joined' % user.username,
+                         'message_time' : datetime.now().strftime(Message.DATE_FORMAT) }
+        return simplejson.dumps(chat_message)
+                         
+    

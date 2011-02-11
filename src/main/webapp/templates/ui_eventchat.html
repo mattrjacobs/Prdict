@@ -24,7 +24,11 @@ Prdict | {{ event.title|escape }}
 
     var chatDiv = document.createElement("div");
     chatDiv.setAttribute("id", "chatMessage");
-    chatDiv.innerHTML = jsonMsg.message_time + " | <a href='" + jsonMsg.author_link + "'>" + jsonMsg.author + "</a> | " + jsonMsg.message;
+    if (jsonMsg.hasOwnProperty('author_link')) {
+      chatDiv.innerHTML = jsonMsg.message_time + " | <a href='" + jsonMsg.author_link + "'>" + jsonMsg.author + "</a> | " + jsonMsg.message;
+    } else {
+      chatDiv.innerHTML = jsonMsg.message_time + " | " + jsonMsg.author + " | " + jsonMsg.message;
+    }
     if (chatWindow.hasChildNodes()) {
       chatWindow.insertBefore(chatDiv, chatWindow.firstChild);
     } else {
