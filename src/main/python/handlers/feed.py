@@ -121,7 +121,7 @@ class FeedHandler(AbstractHandler):
             self.handle_transient_error()
             return
 
-    def is_post_data_valid(self):
+    def is_post_data_valid(self, parent_entry):
         """Given data in the POST request, determine if it is valid.
         Return a (is_valid : Boolean, error_message : String) tuple."""
         raise Exception("Must be overridden by subclasses")
