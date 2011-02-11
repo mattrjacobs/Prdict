@@ -92,7 +92,7 @@ directory "target/itest"
 directory "target/webapp"
 directory "target/webapp/templates"
 
-# create a file with the current Git commit hash rev in it
+# initialize all properties which get set at build time (release/build #s)
 task :initialize => ["target", "target/webapp"] do
   sh "bin/getbuild.sh target/build.txt"
   sh "awk '{print \"s/%BUILD%/\" $1 \"/\"}' target/build.txt > target/build.sed"
@@ -103,10 +103,11 @@ end
 
 task :static_dir => [:initialize] do
   sh "mkdir -p target/webapp/static-`cat target/build.txt`"
+  sh "bin/instantiate_css src/main/webapp/static/scss target/webapp/static-`cat target/build.txt`/css"
 end
 
 desc "generate resources for inclusion in the package"
-task :package => [:static_dir] do
+task :package => [:test, :static_dir] do
   sh "cp src/main/webapp/index.yaml target/webapp/index.yaml"
   sh "cp -r src/main/webapp/static/* target/webapp/static-`cat target/build.txt`"
   sh "bin/rpackage src/main/python target/webapp"

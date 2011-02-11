@@ -1,0 +1,15 @@
+#!/bin/bash
+# usage: instantiate_css <src_scss_dir> <target_css_dir>
+
+BIN=`dirname $0`
+
+mkdir -p $2
+
+for file in $1/*.scss;
+do 
+    echo "Sassing $file" 
+    filename=${file##*/}
+    basename=${filename%%.*}
+    sass "$file" "$2/$basename.css";
+
+done
