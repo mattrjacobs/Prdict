@@ -7,3 +7,28 @@
 {% block message %}
 This is the Prdict homepage.  Welcome
 {% endblock %}
+
+{% block content %}
+<h4>In-Progress Events</h4>
+{% for event in current_events %}
+  <a href="{{ event.relative_url }}/chat">{{ event.title }}</a>
+{% endfor %}
+
+<h4>Most Recent Events</h4>
+{% for event in past_events %}
+  <a href="{{ event.relative_url }}/chat">{{ event.title }}</a>
+{% endfor %}
+
+<h4>Upcoming Events</h4>
+{% for event in next_events %}
+  <a href="{{ event.relative_url }}/chat">{{ event.title }}</a>
+{% endfor %}
+
+{% if current_user %}
+<h4>Your Friends</h4>
+{% for friend in top_friends %}
+  <a href="{{ friend.relative_url }}">{{ friend.username }}</a>
+{% endfor %}
+{% endif %}
+
+{% endblock %}
