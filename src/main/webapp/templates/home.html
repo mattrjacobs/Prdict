@@ -11,17 +11,17 @@ This is the Prdict homepage.  Welcome
 {% block content %}
 <h4>In-Progress Events</h4>
 {% for event in current_events %}
-  <a href="{{ event.relative_url }}/chat">{{ event.title }}</a>
+  <a href="/events/{{ event.key }}/chat">{{ event.title }}</a>
 {% endfor %}
 
 <h4>Most Recent Events</h4>
 {% for event in past_events %}
-  <a href="{{ event.relative_url }}/chat">{{ event.title }}</a>
+  <a href="/events/{{ event.key }}/chat">{{ event.title }}</a>
 {% endfor %}
 
 <h4>Upcoming Events</h4>
 {% for event in next_events %}
-  <a href="{{ event.relative_url }}/chat">{{ event.title }}</a>
+  <a href="/events/{{ event.key }}/chat">{{ event.title }}</a>
 {% endfor %}
 
 {% if current_user %}
