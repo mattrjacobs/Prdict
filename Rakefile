@@ -12,6 +12,7 @@
 #  $ deploy           : pushes code to production
 #  $ release          : releases code to production, tests it there and 
 #                       notifies devs when ready for GAE version switch
+#  $ push             : does a git push and a release
 #  $ itest:run        : runs all of the integration tests against localhost:8080
 #  $ devserver:start  : starts the dev server at localhost:8080
 #  $ devserver:stop   : stops the dev server
@@ -24,6 +25,12 @@ end
 desc "determine if git pull returns no remote diffs from repo"
 task :git_check_remote do
   sh "bin/git_check_remote.sh"
+end
+
+desc "execute a push to the remote repo and a release of the code in one shot"
+task :push do
+  sh "git push"
+  Rake::Task[ "release" ].execute
 end
 
 desc "updates version info in app.yaml and checks that in"
