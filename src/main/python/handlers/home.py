@@ -16,6 +16,23 @@ class HomeHandler(AbstractHandler):
         return query.fetch(num, 0)
 
     def get_current_events(self, num):
+        dummy_query = db.GqlQuery("SELECT * FROM Event")
+        for event in dummy_query.fetch(100, 0):
+            logging.error("EVENT NAME : %s" % event.title)
+            logging.error("DATE RANGE : %s" % event.date_range)
+            #logging.error("START : %s" % (event.date_range > datetime.now()))
+            #logging.error("END : %s" % (event.date_range < datetime.now()))
+
+        dummy_end_query = db.GqlQuery("SELECT * FROM Event WHERE date_range > :1", datetime.now())
+        for event in dummy_end_query.fetch(100, 0):
+            logging.error("END EVENT NAME : %s" % event.title)
+            logging.error("END DATE RANGE : %s" % event.date_range)
+
+        dummy_start_query = db.GqlQuery("SELECT * FROM Event WHERE date_range < :1", datetime.now())
+        for event in dummy_start_query.fetch(100, 0):
+            logging.error("START EVENT NAME : %s" % event.title)
+            logging.error("START DATE RANGE : %s" % event.date_range)
+
         query = db.GqlQuery("SELECT * FROM Event WHERE date_range > :1 AND date_range < :1", datetime.now())
         return query.fetch(10, 0)
 
@@ -32,6 +49,8 @@ class HomeHandler(AbstractHandler):
         past_events = self.get_past_events(10)
         current_events = self.get_current_events(10)
         next_events = self.get_next_events(10)
+
+        logging.error("CURRENT EVENTS : %s" % str(current_events))
         
         self.render_template("home.html",
                              { 'current_user' : current_user,
