@@ -64,6 +64,15 @@ class EventHandler(EntryHandler, EventAuthorizationHandler):
                 event.start_date = Event.convert_date_format(start_date)
             if end_date:
                 event.end_date = Event.convert_date_format(end_date)
+            if start_date and end_date:
+                event.date_range = [Event.convert_date_format(start_date),
+                                    Event.convert_date_format(end_date)]
+            if start_date and not end_date:
+                event.date_range = [Event.convert_date_format(start_date),
+                                    event.date_range[1]]
+            if end_date and not start_date:
+                event.date_range = [event.date_range[0],
+                                    Event.convert_date_format(end_date)]
             return (httplib.OK, "Event updated.")
         else:
             return (httplib.BAD_REQUEST, ','.join(messages))
