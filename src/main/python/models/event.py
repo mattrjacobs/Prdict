@@ -13,6 +13,7 @@ class Event(db.Model):
     end_date = db.DateTimeProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     updated = db.DateTimeProperty(auto_now=True)
+    date_range = db.ListProperty(datetime)
     #possibly add related events
     #possible add interested users
 
