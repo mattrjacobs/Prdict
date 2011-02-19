@@ -16,25 +16,15 @@ class HomeHandler(AbstractHandler):
         return query.fetch(num, 0)
 
     def get_current_events(self, num):
-        dummy_query = db.GqlQuery("SELECT * FROM Event")
-        for event in dummy_query.fetch(100, 0):
-            logging.error("EVENT NAME : %s" % event.title)
-            logging.error("DATE RANGE : %s" % event.date_range)
-            #logging.error("START : %s" % (event.date_range > datetime.now()))
-            #logging.error("END : %s" % (event.date_range < datetime.now()))
-
-        dummy_end_query = db.GqlQuery("SELECT * FROM Event WHERE date_range > :1", datetime.now())
-        for event in dummy_end_query.fetch(100, 0):
-            logging.error("END EVENT NAME : %s" % event.title)
-            logging.error("END DATE RANGE : %s" % event.date_range)
-
-        dummy_start_query = db.GqlQuery("SELECT * FROM Event WHERE date_range < :1", datetime.now())
-        for event in dummy_start_query.fetch(100, 0):
-            logging.error("START EVENT NAME : %s" % event.title)
-            logging.error("START DATE RANGE : %s" % event.date_range)
-
-        query = db.GqlQuery("SELECT * FROM Event WHERE date_range > :1 AND date_range < :1", datetime.now())
-        return query.fetch(10, 0)
+        end_in_future_query = db.GqlQuery("SELECT * FROM Event WHERE end_date > :1 ORDER BY end_date ASC", datetime.now())
+        start_in_past_query = db.GqlQuery("SELECT * FROM Event WHERE start_date < :1 ORDER BY start_date DESC", datetime.now())
+        end_in_future = end_in_future_query.fetch(num * 2, 0)
+        start_in_past = start_in_past_query.fetch(num * 2, 0)
+        current_events = []
+        for event in end_in_future:
+            if str(event.key()) in map(lambda event: str(event.key()), start_in_past):
+                current_events.append(event)
+        return current_events
 
     def get_next_events(self, num):
         query = db.GqlQuery("SELECT * FROM Event WHERE start_date > :1 ORDER BY start_date ASC", datetime.now())
