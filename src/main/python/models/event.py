@@ -6,7 +6,7 @@ import build
 import dateutil
 from prdict_user import PrdictUser
 
-class Event(db.Model):
+class Event(db.Expando):
     title = db.StringProperty(required=True,multiline=False)
     description = db.StringProperty(required=False,multiline=True)
     start_date = db.DateTimeProperty(required=True)
