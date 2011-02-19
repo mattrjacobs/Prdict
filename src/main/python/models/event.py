@@ -6,14 +6,13 @@ import build
 import dateutil
 from prdict_user import PrdictUser
 
-class Event(db.Expando):
+class Event(db.model):
     title = db.StringProperty(required=True,multiline=False)
     description = db.StringProperty(required=False,multiline=True)
     start_date = db.DateTimeProperty(required=True)
     end_date = db.DateTimeProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     updated = db.DateTimeProperty(auto_now=True)
-    date_range = db.ListProperty(datetime)
     #possibly add related events
     #possible add interested users
 
