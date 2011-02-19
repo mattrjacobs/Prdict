@@ -28,9 +28,18 @@ task :git_check_remote do
 end
 
 desc "execute a push to the remote repo and a release of the code in one shot"
-task :push do
+task :push, :release_size, :needs => [:test, :git_check_remote, :clean, "itest:run", :init_deploy_password, "target/itest"] do |t, args|
   sh "git push"
-  Rake::Task[ "release" ].execute
+  if args[:release_size].nil?
+     release_size = 'Minor'
+  else
+     release_size = args[:release_size]
+  end
+  Rake::Task[ "update_version" ].execute(:release_size => args[:release_size])
+  Rake::Task[ "package" ].execute
+  Rake::Task[ "deploy" ].execute
+  #Rake::Task[ "itest:release" ].execute
+  print "DEPLOYMENT WORKED!\n"
 end
 
 desc "updates version info in app.yaml and checks that in"
