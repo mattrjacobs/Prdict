@@ -275,8 +275,6 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.assertEquals(returned_event.description, expected_params['description'])
         self.assertEquals(returned_event.start_date, expected_start_date)
         self.assertEquals(returned_event.end_date, expected_end_date)
-        self.assertEquals(returned_event.date_range, [returned_event.start_date,
-                                                      returned_event.end_date])
         
 class MockEventsHandler(EventsHandler):
     def __init__(self, handler):

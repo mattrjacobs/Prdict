@@ -39,8 +39,6 @@ class HomeHandler(AbstractHandler):
         past_events = self.get_past_events(10)
         current_events = self.get_current_events(10)
         next_events = self.get_next_events(10)
-
-        logging.error("CURRENT EVENTS : %s" % str(current_events))
         
         self.render_template("home.html",
                              { 'current_user' : current_user,

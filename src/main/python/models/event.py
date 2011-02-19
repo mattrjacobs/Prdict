@@ -11,7 +11,6 @@ class Event(db.Model):
     description = db.StringProperty(required=False,multiline=True)
     start_date = db.DateTimeProperty(required=True)
     end_date = db.DateTimeProperty(required=True)
-    date_range = db.ListProperty(datetime)
     created = db.DateTimeProperty(auto_now_add=True)
     updated = db.DateTimeProperty(auto_now=True)
     #possibly add related events

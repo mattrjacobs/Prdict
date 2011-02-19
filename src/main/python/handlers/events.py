@@ -56,10 +56,8 @@ class EventsHandler(AbstractHandler, EventAuthorizationHandler):
     def create_event(self, title, description, start_date_str, end_date_str):
         start_date = datetime.strptime(start_date_str, EventsHandler.DATE_FORMAT)
         end_date = datetime.strptime(end_date_str, EventsHandler.DATE_FORMAT)
-        date_range = [start_date, end_date]
         new_event = event.Event(title = title, description = description,
-                                start_date = start_date, end_date = end_date,
-                                date_range = date_range)
+                                start_date = start_date, end_date = end_date)
         new_event.put()
         self.response.set_status(httplib.CREATED)
         return new_event
