@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block message %}
+You just added the following items to the datastore:
+{% endblock %}
+
+{% block content %}
+<h4>Users</h4>
+{% for user in users %}
+  <a href="/api/users/{{ user.key }}">{{ user.username|escape }}</a>
+{% endfor %}
+<h4>Events</h4>
+{% for event in events %}
+  <a href="/api/events/{{ event.key }}">{{ event.title|escape }}</a>
+{% endfor %}
+{% endblock %}

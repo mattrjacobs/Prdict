@@ -19,5 +19,9 @@ handlers:
   static_files: static-%BUILD%/google76098d9def48f10d.html
   upload: static-%BUILD%/google76098d9def48f10d.html
 
+- url: /dev/populate
+  login: admin
+  script: prdictapi.py
+
 - url: /.*
   script: prdictapi.py

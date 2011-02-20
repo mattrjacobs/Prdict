@@ -1,6 +1,7 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from handlers.dev.data_populate import DevDataPopulateHandler
 from handlers.event import EventHandler
 from handlers.eventchat import EventChatHandler
 from handlers.events import EventsHandler
@@ -26,6 +27,7 @@ urlmap = [('/', HomeHandler),
           (r'/api/users/([^/]+)', UserHandler),
           (r'/api/users/([^/]+)/friends', UserFriendsHandler),
           (r'/api/users/([^/]+)/friends/([^/]+)', UserSpecificFriendHandler),
+          ('/dev/populate', DevDataPopulateHandler),
           (r'/events/([^/]+)/chat', EventChatUiHandler),
           ('/version', VersionHandler)]
 application = webapp.WSGIApplication(urlmap, debug=True)
