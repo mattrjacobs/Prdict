@@ -5,6 +5,7 @@ import httplib
 import logging
 import os
 import urlparse
+from xml.sax.saxutils import escape
 
 from google.appengine.api import users
 from google.appengine.ext import db
@@ -21,7 +22,7 @@ class AbstractHandler(webapp.RequestHandler):
     def baseurl(self):
         """Return the base URL of webapp: URI scheme + hostname"""
         parts = urlparse.urlparse(self.request.url)
-        return "%s://%s" % (parts.scheme, parts.netloc)
+        return self.xml_escape("%s://%s" % (parts.scheme, parts.netloc))
 
     def render_html(self, entry, msg=None):
         """Given a single entry, render an HTML view. Optionally also add
@@ -264,4 +265,9 @@ class AbstractHandler(webapp.RequestHandler):
             return self.request.cookies['env'] == "dev"
         return False
 
-
+    @staticmethod
+    def xml_escape(s):
+        if s:
+            return escape(s)
+        else:
+            return None

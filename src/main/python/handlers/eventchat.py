@@ -44,10 +44,10 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
         self.render_template('xml/eventchat_atom.xml',
                              { 'event' : parent,
                                'messages' : entries,
-                               'self_link' : self.request.url,
+                               'self_link' : self.xml_escape(self.request.url),
                                'base_url' : self.baseurl(),
-                               'prev_link' : prev_link,
-                               'next_link' : next_link})
+                               'prev_link' : self.xml_escape(prev_link),
+                               'next_link' : self.xml_escape(next_link) })
 
     def render_json(self, parent, entries, prev_link=None, next_link=None,
                     msg=None):
