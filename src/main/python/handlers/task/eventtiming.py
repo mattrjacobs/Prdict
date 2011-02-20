@@ -45,7 +45,6 @@ class EventTimingTaskHandler(AbstractHandler):
         #self.handle_recalc()
 
     def handle_recalc(self):
-        logging.error("DOING A RECALC")
         past_events = self.get_past_events(10)
         current_events = self.get_current_events(10)
         next_events = self.get_next_events(10)
@@ -59,7 +58,6 @@ class EventTimingTaskHandler(AbstractHandler):
     def is_cron_request(self):
         hdr = self.get_header(EventTimingTaskHandler.CRON_HEADER)
         if hdr:
-            logging.error("RECEIVED HEADER : %s" % hdr)
             return hdr.lower() == "true"
         else:
             return False
