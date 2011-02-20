@@ -41,7 +41,7 @@ class EventTimingTaskHandler(AbstractHandler):
 
     # used for task queue
     def post(self):
-        logging.error("Shouldn't be receing a POST here")
+        logging.error("Shouldn't be receiving a POST here")
         #self.handle_recalc()
 
     def handle_recalc(self):
@@ -57,7 +57,7 @@ class EventTimingTaskHandler(AbstractHandler):
         memcache.set('event_timing', event_timing)
 
     def is_cron_request(self):
-        hdr = self.get_header(CRON_HEADER)
+        hdr = self.get_header(EventTimingTaskHandler.CRON_HEADER)
         if hdr:
             logging.error("RECEIVED HEADER : %s" % hdr)
             return hdr == "True"
