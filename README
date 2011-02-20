@@ -1,0 +1,9 @@
+This is the Prdict webapp.
+
+There are three major components so far:
+
+1.  Webapp - This is a simple wrapper around the datastore.  Events, users, and messages are stored and manipulated through a mostly-RESTful API.
+
+2.  Async Processing - Just starting on this one.  Some tasks need to be computed in background.  For now, just a proof of concept for the event timeliness data on the homepage, which gets stored in memcache.
+
+3.  UI - For now, just the chat page.  I'm using the GAE channel API to pass chat messages around.  I'm using jQuery to display a reasonable chat UI.
