@@ -14,11 +14,12 @@ from models import prdict_user
 
 class DevDataPopulateHandler(AbstractHandler):
     def get(self):
+        new_users = []
+        new_events = []
+
         if "SERVER_NAME" in os.environ.keys():
             server_name = os.environ["SERVER_NAME"]
             if server_name == "localhost":
-                new_users = []
-                new_events = []
                 for i in range(0, 10):
                     user = prdict_user.PrdictUser(username="user_%d" % i,
                                                   user=users.User("user_%d@testprdict.com" % i))
