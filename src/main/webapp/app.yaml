@@ -23,5 +23,9 @@ handlers:
   login: admin
   script: prdictapi.py
 
+- url: /task/.*
+  login: admin
+  script: prdicttask.py
+
 - url: /.*
   script: prdictapi.py

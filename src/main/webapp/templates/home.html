@@ -20,7 +20,7 @@ This is the Prdict homepage.  Welcome
 {% endfor %}
 
 <h4>Upcoming Events</h4>
-{% for event in next_events %}
+{% for event in future_events %}
   <a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a>
 {% endfor %}
 

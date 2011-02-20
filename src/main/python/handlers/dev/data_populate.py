@@ -33,7 +33,7 @@ class DevDataPopulateHandler(AbstractHandler):
                     rnd_for_start = random.randint(0, 100) - 50
                     rnd_for_end = random.randint(0, 100)
                     now = datetime.now()
-                    start_date = now + timedelta(days = rnd_for_start)
+                    start_date = now + timedelta(hours = rnd_for_start)
                     end_date = start_date + timedelta(hours = rnd_for_end)
                     new_event = event.Event(title = "Event_%d" % i,
                                             description = "Description_%d" % i,
