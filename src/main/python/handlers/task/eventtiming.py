@@ -60,6 +60,6 @@ class EventTimingTaskHandler(AbstractHandler):
         hdr = self.get_header(EventTimingTaskHandler.CRON_HEADER)
         if hdr:
             logging.error("RECEIVED HEADER : %s" % hdr)
-            return hdr == "True"
+            return hdr.lower() == "true"
         else:
             return False
