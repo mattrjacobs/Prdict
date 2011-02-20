@@ -10,6 +10,8 @@ from models import prdict_user
 from models.event import Event
 
 class EventTimingTaskHandler(AbstractHandler):
+    CRON_HEADER = "X-AppEngine-Cron"
+
     def get_top_friends(self, user, num):
         return [prdict_user.lookup_user(u) for u in user.friends[0 : num]] 
 
@@ -34,13 +36,16 @@ class EventTimingTaskHandler(AbstractHandler):
 
     # used for cron
     def get(self):
-        self.handle_recalc()
+        if self.is_dev_host() or self.is_cron_request():
+            self.handle_recalc()
 
     # used for task queue
     def post(self):
-        self.handle_recalc()
+        logging.error("Shouldn't be receing a POST here")
+        #self.handle_recalc()
 
     def handle_recalc(self):
+        logging.error("DOING A RECALC")
         past_events = self.get_past_events(10)
         current_events = self.get_current_events(10)
         next_events = self.get_next_events(10)
@@ -50,4 +55,11 @@ class EventTimingTaskHandler(AbstractHandler):
                          'future' : next_events }
 
         memcache.set('event_timing', event_timing)
-        
+
+    def is_cron_request(self):
+        hdr = self.get_header(CRON_HEADER)
+        if hdr:
+            logging.error("RECEIVED HEADER : %s" % hdr)
+            return hdr == "True"
+        else:
+            return False

@@ -75,6 +75,12 @@ class AbstractHandler(webapp.RequestHandler):
             return self.request.headers[header_key]
         return None
 
+    def is_dev_host(self):
+        if "SERVER_NAME" in os.environ.keys():
+            server_name = os.environ["SERVER_NAME"]
+            return server_name == "localhost"
+        return False
+
     @staticmethod
     def _prefers_atom_by_accept_header(acc):
         """Helper method to determine if request prefers ATOM or HTML"""

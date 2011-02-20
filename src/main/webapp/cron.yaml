@@ -1,5 +1,5 @@
 cron:
   - description: Recalculate the list of events in "most recent", "next", "current" buckets and store them in memcache
     url: /task/events/timing
-    schedule: every 5 minutes
+    schedule: every 5 minutes synchronized
 
