@@ -1,20 +1,22 @@
 """Handles a request for an event"""
 import httplib
 
-from handlers.auth import EventAuthorizationHandler
+from handlers.auth import BaseAuthorizationHandler
 from handlers.entry import EntryHandler
 from models.event import Event
 
-class EventHandler(EntryHandler, EventAuthorizationHandler):
+class EventHandler(EntryHandler, BaseAuthorizationHandler):
     """Handles a request for an event resource.
     EntryHandler has logic for HTP operations
     EventAuthorizationHandler has logic for authorization."""
     def render_html(self, entry, msg=None):
         """Renders an HTML Event"""
         current_user = self.get_prdict_user()
+        can_write = self.is_user_authorized_to_write(current_user, None)
         self.render_template("event.html",
                              { 'msg': msg,
                                'current_user' : current_user,
+                               'can_write' : can_write,
                                'event' : entry})
 
     def render_atom(self, entry):

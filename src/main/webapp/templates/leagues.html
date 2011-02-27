@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Leagues</h3>
+{% for league in items %}
+{% include "fragments/league_fragment.html" %}
+{% endfor %}
+
+{% if can_write %}
+{% include "forms/new_league_form.html" %}
+{% endif %}
+{% endblock %}

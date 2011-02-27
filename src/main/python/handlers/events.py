@@ -1,69 +1,37 @@
 """Handles requests for the resource of all events"""
 from datetime import datetime
-import httplib
 import logging
 
-from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
+from google.appengine.ext import db
 
-from auth import EventAuthorizationHandler
-from handlers.handler import AbstractHandler
+from handlers.list import ListHandler
 from models import event
-from utils.constants import Constants
 
-class EventsHandler(AbstractHandler, EventAuthorizationHandler):
+class EventsHandler(ListHandler):
     """Handles requests for the resource of all events."""
-    DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+    def __init__(self):
+        ListHandler.__init__(self)
+        self.html = "events.html"
+        self.item_html = "event.html"
 
-    def get(self):
-        """Renders a template for adding a new event"""
-        user = self.get_prdict_user()
-        if not self.is_user_authorized_to_write(user, None):
-            self.set_403()
-            return None
-        now = datetime.now().strftime(EventsHandler.DATE_FORMAT)
-        self.render_template('events.html', { 'current_user' : user,
-                                              'now' : now })
+    def get_all_items(self):
+        query = db.GqlQuery("SELECT * FROM Event")
+        return query.fetch(100)
 
-    def post(self):
-        """Attempts to respond to a POST by adding a new event"""
-        user = self.get_prdict_user()
-        if not self.is_user_authorized_to_write(user, None):
-            self.set_403()
-            return None
-        if self.get_header('Content-Type') != Constants.FORM_ENCODING:
-            msg = "Must POST in %s format." % Constants.FORM_ENCODING
-            self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
-            return self.render_template('events.html', { 'msg': msg,
-                                                         'current_user' : user})
-        title = self.request.get("title")
-        description = self.request.get("description")
+    def validate_other_params(self):
         start_date = self.request.get("start_date")
         end_date = self.request.get("end_date")
-        (is_valid, error_message) = event.Event.validate_params(title, description, start_date, end_date)
-        if not is_valid:
-            return self.__bad_request_template(error_message)
+        return event.Event.validate_dates(start_date, end_date)
 
-        try:
-            new_event = self.create_event(title, description, start_date, end_date)
-        except CapabilityDisabledError:
-            self.handle_transient_error()
-            return
-        event_url = "%s/%s" % (self.request.url, new_event.key())
-        self.response.headers['Content-Location'] = event_url
-        self.render_template('event.html', { 'event' : new_event,
-                                             'current_user' : user})
+    def create_params(self, title, description):
+        start_date_str = self.request.get("start_date")
+        end_date_str = self.request.get("end_date")
+        start_date = datetime.strptime(start_date_str, ListHandler.DATE_FORMAT)
+        end_date = datetime.strptime(end_date_str, ListHandler.DATE_FORMAT)
+        return (title, description, start_date, end_date)
 
-    def create_event(self, title, description, start_date_str, end_date_str):
-        start_date = datetime.strptime(start_date_str, EventsHandler.DATE_FORMAT)
-        end_date = datetime.strptime(end_date_str, EventsHandler.DATE_FORMAT)
+    def instantiate_new_item(self, params):
+        (title, description, start_date, end_date) = params
         new_event = event.Event(title = title, description = description,
                                 start_date = start_date, end_date = end_date)
-        new_event.put()
-        self.response.set_status(httplib.CREATED)
         return new_event
-
-    def __bad_request_template(self, message):
-        """Returns an HTML template explaining why user add failed"""
-        self.response.set_status(httplib.BAD_REQUEST)
-        return self.render_template('events.html', { 'msg' : message,
-                                                     'current_user' : self.get_prdict_user()})

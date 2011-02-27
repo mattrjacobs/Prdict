@@ -1,27 +1,31 @@
-<h1>Event: {{ event.title|escape }}</h1>
-<p><a href="{{ event.relative_url }}">self link</a></p>
-<p><a href="/events/{{ event.key }}/chat">chat about {{ event.title|escape }}</a></p>
+{% if can_write %}
+<dt><a href="{{ event.relative_url }}">self link</a></dt>
+<dt><a href="/events/{{ event.key }}/chat">chat about {{ event.title|escape }}</a></dt>
 <form action="{{ event.relative_url }}" method="POST">
 Update event:<br/>
 <input type="hidden" name="_method" value="PUT"/>
 Title: <input type="text" name="title" maxlength="80" value="{{ event.title|escape }}"/><br/>
-Description: <input type="textarea" name="description" maxlength="1000" value="{{ event.description|escape }}"/><br/>
+Description: <input type="textarea" name="description" maxlength="500" value="{{ event.description|escape }}"/><br/>
 Start date: <input type="text" name="start_date" value="{{ event.start_date|escape }}"/><br/>
 End date: <input type="text" name="end_date" value="{{ event.end_date|escape }}"/><br/>
 <input type="submit" name="submit" value="Update event"/>
 </form>
-<dl>
-<dt>Created:</dt>
-<dd>{{ event.isoformat_created }}</dd>
-<dt>Updated:</dt>
-<dd>{{ event.isoformat_updated }}</dd>
-<dt>Etag:</dt>
-<dd>{{ event.etag }}</dd>
-</dl>
 <form action="{{ event.relative_url }}" method="POST">
 <input type="hidden" name="_method" value="DELETE"/>
 <input type="submit" name="submit" value="Delete Event"/>
 </form>
+{% else %}
+<dl>
+<dt><a href="{{ event.relative_url }}">self link</a></dt>
+<dt><a href="/events/{{ event.key }}/chat">chat about {{ event.title|escape }}</a></dt>
+<dt>Title: {{ event.title|escape }}</dt>
+<dt>Description: {{ event.description|escape }}</dt>
+<dt>Start Date: {{event.start_date|escape }}</dt>
+<dt>End Date: {{event.end_date|escape }}</dt>
+</dl>
+{% endif %}
+<dt>Created: {{ event.isoformat_created }}</dt>
+<dt>Updated:{{ event.isoformat_updated }}</dt>
 <p class="hidden">
 <span class="event_title">{{ event.title|escape }}</span>
 </p>

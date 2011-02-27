@@ -11,6 +11,7 @@ from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
 from base_mock_handler_test import BaseMockHandlerTest
 from handlers.events import EventsHandler 
+from handlers.list import ListHandler
 from models.event import Event
 from utils.constants import Constants
 
@@ -36,18 +37,16 @@ class TestEventsHandler(BaseMockHandlerTest):
 
     def testGetNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
-        self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html", mox.IgnoreArg())
+        self.mock_handler.get_prdict_user().AndReturn(None)
+        self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get()
         self.mox.VerifyAll()
 
     def testGetWithNonAdminUser(self):
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
-        self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html", mox.IgnoreArg())
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        self.mock_handler.render_template("events.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get()
@@ -127,13 +126,20 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.set_user(self.username, True)
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
-        self.impl.response.set_status(400)
-        self.mock_handler.render_template("events.html", mox.IgnoreArg())
-        self.mox.ReplayAll()
-        self.impl.post()
 
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        
+        self.impl.response.set_status(201)
+        self.mock_handler.render_template("event.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.assertTrue(len(self.impl.response.headers["Content-Location"]) > 0)
+        url = self.impl.response.headers["Content-Location"]
+        self.verifyReturnedEvent(url, {'title' : 'New Event',
+                                       'description' : '',
+                                       'start_date' : self.start_date,
+                                       'end_date' : self.end_date})
         self.mox.VerifyAll()
 
     def testPostEmptyDesc(self):
@@ -144,13 +150,20 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.set_user(self.username, True)
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
-        self.impl.response.set_status(400)
-        self.mock_handler.render_template("events.html", mox.IgnoreArg())
-        self.mox.ReplayAll()
-        self.impl.post()
 
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
+        
+        self.impl.response.set_status(201)
+        self.mock_handler.render_template("event.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.post()
+        self.assertTrue(len(self.impl.response.headers["Content-Location"]) > 0)
+        url = self.impl.response.headers["Content-Location"]
+        self.verifyReturnedEvent(url, {'title' : 'New Event',
+                                       'description' : '',
+                                       'start_date' : self.start_date,
+                                       'end_date' : self.end_date})
         self.mox.VerifyAll()
 
     def testPostMissingStartDate(self):
@@ -223,12 +236,14 @@ class TestEventsHandler(BaseMockHandlerTest):
     def testPostValidPostParamGAEReadOnly(self):
         self.set_user(self.username, True)
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
-        self.mox.StubOutWithMock(self.impl, "create_event") 
+        self.mox.StubOutWithMock(self.impl, "create_item") 
 
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
-        self.impl.create_event("New Event", "New Event Description", self.start_date, self.end_date).AndRaise(CapabilityDisabledError)
+        self.impl.create_item(("New Event", "New Event Description",
+                               datetime.strptime(self.start_date, ListHandler.DATE_FORMAT),
+                               datetime.strptime(self.end_date, ListHandler.DATE_FORMAT))).AndRaise(CapabilityDisabledError)
         self.impl.response.set_status(503)
         self.mock_handler.render_template("503.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -278,6 +293,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         
 class MockEventsHandler(EventsHandler):
     def __init__(self, handler):
+        EventsHandler.__init__(self)
         self.handler = handler
         
     def get_prdict_user(self):

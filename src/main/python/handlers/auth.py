@@ -19,17 +19,6 @@ class AuthorizationHandler:
         to write the given entry"""
         raise Exception("Must be overridden by subclasses")
 
-class EventAuthorizationHandler(AuthorizationHandler):
-    """Authorization for event resource"""
-    def __init__(self):
-        AuthorizationHandler.__init__(self)
-
-    def is_user_authorized_to_read(self, prdict_user, event):
-        return True
-
-    def is_user_authorized_to_write(self, prdict_user, event):
-        return users.is_current_user_admin()
-
 class EventChatAuthorizationHandler(AuthorizationHandler):
     """Authorization for event chat resource"""
     def __init__(self):
@@ -54,6 +43,17 @@ class FriendsAuthorizationHandler(AuthorizationHandler):
     def is_user_authorized_to_write(self, prdict_user, entry):
         return prdict_user and (entry.key() == prdict_user.key() or \
                                 users.is_current_user_admin())
+
+class BaseAuthorizationHandler(AuthorizationHandler):
+    """Base authorization for a resource"""
+    def __init__(self):
+        AuthorizationHandler.__init__(self)
+
+    def is_user_authorized_to_read(self, prdict_user, item):
+        return True
+
+    def is_user_authorized_to_write(self, prdict_user, item):
+        return users.is_current_user_admin()
 
 class UserAuthorizationHandler(AuthorizationHandler):
     """Authorization for user resource"""

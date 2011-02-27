@@ -1,0 +1,21 @@
+<dl>
+<dt><a href="{{ league.relative_url }}">self link</a></dt>
+{% if can_write %}
+<form action="{{ league.relative_url }}" method="POST">
+Update event:<br/>
+<input type="hidden" name="_method" value="PUT"/>
+<dl>Title: <input type="text" name="title" maxlength="80" value="{{ league.title|escape }}"/></dl>
+<dl>Description: <input type="textarea" name="description" maxlength="500" value="{{ league.description|escape }}"/></dl>
+<input type="submit" name="submit" value="Update league"/>
+</form>
+<form action="{{ league.relative_url }}" method="POST">
+<input type="hidden" name="_method" value="DELETE"/>
+<dl><input type="submit" name="submit" value="Delete League"/></dl>
+</form>
+{% else %}
+<dt>Title: {{ league.title|escape }}</dt>
+<dt>Description: {{ league.description|escape }}</dt>
+<dt>Created: {{ league.isoformat_created }}</dt>
+<dt>Updated:{{ league.isoformat_updated }}</dt>
+{% endif %}
+</dl>

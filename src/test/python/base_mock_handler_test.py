@@ -16,6 +16,7 @@ from google.appengine.ext.webapp import Request
 from google.appengine.ext.webapp import Response 
 
 from models.event import Event
+from models.league import League
 from models.message import Message
 from models.prdict_user import PrdictUser
 
@@ -69,6 +70,9 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.admin_user = self._create_user(self.admin_username, self.admin_email) 
         self.user = self._create_user(self.username, self.email, [users.User(self.friend_email)])
 
+        self.league = self._create_league("League 1", "League 1 Desc")
+        self.league_key = str(self.league.key())
+
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
         self.event_key = str(self.event.key())
 
@@ -117,6 +121,11 @@ class BaseMockHandlerTest(unittest.TestCase):
         user = PrdictUser(username = name, user = users.User(email), friends = friends)
         user_key = str(user.put())
         return user
+
+    def _create_league(self, title, description):
+        league = League(title = title, description = description)
+        league_key = str(league.put())
+        return league
 
     def _create_event(self, title, description, start_date_str, end_date_str):
         start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")
