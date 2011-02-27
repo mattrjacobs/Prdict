@@ -17,15 +17,15 @@ class SportHandler(EntryHandler, BaseAuthorizationHandler):
                              { 'msg': msg,
                                'current_user' : current_user,
                                'can_write' : can_write,
-                               'sport' : entry})
+                               'item' : entry})
 
     def render_atom(self, league):
         self.render_template('xml/sport_atom.xml',
-                             { 'sport' : entry, 'base_url' : self.baseurl() })
+                             { 'item' : entry, 'base_url' : self.baseurl() })
 
     def render_json(self, entry):
         self.render_template('json/sport_json.json',
-                             { 'sport' : entry })
+                             { 'item' : entry })
 
     @staticmethod
     def _update_entry_from_params(sport, params):

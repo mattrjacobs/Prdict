@@ -46,5 +46,14 @@ class Event(AbstractModel):
         except ValueError:
             return None
 
+    def get_start_date_str(self):
+        return self.start_date.strftime("%Y-%m-%d %H:%M:%S")
+    start_date_str = property(get_start_date_str)
+
+    def get_end_date_str(self):
+        return self.end_date.strftime("%Y-%m-%d %H:%M:%S")
+    end_date_str = property(get_end_date_str)
+
     def get_item_name(self):
         return "event"
+    item_name = property(get_item_name)

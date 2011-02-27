@@ -1,0 +1,25 @@
+<dl>
+<dt><a href="{{ item.relative_url }}">self link</a></dt>
+{% block links %}{% endblock %}
+{% if can_write %}
+<form action="{{ item.relative_url }}" method="POST">
+<input type="hidden" name="_method" value="PUT"/>
+<dt>Title: <input type="text" name="title" maxlength="80" value="{{ item.title|escape }}"/></dt>
+<dt>Description: <input type="textarea" name="description" maxlength="500" value="{{ item.description|escape }}"/></dt>
+<dt>
+{% block form %}{% endblock %}
+<input type="submit" name="submit" value="Update {{ item.item_name }}"/></dt>
+</form>
+<form action="{{ item.relative_url }}" method="POST">
+<input type="hidden" name="_method" value="DELETE"/>
+<dt><input type="submit" name="submit" value="Delete {{ item.item_name }}"/></dt>
+</form>
+{% else %}
+<dt>Title: {{ item.title|escape }}</dt>
+<dt>Description: {{ item.description|escape }}</dt>
+{% block other_write_data %}{% endblock %}
+{% endif %}
+<dt>Created: {{ item.isoformat_created }}</dt>
+<dt>Updated:{{ item.isoformat_updated }}</dt>
+</dl>
+{% block other_data %}{% endblock %}

@@ -1,31 +1,22 @@
-{% if can_write %}
-<dt><a href="{{ event.relative_url }}">self link</a></dt>
-<dt><a href="/events/{{ event.key }}/chat">chat about {{ event.title|escape }}</a></dt>
-<form action="{{ event.relative_url }}" method="POST">
-Update event:<br/>
-<input type="hidden" name="_method" value="PUT"/>
-<dt>Title: <input type="text" name="title" maxlength="80" value="{{ event.title|escape }}"/></dt>
-<dt>Description: <input type="textarea" name="description" maxlength="500" value="{{ event.description|escape }}"/></dt>
-<dt>Start date: <input type="text" name="start_date" value="{{ event.start_date|escape }}"/></dt>
-<dt>End date: <input type="text" name="end_date" value="{{ event.end_date|escape }}"/></dt>
-<dt><input type="submit" name="submit" value="Update event"/>
-</form>
-<form action="{{ event.relative_url }}" method="POST">
-<input type="hidden" name="_method" value="DELETE"/>
-<input type="submit" name="submit" value="Delete Event"/>
-</form></dt>
-{% else %}
-<dl>
-<dt><a href="{{ event.relative_url }}">self link</a></dt>
-<dt><a href="/events/{{ event.key }}/chat">chat about {{ event.title|escape }}</a></dt>
-<dt>Title: {{ event.title|escape }}</dt>
-<dt>Description: {{ event.description|escape }}</dt>
-<dt>Start Date: {{event.start_date|escape }}</dt>
-<dt>End Date: {{event.end_date|escape }}</dt>
-</dl>
-{% endif %}
-<dt>Created: {{ event.isoformat_created }}</dt>
-<dt>Updated:{{ event.isoformat_updated }}</dt>
+{% extends "fragments/base_fragment.html" %}
+
+{% block links %}
+<dt><a href="/events/{{ item.key }}/chat">chat about {{ item.title|escape }}</a></dt>
+{% endblock %}
+
+{% block form %}
+<dt>Start date: <input type="text" name="start_date" value="{{ item.start_date_str|escape }}"/></dt>
+<dt>End date: <input type="text" name="end_date" value="{{ item.end_date_str|escape }}"/></dt>
+<dt>
+{% endblock %}
+
+{% block other_write_data %}
+<dt>Start Date: {{item.start_date|escape }}</dt>
+<dt>End Date: {{item.end_date|escape }}</dt>
+{% endblock %}
+
+{% block other_data %}
 <p class="hidden">
-<span class="event_title">{{ event.title|escape }}</span>
+<span class="event_title">{{ item.title|escape }}</span>
 </p>
+{% endblock %}

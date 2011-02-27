@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<h3>Events</h3>
+{% for item in items %}
+{% include "fragments/event_fragment.html" %}
+{% endfor %}
+
+{% if can_write %} 
 {% include "forms/new_event_form.html" %}
+{% endif %}
 {% endblock %}

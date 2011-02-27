@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Prdict | {{ league.title|escape }}{% endblock %}
+{% block title %}Prdict | {{ item.title|escape }}{% endblock %}
 
 {% block head %}
-    <link rel="self" href="{{ league.relative_url }}?alt=xml" type="application/atom+xml"/>
-    <link rel="self" href="{{ league.relative_url }}?alt=json" type="application/json"/>
+    <link rel="self" href="{{ item.relative_url }}?alt=xml" type="application/atom+xml"/>
+    <link rel="self" href="{{ item.relative_url }}?alt=json" type="application/json"/>
 {% endblock %}
 
 {% block content %}
-{% if league %}
+{% if item %}
 {% include "fragments/league_fragment.html" %}
 {% endif %}
 {% endblock %}

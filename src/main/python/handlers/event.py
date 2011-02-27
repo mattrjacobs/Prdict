@@ -1,5 +1,6 @@
 """Handles a request for an event"""
 import httplib
+import logging
 
 from handlers.auth import BaseAuthorizationHandler
 from handlers.entry import EntryHandler
@@ -17,15 +18,15 @@ class EventHandler(EntryHandler, BaseAuthorizationHandler):
                              { 'msg': msg,
                                'current_user' : current_user,
                                'can_write' : can_write,
-                               'event' : entry})
+                               'item' : entry})
 
     def render_atom(self, entry):
         self.render_template('xml/event_atom.xml',
-                             { 'event' : entry, 'base_url' : self.baseurl() })
+                             { 'item' : entry, 'base_url' : self.baseurl() })
 
     def render_json(self, entry):
         self.render_template('json/event_json.json',
-                             { 'event' : entry })
+                             { 'item' : entry })
 
     @staticmethod
     def _update_entry_from_params(event, params):
@@ -47,13 +48,15 @@ class EventHandler(EntryHandler, BaseAuthorizationHandler):
 
         if 'start_date' in params:
             start_date = params['start_date'][0]
-            (start_date_valid, msg) = Event.validate_start_date(start_date)
+            logging.error("START_DATE : %s" % start_date)
+            (start_date_valid, msg) = Event.validate_date(start_date, "start_date")
             if not start_date_valid:
                 messages.append(msg)
 
         if 'end_date' in params:
             end_date = params['end_date'][0]
-            (end_date_valid, msg) = Event.validate_end_date(end_date)
+            logging.error("END DATE : %s" % end_date)
+            (end_date_valid, msg) = Event.validate_date(end_date, "end_date")
             if not end_date_valid:
                 messages.append(msg)
 

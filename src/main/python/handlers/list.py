@@ -57,8 +57,7 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
             return
         item_url = "%s/%s" % (self.request.url, new_item.key())
         self.response.headers['Content-Location'] = item_url
-        logging.error("NAME : %s" % new_item.get_item_name())
-        self.render_template(self.item_html, { new_item.get_item_name() : new_item,
+        self.render_template(self.item_html, { 'item' : new_item,
                                                'current_user' : user})
 
     def create_item(self, params):
