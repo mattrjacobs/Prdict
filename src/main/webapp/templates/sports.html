@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Sports</h3>
+{% for sport in items %}
+{% include "fragments/sport_fragment.html" %}
+{% endfor %}
+
+{% if can_write %}
+{% include "forms/new_sport_form.html" %}
+{% endif %}
+{% endblock %}

@@ -18,6 +18,7 @@ from google.appengine.ext.webapp import Response
 from models.event import Event
 from models.league import League
 from models.message import Message
+from models.sport import Sport
 from models.prdict_user import PrdictUser
 
 APP_ID = 'Prdict API'
@@ -70,6 +71,9 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.admin_user = self._create_user(self.admin_username, self.admin_email) 
         self.user = self._create_user(self.username, self.email, [users.User(self.friend_email)])
 
+        self.sport = self._create_sport("Sport 1", "")
+        self.sport_key = str(self.sport.key())
+
         self.league = self._create_league("League 1", "League 1 Desc")
         self.league_key = str(self.league.key())
 
@@ -121,6 +125,11 @@ class BaseMockHandlerTest(unittest.TestCase):
         user = PrdictUser(username = name, user = users.User(email), friends = friends)
         user_key = str(user.put())
         return user
+    
+    def _create_sport(self, title, description):
+        sport = Sport(title = title, description = description)
+        sport_key = str(sport.put())
+        return sport
 
     def _create_league(self, title, description):
         league = League(title = title, description = description)

@@ -4,16 +4,16 @@
 <form action="{{ event.relative_url }}" method="POST">
 Update event:<br/>
 <input type="hidden" name="_method" value="PUT"/>
-Title: <input type="text" name="title" maxlength="80" value="{{ event.title|escape }}"/><br/>
-Description: <input type="textarea" name="description" maxlength="500" value="{{ event.description|escape }}"/><br/>
-Start date: <input type="text" name="start_date" value="{{ event.start_date|escape }}"/><br/>
-End date: <input type="text" name="end_date" value="{{ event.end_date|escape }}"/><br/>
-<input type="submit" name="submit" value="Update event"/>
+<dt>Title: <input type="text" name="title" maxlength="80" value="{{ event.title|escape }}"/></dt>
+<dt>Description: <input type="textarea" name="description" maxlength="500" value="{{ event.description|escape }}"/></dt>
+<dt>Start date: <input type="text" name="start_date" value="{{ event.start_date|escape }}"/></dt>
+<dt>End date: <input type="text" name="end_date" value="{{ event.end_date|escape }}"/></dt>
+<dt><input type="submit" name="submit" value="Update event"/>
 </form>
 <form action="{{ event.relative_url }}" method="POST">
 <input type="hidden" name="_method" value="DELETE"/>
 <input type="submit" name="submit" value="Delete Event"/>
-</form>
+</form></dt>
 {% else %}
 <dl>
 <dt><a href="{{ event.relative_url }}">self link</a></dt>

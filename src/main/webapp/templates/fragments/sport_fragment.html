@@ -1,0 +1,21 @@
+<dl>
+<dt><a href="{{ sport.relative_url }}">self link</a></dt>
+{% if can_write %}
+<form action="{{ sport.relative_url }}" method="POST">
+Update sport:<br/>
+<input type="hidden" name="_method" value="PUT"/>
+<dt>Title: <input type="text" name="title" maxlength="80" value="{{ sport.title|escape }}"/></dt>
+<dt>Description: <input type="textarea" name="description" maxlength="500" value="{{ sport.description|escape }}"/></dt>
+<dt><input type="submit" name="submit" value="Update sport"/>
+</form>
+<form action="{{ sport.relative_url }}" method="POST">
+<input type="hidden" name="_method" value="DELETE"/>
+<input type="submit" name="submit" value="Delete Sport"/></dt>
+</form>
+{% else %}
+<dt>Title: {{ sport.title|escape }}</dt>
+<dt>Description: {{ sport.description|escape }}</dt>
+{% endif %}
+<dt>Created: {{ sport.isoformat_created }}</dt>
+<dt>Updated:{{ sport.isoformat_updated }}</dt>
+</dl>
