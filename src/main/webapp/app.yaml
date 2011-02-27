@@ -1,5 +1,5 @@
 application: prdictapi
-version: 0-1-58
+version: 0-1-59
 runtime: python
 api_version: 1
 
