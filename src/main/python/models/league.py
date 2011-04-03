@@ -5,6 +5,16 @@ from google.appengine.ext import db
 from models.sport import Sport
 
 class League(AbstractModel):
+    @staticmethod
+    def find_by_name(name):
+        query = db.GqlQuery("SELECT * FROM League WHERE title = :1 " +
+                            "LIMIT 1", name)
+        league = query.fetch(1)
+        if len(league) > 0:
+            return league[0]
+        else:
+            return None
+
     sport = db.ReferenceProperty(required=True,reference_class=Sport)
 
     def get_item_name(self):

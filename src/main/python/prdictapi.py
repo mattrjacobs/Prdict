@@ -10,6 +10,8 @@ from handlers.league import LeagueHandler
 from handlers.leagues import LeaguesHandler
 from handlers.sport import SportHandler
 from handlers.sports import SportsHandler
+from handlers.team import TeamHandler
+from handlers.teams import TeamsHandler 
 from handlers.ui.eventchat import EventChatUiHandler
 from handlers.user import UserHandler
 from handlers.userfriend import UserSpecificFriendHandler
@@ -31,6 +33,8 @@ urlmap = [('/', HomeHandler),
           (r'/api/leagues/([^/]+)', LeagueHandler),
           ('/api/sports', SportsHandler),
           (r'/api/sports/([^/]+)', SportHandler),
+          ('/api/teams', TeamsHandler),
+          (r'/api/teams/([^/]+)', TeamHandler),
           ('/api/users', UsersHandler),
           (r'/api/users/([^/]+)', UserHandler),
           (r'/api/users/([^/]+)/friends', UserFriendsHandler),

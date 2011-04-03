@@ -1,0 +1,19 @@
+{% extends "fragments/base_fragment.html" %}
+
+{% block extra_form %}
+<dt>League: </dt>
+<select name="league">
+{% for league in leagues %}
+{% ifequal league.title item.league.title %}
+<option selected value="{{league.title|escape}}">{{league.title|escape}}</option>
+{% else %}
+<option value="{{league.title|escape}}">{{league.title|escape}}</option>
+{% endifequal %}
+{% endfor %}
+</select>
+{% endblock %}
+
+{% block other_write_data %}
+<dt>League: <a href="/api/leagues/{{item.league.key}}">{{item.league.title}}</a></dt>
+{% endblock %}
+

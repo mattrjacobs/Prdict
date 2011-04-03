@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Teams</h3>
+{% for item in items %}
+{% include "fragments/team_fragment.html" %}
+{% endfor %}
+
+{% if can_write %}
+{% include "forms/new_team_form.html" %}
+{% endif %}
+{% endblock %}

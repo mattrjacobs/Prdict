@@ -19,6 +19,7 @@ from models.event import Event
 from models.league import League
 from models.message import Message
 from models.sport import Sport
+from models.team import Team
 from models.prdict_user import PrdictUser
 
 APP_ID = 'Prdict API'
@@ -76,6 +77,10 @@ class BaseMockHandlerTest(unittest.TestCase):
 
         self.league = self._create_league("League 1", "League 1 Desc", self.sport)
         self.league_key = str(self.league.key())
+
+        self.team = self._create_team("Team 1", "Team 1 Desc",
+                                      self.league, "Team 1 Loc")
+        self.team_key = str(self.team.key())
 
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
         self.event_key = str(self.event.key())
@@ -136,6 +141,12 @@ class BaseMockHandlerTest(unittest.TestCase):
                         sport = sport)
         league_key = str(league.put())
         return league
+
+    def _create_team(self, title, description, league, location):
+        team = Team(title = title, description = description, league =
+                    league, location = location)
+        team_key = str(team.put())
+        return team
 
     def _create_event(self, title, description, start_date_str, end_date_str):
         start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")

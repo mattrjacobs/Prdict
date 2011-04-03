@@ -1,0 +1,17 @@
+<p>Create a new team:<br/>
+<form method="POST" action="{{ self_link }}">
+<b>Team name:</b>
+<input type="text" name="title" maxlength="80"/><br/>
+<b>Team location:</b>
+<input type="text" name="location" maxlength="80"/><br/>
+<b>Team description:</b>
+<input type="textarea" name="description" maxlength="500"/><br/>
+<b>League:</b>
+<select name="league">
+{% for league in leagues %}
+<option value="{{league.title}}">{{league.title|escape}}</option>
+{% endfor %}
+</select>
+<input type="submit" name="submit" value="Create Team"/>
+</form>
+</p>

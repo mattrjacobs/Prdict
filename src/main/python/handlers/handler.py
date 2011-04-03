@@ -273,9 +273,13 @@ class AbstractHandler(webapp.RequestHandler):
         query = db.GqlQuery("SELECT * FROM League ORDER BY title ASC")
         return query.fetch(100)
 
+    def get_all_teams(self):
+        query = db.GqlQuery("SELECT * FROM Team ORDER BY title ASC")
+        return query.fetch(1000)
+
     def get_all_events(self):
         query = db.GqlQuery("SELECT * FROM Event ORDER BY title ASC")
-        return query.fetch(100)
+        return query.fetch(10000)
 
     @staticmethod
     def xml_escape(s):
