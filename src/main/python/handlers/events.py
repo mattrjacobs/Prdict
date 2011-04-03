@@ -15,8 +15,7 @@ class EventsHandler(ListHandler):
         self.item_html = "event.html"
 
     def get_all_items(self):
-        query = db.GqlQuery("SELECT * FROM Event")
-        return query.fetch(100)
+        return self.get_all_events()
 
     def validate_other_params(self):
         start_date = self.request.get("start_date")

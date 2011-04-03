@@ -6,9 +6,8 @@
 <input type="hidden" name="_method" value="PUT"/>
 <dt>Title: <input type="text" name="title" maxlength="80" value="{{ item.title|escape }}"/></dt>
 <dt>Description: <input type="textarea" name="description" maxlength="500" value="{{ item.description|escape }}"/></dt>
-<dt>
-{% block form %}{% endblock %}
-<input type="submit" name="submit" value="Update {{ item.item_name }}"/></dt>
+{% block extra_form %}{% endblock %}
+<dt><input type="submit" name="submit" value="Update {{ item.item_name }}"/></dt>
 </form>
 <form action="{{ item.relative_url }}" method="POST">
 <input type="hidden" name="_method" value="DELETE"/>

@@ -28,9 +28,8 @@ class EventHandler(EntryHandler, BaseAuthorizationHandler):
         self.render_template('json/event_json.json',
                              { 'item' : entry })
 
-    @staticmethod
-    def _update_entry_from_params(event, params):
-        """Given a dict of params, update an event resource if they are valid."""
+    def parse_put_params(self, params):
+        parsed_params = dict()
         messages = []
         title_valid = desc_valid = start_date_valid = end_date_valid = True
         
@@ -39,38 +38,44 @@ class EventHandler(EntryHandler, BaseAuthorizationHandler):
             (title_valid, msg) = Event.validate_title(title)
             if not title_valid:
                 messages.append(msg)
+            else:
+                parsed_params['title'] = title
 
         if 'description' in params:
             description = params['description'][0]
             (desc_valid, msg) = Event.validate_description(description)
             if not desc_valid:
                 messages.append(msg)
+            else:
+                parsed_params['description'] = description
 
         if 'start_date' in params:
             start_date = params['start_date'][0]
-            logging.error("START_DATE : %s" % start_date)
             (start_date_valid, msg) = Event.validate_date(start_date, "start_date")
             if not start_date_valid:
                 messages.append(msg)
+            else:
+                parsed_params['start_date'] = Event.convert_date_format(start_date)
 
         if 'end_date' in params:
             end_date = params['end_date'][0]
-            logging.error("END DATE : %s" % end_date)
             (end_date_valid, msg) = Event.validate_date(end_date, "end_date")
             if not end_date_valid:
                 messages.append(msg)
+            else:
+                parsed_params['end_date'] = Event.convert_date_format(end_date)
 
-        if title_valid and desc_valid and start_date_valid and end_date_valid:
-            if title:
-                event.title = title
-            if description:
-                event.description = description
-            if start_date:
-                event.start_date = Event.convert_date_format(start_date)
-            if end_date:
-                event.end_date = Event.convert_date_format(end_date)
+        return (title_valid and desc_valid and start_date_valid and \
+                end_date_valid, messages, parsed_params)
 
-            return (httplib.OK, "Event updated.")
-        else:
-            return (httplib.BAD_REQUEST, ','.join(messages))
+    def update_entry(self, event, parsed_params):
+        if 'title' in parsed_params:
+            event.title = parsed_params['title']
+        if 'description' in parsed_params:
+            event.description = parsed_params['description']
+        if 'start_date' in parsed_params:
+            event.start_date = parsed_params['start_date']
+        if 'end_date' in parsed_params:
+            event.end_date = parsed_params['end_date']
 
+        return (httplib.OK, "Event updated.")

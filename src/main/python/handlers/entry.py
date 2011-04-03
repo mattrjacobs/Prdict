@@ -10,7 +10,7 @@ from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 from handlers.handler import AbstractHandler
 from utils.constants import Constants
 
-def put_txn(handler, entry):
+def put_txn(handler, entry, parsed_params):
     """Wraps a DB write triggered by HTTP PUT in txn"""
     if not entry:
         return (None, None, None)
@@ -18,7 +18,7 @@ def put_txn(handler, entry):
         status = httplib.PRECONDITION_FAILED
         msg = "Entry was out of date on update"
     else:
-        status, msg = handler.update_entry(entry)
+        status, msg = handler.update_entry(entry, parsed_params)
     if status == httplib.OK:
         entry.put()
     return entry, status, msg
@@ -93,17 +93,27 @@ class EntryHandler(AbstractHandler):
         then doing the DB write and returning a representation of
         the new resource according to HTTP request""" 
         entry_before_put = self.get_authorized_entry(key, "write")
-        try:
-            entry, status, msg = \
-                   db.run_in_transaction(put_txn, self, entry_before_put)
-        except db.TransactionFailedError:
+        if not self.has_valid_data_media_type():
+            return (httplib.UNSUPPORTED_MEDIA_TYPE,
+                    "Must provide body as %s" % Constants.FORM_ENCODING)
+        params = cgi.parse_qs(self.request.body)
+        (params_valid, messages, parsed_params) = self.parse_put_params(params)
+        if not params_valid:
             entry = entry_before_put
-            status = httplib.CONFLICT
-            msg = "Update transaction failed."
-        except CapabilityDisabledError:
-            entry = entry_before_put
-            status = httplib.SERVICE_UNAVAILABLE
-            msg = "Unable to write data."
+            status = httplib.BAD_REQUEST
+            msg = ','.join(messages)
+        else:
+            try:
+                entry, status, msg = \
+                       db.run_in_transaction(put_txn, self, entry_before_put, parsed_params)
+            except db.TransactionFailedError:
+                entry = entry_before_put
+                status = httplib.CONFLICT
+                msg = "Update transaction failed."
+            except CapabilityDisabledError:
+                entry = entry_before_put
+                status = httplib.SERVICE_UNAVAILABLE
+                msg = "Unable to write data."
         if status is None:
             return
         if entry:
@@ -145,23 +155,17 @@ class EntryHandler(AbstractHandler):
         self.response.set_status(status)
         self.render_html(entry, msg)
 
-    def update_entry(self, entry):
+    def parse_put_params(self, params):
+        """Default behavior is to just return the passed-in params"""
+        return (True, [], params)
+        
+
+    def update_entry(self, entry, parsed_params):
         """Given an entry, update it with the body of a PUT request,
         returning a pair of (status, msg) where status is the HTTP
         response code that resulted and msg is a string indicating
         further information (e.g. what syntax error caused a 400,
         for example."""
-        if not self.has_valid_data_media_type():
-            return (httplib.UNSUPPORTED_MEDIA_TYPE,
-                    "Must provide body as %s" % Constants.FORM_ENCODING)
-        params = cgi.parse_qs(self.request.body)
-        return self._update_entry_from_params(entry, params)
-
-    @staticmethod
-    def _update_entry_from_params(entry, params):
-        """Given an entry and params that might/might not be valid to
-        construct an entry, update the entry with the param if possible.
-        Return an (HTTP status, error_message) tuple."""
         raise Exception("Must be overridden by subclasses")
 
     def precondition_passes(self, entry):

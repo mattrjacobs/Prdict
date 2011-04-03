@@ -19,7 +19,8 @@ class TestLeaguesHandler(BaseMockHandlerTest):
 
         self.set_user(self.username, False)
         self.valid_params = { 'title' : 'New League',
-                              'description' : 'New League Description'}
+                              'description' : 'New League Description',
+                              'sport' : self.sport.title}
 
     def tearDown(self):
         BaseMockHandlerTest.tearDown(self)
@@ -27,6 +28,11 @@ class TestLeaguesHandler(BaseMockHandlerTest):
     def define_impl(self):
         self.mock_handler = self.mox.CreateMock(LeaguesHandler)
         self.impl = MockLeaguesHandler(self.mock_handler)
+
+    def ValidParamTuple(self, arg):
+        (title, desc, sport) = arg
+        return title == "New League" and desc == "New League Description" and str(sport.key()) == str(self.sport_key)
+    
 
     def testGetNoUser(self):
         self.remove_user()
@@ -79,7 +85,8 @@ class TestLeaguesHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testPostMissingTitle(self):
-        invalid_params = { 'description' : 'New League Description'}
+        invalid_params = { 'description' : 'New League Description',
+                           'sport' : self.sport.title }
 
         self.set_user(self.username, True)
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
@@ -95,7 +102,8 @@ class TestLeaguesHandler(BaseMockHandlerTest):
 
     def testPostEmptyTitle(self):
         invalid_params = { 'title' : '',
-                           'description' : 'New League Description'}
+                           'description' : 'New League Description',
+                           'sport' : self.sport.title }
         self.set_user(self.username, True)
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
@@ -109,7 +117,8 @@ class TestLeaguesHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testPostMissingDesc(self):
-        invalid_params = { 'title' : 'New League'}
+        invalid_params = { 'title' : 'New League',
+                           'sport' : self.sport.title }
         self.set_user(self.username, True)
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
@@ -127,7 +136,8 @@ class TestLeaguesHandler(BaseMockHandlerTest):
 
     def testPostEmptyDesc(self):
         invalid_params = { 'title' : 'New League',
-                           'description' : ''}
+                           'description' : '',
+                           'sport' : self.sport.title }
         self.set_user(self.username, True)
         self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
@@ -143,6 +153,53 @@ class TestLeaguesHandler(BaseMockHandlerTest):
         self.verifyReturnedLeague(url, {'title' : 'New League', 'description' : ''})
         self.mox.VerifyAll()
 
+    def testPostMissingSport(self):
+        invalid_params = { 'title' : 'New League',
+                           'description' : 'New League Description' }
+        self.set_user(self.username, True)
+        self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("leagues.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+        self.impl.post()
+
+        self.mox.VerifyAll()
+
+    def testPostEmptySport(self):
+        invalid_params = { 'title' : 'New League',
+                           'description' : 'New League Description',
+                           'sport' : '' }
+        self.set_user(self.username, True)
+        self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("leagues.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+        self.impl.post()
+
+        self.mox.VerifyAll()
+
+    def testPostInvalidSport(self):
+        invalid_params = { 'title' : 'New League',
+                           'description' : 'New League Description',
+                           'sport' : "not-a-sport" }
+        self.set_user(self.username, True)
+        self.impl.request = self.req(urllib.urlencode(invalid_params), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.impl.response.set_status(400)
+        self.mock_handler.render_template("leagues.html", mox.IgnoreArg())
+        self.mox.ReplayAll()
+        self.impl.post()
+
+        self.mox.VerifyAll()
+
     def testPostValidPostParamGAEReadOnly(self):
         self.set_user(self.username, True)
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
@@ -150,8 +207,7 @@ class TestLeaguesHandler(BaseMockHandlerTest):
 
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
-        
-        self.impl.create_item(("New League", "New League Description")).AndRaise(CapabilityDisabledError)
+        self.impl.create_item(mox.Func(self.ValidParamTuple)).AndRaise(CapabilityDisabledError)
         self.impl.response.set_status(503)
         self.mock_handler.render_template("503.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -187,12 +243,13 @@ class TestLeaguesHandler(BaseMockHandlerTest):
         url = self.impl.response.headers["Content-Location"]
         self.verifyReturnedLeague(url, self.valid_params)
         self.mox.VerifyAll()
-
+        
     def verifyReturnedLeague(self, url, expected_params):
         league_key = url[url.rindex("/") + 1:]
         returned_league = db.get(db.Key(encoded = league_key))
         self.assertEquals(returned_league.title, expected_params['title'])
         self.assertEquals(returned_league.description, expected_params['description'])
+        self.assertEquals(str(returned_league.sport.key()), self.sport_key)
         
 class MockLeaguesHandler(LeaguesHandler):
     def __init__(self, handler):

@@ -265,6 +265,18 @@ class AbstractHandler(webapp.RequestHandler):
             return self.request.cookies['env'] == "dev"
         return False
 
+    def get_all_sports(self):
+        query = db.GqlQuery("SELECT * FROM Sport ORDER BY title ASC")
+        return query.fetch(100)
+
+    def get_all_leagues(self):
+        query = db.GqlQuery("SELECT * FROM League ORDER BY title ASC")
+        return query.fetch(100)
+
+    def get_all_events(self):
+        query = db.GqlQuery("SELECT * FROM Event ORDER BY title ASC")
+        return query.fetch(100)
+
     @staticmethod
     def xml_escape(s):
         if s:

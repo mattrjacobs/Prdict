@@ -27,9 +27,8 @@ class SportHandler(EntryHandler, BaseAuthorizationHandler):
         self.render_template('json/sport_json.json',
                              { 'item' : entry })
 
-    @staticmethod
-    def _update_entry_from_params(sport, params):
-        """Given a dict of params, update a sport resource if they are valid."""
+    def parse_put_params(self, params):
+        parsed_params = dict()
         messages = []
         title_valid = desc_valid = True
         
@@ -38,20 +37,23 @@ class SportHandler(EntryHandler, BaseAuthorizationHandler):
             (title_valid, msg) = Sport.validate_title(title)
             if not title_valid:
                 messages.append(msg)
+            else:
+                parsed_params['title'] = title
 
         if 'description' in params:
             description = params['description'][0]
             (desc_valid, msg) = Sport.validate_description(description)
             if not desc_valid:
                 messages.append(msg)
+            else:
+                parsed_params['description'] = description
 
-        if title_valid and desc_valid:
-            if title:
-                sport.title = title
-            if description:
-                sport.description = description
+        return (title_valid and desc_valid, messages, parsed_params)
 
-            return (httplib.OK, "Sport updated.")
-        else:
-            return (httplib.BAD_REQUEST, ','.join(messages))
+    def update_entry(self, sport, parsed_params):
+        if 'title' in parsed_params:
+            sport.title = parsed_params['title']
+        if 'description' in parsed_params:
+            sport.description = parsed_params['description']
+        return (httplib.OK, "Sport updated.")
 

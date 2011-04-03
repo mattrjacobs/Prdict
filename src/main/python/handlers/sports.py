@@ -12,8 +12,7 @@ class SportsHandler(ListHandler):
         self.item_html = "sport.html"
 
     def get_all_items(self):
-        query = db.GqlQuery("SELECT * FROM Sport")
-        return query.fetch(100)
+        return self.get_all_sports()
 
     def create_params(self, title, description):
         return (title, description)

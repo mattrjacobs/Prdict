@@ -74,7 +74,7 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.sport = self._create_sport("Sport 1", "")
         self.sport_key = str(self.sport.key())
 
-        self.league = self._create_league("League 1", "League 1 Desc")
+        self.league = self._create_league("League 1", "League 1 Desc", self.sport)
         self.league_key = str(self.league.key())
 
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
@@ -131,8 +131,9 @@ class BaseMockHandlerTest(unittest.TestCase):
         sport_key = str(sport.put())
         return sport
 
-    def _create_league(self, title, description):
-        league = League(title = title, description = description)
+    def _create_league(self, title, description, sport):
+        league = League(title = title, description = description,
+                        sport = sport)
         league_key = str(league.put())
         return league
 

@@ -1,1 +1,19 @@
 {% extends "fragments/base_fragment.html" %}
+
+{% block extra_form %}
+<dt>Sport: </dt>
+<select name="sport">
+{% for sport in sports %}
+{% ifequal sport.title item.sport.title %}
+<option selected value="{{sport.title|escape}}">{{sport.title|escape}}</option>
+{% else %}
+<option value="{{sport.title|escape}}">{{sport.title|escape}}</option>
+{% endifequal %}
+{% endfor %}
+</select>
+{% endblock %}
+
+{% block other_write_data %}
+<dt>Sport: <a href="/api/sports/{{item.sport.key}}">{{item.sport.title}}</a></dt>
+{% endblock %}
+

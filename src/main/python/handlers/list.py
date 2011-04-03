@@ -26,10 +26,8 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
         can_write = self.is_user_authorized_to_write(user, None)
         all_items = self.get_all_items()
         now = datetime.now().strftime(ListHandler.DATE_FORMAT)
-        self.render_template(self.html, { 'current_user' : user,
-                                          'items' : all_items,
-                                          'can_write' : can_write,
-                                          'now' : now })
+        param_map = self.create_param_map(user, all_items, can_write, now)
+        self.render_template(self.html, param_map)
 
     def post(self):
         """Attempts to respond to a POST by adding a new item"""
@@ -74,6 +72,10 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
 
     def instantiate_new_item(self, params):
         raise Exception("Must be implemented by subclass")
+
+    def create_param_map(self, user, all_items, can_write, now):
+        return { 'current_user' : user, 'items' : all_items,
+                 'can_write' : can_write, 'now' : now }
 
     def __bad_request_template(self, message):
         """Returns an HTML template explaining why item add failed"""
