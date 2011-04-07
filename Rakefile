@@ -123,7 +123,7 @@ task :static_dir => [:initialize] do
 end
 
 desc "generate resources for inclusion in the package"
-task :package => [:test, :static_dir] do
+task :package => [:static_dir] do
   sh "cp src/main/webapp/cron.yaml target/webapp/cron.yaml"
   sh "cp src/main/webapp/index.yaml target/webapp/index.yaml"
   sh "cp -r src/main/webapp/static/* target/webapp/static-`cat target/build.txt`"
