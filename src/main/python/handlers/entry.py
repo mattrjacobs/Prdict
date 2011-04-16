@@ -1,36 +1,10 @@
 """Abstract class for handling single resources: Event/User"""
-import cgi
 import dateutil
 import httplib
 import logging
 
-from google.appengine.ext import db
-from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
-
 from handlers.handler import AbstractHandler
 from utils.constants import Constants
-
-def put_txn(handler, entry, parsed_params):
-    """Wraps a DB write triggered by HTTP PUT in txn"""
-    if not entry:
-        return (None, None, None)
-    if not handler.precondition_passes(entry):
-        status = httplib.PRECONDITION_FAILED
-        msg = "Entry was out of date on update"
-    else:
-        status, msg = handler.update_entry(entry, parsed_params)
-    if status == httplib.OK:
-        entry.put()
-    return entry, status, msg
-
-def delete_txn(handler, entry):
-    """Wraps a DB delete triggered by HTTP DELETE in txn"""
-    if not entry:
-        return (None, None, None)
-    if not handler.precondition_passes(entry):
-        return (entry, httplib.PRECONDITION_FAILED, "Entry was out-of-date.")
-    entry.delete()
-    return (None, httplib.OK, "Deleted.")
 
 class EntryHandler(AbstractHandler):
     """Parent class for REST-based single-entity handlers."""
@@ -46,7 +20,7 @@ class EntryHandler(AbstractHandler):
 
     def render_json(self, entry):
         """Given a single entry, render a JSON view."""
-        raise Exception("Must be overridden by subclasses")
+        self.render_string(entry.to_json())
 
     def get(self, key):
         """Handles an HTTP GET by checking authorization and rendering
@@ -66,22 +40,22 @@ class EntryHandler(AbstractHandler):
             return self.response.set_status(httplib.NOT_MODIFIED)
 
     def handle_output(self, entry):
-        request_type, vary = self.get_request_type()
+        (content_type, vary) = self.get_read_content_type()
         if vary:
             self.set_header("Vary","Accept")
-        if request_type == "atom":
-            self.set_header("Content-Type", "application/xml; charset=utf-8")
+        if content_type == "atom":
+            self.set_header("Content-Type", Constants.XML_ENCODING)
             self.render_atom(entry)
             return
-        if request_type == "json":
-            self.set_header("Content-Type", "application/json; charset=utf-8")
+        elif content_type == "json":
+            self.set_header("Content-Type", Constants.JSON_ENCODING)
             self.render_json(entry)
             return
-        if request_type == "html":
+        elif content_type == "html":
             self.render_html(entry)
             return
         else:
-            logging.error("Received a request type I can't handle %s" % request_type)
+            logging.error("Received a request type I can't handle : %s" % content_type)
 
     def post(self, key):
         """Handles an HTTP POST by only proceeding if it is an
@@ -91,109 +65,100 @@ class EntryHandler(AbstractHandler):
     def put(self, key):
         """Handles an HTTP PUT by checking if the user is authorized
         then doing the DB write and returning a representation of
-        the new resource according to HTTP request""" 
+        the new resource according to HTTP request"""
+        user = self.get_prdict_user()
         entry_before_put = self.get_authorized_entry(key, "write")
-        if not self.has_valid_data_media_type():
-            return (httplib.UNSUPPORTED_MEDIA_TYPE,
-                    "Must provide body as %s" % Constants.FORM_ENCODING)
-        params = cgi.parse_qs(self.request.body)
-        (params_valid, messages, parsed_params) = self.parse_put_params(params)
-        if not params_valid:
-            entry = entry_before_put
-            status = httplib.BAD_REQUEST
-            msg = ','.join(messages)
-        else:
-            try:
-                entry, status, msg = \
-                       db.run_in_transaction(put_txn, self, entry_before_put, parsed_params)
-            except db.TransactionFailedError:
-                entry = entry_before_put
-                status = httplib.CONFLICT
-                msg = "Update transaction failed."
-            except CapabilityDisabledError:
-                entry = entry_before_put
-                status = httplib.SERVICE_UNAVAILABLE
-                msg = "Unable to write data."
-        if status is None:
+        content_type = self.get_write_content_type()
+
+        (is_content_type_ok, are_params_valid, preconditions_succeeded,
+         db_lock_avoided, db_write_succeeded, error_msg, updated_entry) = \
+         self.update_entry(entry_before_put, content_type)
+
+        if not is_content_type_ok:
+            self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
+            return self.render_template(self.get_html(entry_before_put),
+                                        { 'msg' : error_msg,
+                                          'current_user' : user })
+
+        if not are_params_valid:
+            return self.set_400(self.get_html(entry_before_put),
+                                content_type, error_msg,
+                                params = { "entry" : entry_before_put })
+
+        if not preconditions_succeeded:
+            self.response.set_status(httplib.PRECONDITION_FAILED)
+            return self.render_template(self.get_html(entry_before_put),
+                                        { 'msg' : error_msg,
+                                          'current_user' : user })
+
+        if not db_lock_avoided:
+            self.response.set_status(httplib.CONFLICT)
+            return self.render_template(self.get_html(entry_before_put),
+                                        { 'msg' : error_msg,
+                                          'current_user' : user })
+
+        if not db_write_succeeded:
+            self.response.set_status(httplib.SERVICE_UNAVAILABLE)
+            return self.render_template(self.get_html(entry_before_put),
+                                        { 'msg' : error_msg,
+                                          'current_user' : user })
+
+        self.response.set_status(httplib.OK)
+        if content_type == "atom":
+            raise "Not implemented yet"
+        elif content_type == "json":
+            self.set_header("Content-Type", Constants.JSON_ENCODING)
+            self.render_json(updated_entry)
             return
-        if entry:
-            self.response.set_status(status)
-            request_type, _ = self.get_request_type()
-            if request_type == "atom":
-                self.set_header("Content-Type", 
-                                "application/xml; charset=utf-8")
-                self.render_atom(entry)
-                return
-            if request_type == "json":
-                self.set_header("Content-Type",
-                                "application/json; charset=utf-8")
-                self.render_json(entry)
-                return
-            if request_type == "html":
-                self.render_html(entry, msg)
-                return
-            else:
-                logging.error("I don't know how to handle request type %s" % request_type)
+        elif content_type == "form":
+            self.render_html(updated_entry, "Entry updated")
+            return
+        else:
+            logging.error("I don't know how to handle PUT of content type %s" % content_type)
 
     def delete(self, key):
         """Handles an HTTP DELETE by checking if the user is authorized
         then doing the DB delete"""
         entry_before_delete = self.get_authorized_entry(key, "write")
-        try:
-            entry, status, msg = \
-                   db.run_in_transaction(delete_txn, self, entry_before_delete)
-        except db.TransactionFailedError:
-            entry = entry_before_delete
-            status = httplib.CONFLICT
-            msg = "Delete transaction failed."
-        except CapabilityDisabledError:
-            entry = entry_before_delete
-            status = httplib.SERVICE_UNAVAILABLE
-            msg = "Unable to write data."
-        if status is None:
-            return
-        self.response.set_status(status)
-        self.render_html(entry, msg)
+        (preconditions_succeeded, db_lock_avoided,
+         db_write_succeeded, error_msg) = \
+         self.delete_entry(entry_before_delete)
 
-    def parse_put_params(self, params):
-        """Default behavior is to just return the passed-in params"""
-        return (True, [], params)
+        if not preconditions_succeeded:
+            self.response.set_status(httplib.PRECONDITION_FAILED)
+            return self.render_template(self.get_html(entry_before_delete),
+                                        { 'msg' : error_msg,
+                                          'current_user' : user })
+        if not db_lock_avoided:
+            self.response.set_status(httplib.CONFLICT)
+            return self.render.template(self.get_html(entry_before_delete),
+                                        { 'msg' : error_msg,
+                                          'current_user' : user })
+
+        if not db_write_succeeded:
+            self.response.set_status(httplib.SERVICE_UNAVAILABLE)
+            return self.render.template(self.get_html(entry_before_delete),
+                                        { 'msg' : error_msg,
+                                          'current_user' : user })
+
+        self.response.set_status(httplib.OK)
+        content_type = self.get_write_content_type()
+        if content_type == "atom":
+            raise "Not implemented yet"
+        elif content_type == "json":
+            self.set_header("Content-Type", Constants.JSON_ENCODING)
+            return self.render_json_ok()
+        else:
+            return self.render_html(None, "Entry deleted")
         
+    def update_entry(self, entry, content_type):
+        return self.get_svc().update_entry(entry, self.request, content_type)
 
-    def update_entry(self, entry, parsed_params):
-        """Given an entry, update it with the body of a PUT request,
-        returning a pair of (status, msg) where status is the HTTP
-        response code that resulted and msg is a string indicating
-        further information (e.g. what syntax error caused a 400,
-        for example."""
-        raise Exception("Must be overridden by subclasses")
+    def delete_entry(self, entry):
+        return self.get_svc().delete_entry(entry, self.request)
 
-    def precondition_passes(self, entry):
-        """All conditional clauses must pass on a conditional request,
-        if multiple are specified (although this would be an odd thing
-        for a client to do)."""
-        if 'If-Match' in self.request.headers:
-            req_etags = map(lambda s: s.strip(),
-                            self.request.headers['If-Match'].split(','))
-            if '*' in req_etags and entry is None:
-                return False
-            if entry.etag not in req_etags:
-                return False
-        if 'If-None-Match' in self.request.headers:
-            req_etags = map(lambda s: s.strip(),
-                            self.request.headers['If-None-Match'].split(','))
-            if '*' in req_etags and entry is not None:
-                return False
-            if entry.etag in req_etags:
-                return False
-        if 'If-Unmodified-Since' in self.request.headers:
-            req_lm = dateutil.parse_http_date(
-                self.request.headers['If-Unmodified-Since'])
-            if req_lm and dateutil.normalize(entry.updated) > req_lm:
-                return False
-        if 'If-Modified-Since' in self.request.headers:
-            req_lm = dateutil.parse_http_date(
-                self.request.headers['If-Modified-Since'])
-            if req_lm and dateutil.normalize(entry.updated) <= req_lm:
-                return False
-        return True
+    def get_svc(self):
+        raise "Must be implemented by subclasses"
+
+    def get_html(self, entry):
+        raise "Must be implemented by subclasses"

@@ -2,20 +2,21 @@
 
 {% block extra_form %}
 <dt>League: </dt>
+<a href="{{entry.league.relative_url}}">{{ entry.league.title|escape }}</a>
 <select name="league">
 {% for league in leagues %}
-{% ifequal league.title item.league.title %}
+{% ifequal league.title entry.league.title %}
 <option selected value="{{league.title|escape}}">{{league.title|escape}}</option>
 {% else %}
 <option value="{{league.title|escape}}">{{league.title|escape}}</option>
 {% endifequal %}
 {% endfor %}
 </select>
-<dt>Location: <input type="text" name="location" value="{{ item.location|escape }}"/></dt>
+<dt>Location: <input type="text" name="location" value="{{ entry.location|escape }}"/></dt>
 {% endblock %}
 
 {% block other_write_data %}
-<dt>League: <a href="/api/leagues/{{item.league.key}}">{{item.league.title}}</a></dt>
-<dt>Location: {{item.location|escape}}</dt>
+<dt>League: <a href="/api/leagues/{{entry.league.key}}">{{entry.league.title}}</a></dt>
+<dt>Location: {{entry.location|escape}}</dt>
 {% endblock %}
 

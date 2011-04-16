@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
+{% block scriptinclude %}
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+{% endblock %}
+
 {% block content %}
 
 <h3>Events</h3>
-{% for item in items %}
-{% include "fragments/event_fragment.html" %}
+{% for entry in entries %}
+{% include "fragments/sportsevent_fragment.html" %}
 {% endfor %}
 
 {% if can_write %} 

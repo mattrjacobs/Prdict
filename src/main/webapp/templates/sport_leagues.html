@@ -1,0 +1,22 @@
+{% extends "base_feed.html" %}
+
+{% block parent %}
+{% if parent %}
+<h1>Leagues in Sport: {{ parent.title|escape }}</h1>
+<p><a href="{{ self_link }}">self link</a></p>
+<hr/>
+{% endif %}
+{% endblock %}
+
+{% block entries %}
+{% if entries %}
+{% for entry in entries %}
+  {% include "fragments/league_fragment.html" %}
+  <hr/>
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block new_entry %}
+{% include "forms/new_league_form.html" %}
+{% endblock %}

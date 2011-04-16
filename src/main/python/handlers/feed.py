@@ -4,6 +4,7 @@ import dateutil
 import hashlib
 import httplib
 import logging
+import simplejson as json
 
 from google.appengine.ext import db
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
@@ -36,12 +37,22 @@ class FeedHandler(AbstractHandler):
         use them in the view."""
         raise Exception("Must be overridden by subclasses")
 
-    def render_json(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
+    def render_json(self, parent, entries):
         """Given a parent object and a list of entries related to the
         parent, render a JSON view.  If pagination links are provided,
         use them in the view."""
-        raise Exception("Must be overridden by subclasses")
+        parent_json = parent.to_json()
+        entry_json = [json.loads(entry.to_json()) for entry in entries]
+        self.render_string(json.dumps({ self.get_parent_name() :
+                                        json.loads(parent_json),
+                                        self.get_entries_name() :
+                                        entry_json }))
+
+    def get_parent_name(self):
+        raise "Must be implemented by subclasses"
+
+    def get_entries_name(self):
+        raise "Must be implemented by subclasses"
 
     def render_entry_html(self, entry):
         """Given a created entry, render it to HTML."""
@@ -66,18 +77,18 @@ class FeedHandler(AbstractHandler):
         if not self.in_dev_mode() and \
            not self.modified(feed_etag, feed_lmdate):
             return self.response.set_status(httplib.NOT_MODIFIED)
-        request_type, vary = self.get_request_type()
+        (content_type, vary) = self.get_read_content_type()
         if vary:
             self.set_header("Vary","Accept")
-        if request_type == "atom":
-            self.set_header("Content-Type", "application/xml; charset=utf-8")
+        if content_type == "atom":
+            self.set_header("Content-Type", Constants.XML_ENCODING)
             self.render_atom(parent_entry, entries, prev_link, next_link)
             return
-        if request_type == "json":
-            self.set_header("Content-Type", "application/json; charset=utf-8")
-            self.render_json(parent_entry, entries, prev_link, next_link)
+        elif content_type == "json":
+            self.set_header("Content-Type", Constants.JSON_ENCODING)
+            self.render_json(parent_entry, entries)
             return
-        if request_type == "html":
+        elif content_type == "html":
             self.render_html(parent_entry, entries, prev_link, next_link, None)
             return
         else:
@@ -87,59 +98,54 @@ class FeedHandler(AbstractHandler):
         """Handles an HTTP POST by checking it is not overloaded PUT or DELETE,
         then checking if user is authorized, then validating new child and
         adding it to the resource."""
+        content_type = self.get_write_content_type()
         if self.request.get('_method') == 'DELETE' or \
            self.request.get('_method') == 'PUT':
             self.response.set_status(httplib.BAD_REQUEST)
             msg = "Overloaded POST not allowed on this resource"
             try:
-                parent = db.get(db.Key(encoded=key))
+                parent = db.get(db.Key(encoded = key))
             except db.BadKeyError:
                 parent = None
-            self.render_html(parent, None, msg=msg)
+            self.render_html(parent, None, msg = msg)
             return
         parent_entry = self.get_authorized_entry(key, "write")
         if not parent_entry:
             return
         user = self.get_prdict_user()
-        if not self.has_valid_data_media_type():
+
+        (is_content_type_ok, are_params_valid, is_db_write_ok,
+         error_msg, new_entry) = self.create_entry(content_type)
+
+        if not is_content_type_ok:
             self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
-            self.render_html(parent = parent_entry,
-                             entries = None,
-                             msg = "Must POST in %s format." % \
-                             Constants.FORM_ENCODING)
-            return
-        (is_valid, error_message) = self.is_post_data_valid(parent_entry)
-        if not is_valid:
+            return self.render_template(self.html, { 'msg' : error_msg,
+                                                     'current_user' : user,
+                                                     'parent' : parent_entry })
+        if not are_params_valid:
             self.response.set_status(httplib.BAD_REQUEST)
-            self.render_html(parent = parent_entry,
-                             entries = self.get_entries(parent=parent_entry),
-                             msg = error_message)
-            return
-        try:
-            self.handle_post(parent_entry)
-        except CapabilityDisabledError:
-            self.handle_transient_error()
-            return
+            return self.render_template(self.html, { 'msg' : error_msg,
+                                                     'current_user' : user,
+                                                     'parent' : parent_entry })
 
-    def is_post_data_valid(self, parent_entry):
-        """Given data in the POST request, determine if it is valid.
-        Return a (is_valid : Boolean, error_message : String) tuple."""
-        raise Exception("Must be overridden by subclasses")
+        if not is_db_write_ok:
+            self.response.set_status(httplib.SERVICE_UNAVAILABLE)
+            return self.render_template(self.html, { 'msg' : error_msg,
+                                                     'current_user' : user,
+                                                     'parent' : parent_entry })
 
-    def handle_post(self, parent_entry):
-        """Given a parent in this feed, make the requested
-        changes in the datastore and return an appropriate HTTP response."""
-        raise Exception("Must be overridden in subclasses")
-
-    def handle_newly_created_entry(self, created_entry):
-        """Given a newly created entry, store it to the DB and
-        return appropriate HTTP headers."""
-        created_entry.put()
-        created_entry_location = self.baseurl() + \
-                                 created_entry.get_relative_url()
+        entry_url = "%s/%s" % (self.request.url, new_entry.key())
+        self.response.headers['Content-Location'] = entry_url
         self.response.set_status(httplib.CREATED)
-        self.set_header('Content-Location', created_entry_location)
-        self.render_entry_html(created_entry)
+        if content_type == "atom":
+            raise "Not implemented yet"
+        elif content_type == "json":
+            self.set_header('Content-Type',
+                            Constants.JSON_ENCODING)
+            return self.render_json_ok()
+        else:
+            return self.render_template(self.entry_html, { 'entry' : new_entry,
+                                                           'current_user' : user })
 
     def _handle_pagination(self, parent):
         """Use request info to determine which children to return"""
@@ -231,3 +237,9 @@ class FeedHandler(AbstractHandler):
     def write_message(self, msg):
         """Helper method for response writing"""
         self.response.out.write(msg)
+
+    def create_entry(self, content_type):
+        return self.get_svc().create_entry(self.request, content_type)
+
+    def get_svc(self):
+        raise "Must be implemented by subclasses"

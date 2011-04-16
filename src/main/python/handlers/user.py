@@ -1,4 +1,4 @@
-"""HAndles request for a user resource"""
+"""Handles request for a user resource"""
 import httplib
 
 from handlers.auth import UserAuthorizationHandler
@@ -10,22 +10,22 @@ class UserHandler(EntryHandler, UserAuthorizationHandler):
     UserAuthorizationHandler handles authorization logic"""
     def render_html(self, entry, msg=None):
         current_user = self.get_prdict_user()
-        self.render_template('user.html', { 'msg' : msg,
-                                            'current_user' : current_user,
-                                            'user' : entry })
+        self.render_template(self.get_html(entry),
+                             { 'msg' : msg,
+                               'current_user' : current_user,
+                               'user' : entry })
 
     def render_atom(self, entry):
         self.render_template('xml/user_atom.xml',
                              { 'user' : entry,
                                'base_url' : self.baseurl() } )
 
-    def render_json(self, entry):
-        self.render_template('json/user_json.json',
-                             { 'user' : entry })
-        
     def post(self, key):
         self.allow_overloaded_post_of_delete(key)
 
     #For now, can't update users - this will change
     def put(self, key):
         return self.response.set_status(httplib.METHOD_NOT_ALLOWED)
+
+    def get_html(self, entry):
+        return "user.html"

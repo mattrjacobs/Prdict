@@ -34,21 +34,17 @@ class UserSpecificFriendHandler(EntryHandler, FriendsAuthorizationHandler):
                              { 'user' : entry,
                                'base_url' : self.baseurl() } )
 
-    def render_json(self, entry):
-        self.render_template('json/user_json.xml',
-                             { 'user' : entry,
-                               'base_url' : self.baseurl() } )
-
     def get(self, user_key, friend_key):
         user = self.get_authorized_entry(user_key, "read")
+        content_type = self.get_read_content_type()
         if not user:
             return
         friend = self.get_entry(friend_key)
         if not friend:
-            self.set_404()
+            self.set_404(content_type)
             return
         if not friend.user in user.friends:
-            self.set_404()
+            self.set_404(content_type)
             return
         
         self.handle_http_caching_headers(user)
@@ -61,16 +57,17 @@ class UserSpecificFriendHandler(EntryHandler, FriendsAuthorizationHandler):
         return self.response.set_status(httplib.METHOD_NOT_ALLOWED)
 
     def delete(self, user_key, friend_key):
+        content_type = self.get_write_content_type()
         user_before_membership_delete = self.get_authorized_entry(user_key, "write")
         if not user_before_membership_delete:
             return
         friend = self.get_entry(friend_key)
         if not friend:
-            self.set_404()
+            self.set_404(content_type)
             return
         
         if not friend.user in user_before_membership_delete.friends:
-            self.set_404()
+            self.set_404(content_type)
             return
         try:
             entry, status, msg = \

@@ -1,4 +1,53 @@
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('.event_type').change( function() {
+      if ($('.event_type option:selected').text() == "SportsEvent") {
+        $('.event_form input:text').attr('disabled', 'disabled');
+        $('.event_form input:hidden').attr('disabled', 'disabled');
+        $('.sports_event_form input:text').removeAttr('disabled');
+        $('.sports_event_form input:hidden').removeAttr('disabled');
+        $('.sports_event_form').show();
+        $('.event_form').hide();
+      } else {
+        $('.sports_event_form input:text').attr('disabled', 'disabled');
+        $('.sports_event_form input:hidden').attr('disabled', 'disabled');
+        $('.event_form input:text').removeAttr('disabled');
+        $('.event_form input:hidden').removeAttr('disabled');
+        $('.sports_event_form').hide();
+        $('.event_form').show();
+      }
+    });
+
+    $('.league_dropdown').change( function() {
+      $.ajax({
+        url      : "/api/leagues/" + $(this).children("option:selected").attr("id") + "/teams" + "?alt=json",
+        type     : "GET",
+        dataType : "json",
+        error    : function() {
+           console.error("Encountered error making AJAX call to league resource!");
+        },
+        success  : function(json) {
+          $('.home_team_none').remove();
+          $('.away_team_none').remove();
+          for (var i in json.teams) {
+            var nameAndLoc = json.teams[i].location + " " + json.teams[i].title;
+            var nameAndLeague = escape($('.league_dropdown').attr("value") + ":" + json.teams[i].title);
+            $('.home_team').append('<option value=' + nameAndLeague + '>' + nameAndLoc + '</option>')
+            $('.away_team').append('<option value=' + nameAndLeague + '>' + nameAndLoc + '</option>')
+          }
+        }
+      });
+    });
+    $('.sports_event_form input:text').attr('disabled', 'disabled');
+    $('.sports_event_form input:hidden').attr('disabled', 'disabled');
+    $('.sports_event_form').hide();
+  });
+</script>
 <p>Create a new event:<br/>
+<select name="event_type" class="event_type">
+<option value="event">Event</option>
+<option value="sportsevent">SportsEvent</option>
+</select>
 <form method="POST" action="{{ self_link }}">
 <b>Event title:</b>
 <input type="text" name="title" maxlength="80"/><br/>
@@ -8,6 +57,42 @@
 <input type="text" name="start_date" value="{{ now }}"/><br/>
 <b>End date (Ex: 2010-01-01 01:00:00):</b>
 <input type="text" name="end_date" value="{{ now }}"/><br/>
+<span class="form_choice">
+<span class="event_form">
+<input type="hidden" name="type" value="event"/>
+</span>
+<span class="sports_event_form">
+<input type="hidden" name="type" value="sportsevent"/>
+<b>League</b>
+<select name="league" class="league_dropdown">
+<option selected value="Not selected">Not selected</option>
+{% for league in leagues %}
+<option value="{{league.title|escape}}" id="{{league.key}}">{{league.title|escape}}</option>
+{% endfor %}
+</select><br/>
+<b>Home team:</b>
+<select name="home_team" class="home_team">
+<option selected disabled="disabled" value="No league selected" class="home_team_none">No league selected</option>
+</select><br/>
+<b>Away team:</b>
+<select name="away_team" class="away_team">
+<option selected disabled="disabled" value="No league selected" class="away_team_none">No league selected</option>
+</select><br/>
+<b>Completed:</b>
+<input type="radio" name="completed" value="true" />True
+<input type="radio" checked name="completed" value="false" />False<br/>
+<b>Home team score:</b>
+<input type="text" name="home_team_score" maxlength="80"/><br/>
+<b>Away team score:</b>
+<input type="text" name="away_team_score" maxlength="80"/><br/>
+<b>Game kind:</b>
+<select name="game_kind">
+{% for kind in game_kinds %}
+<option value="{{ kind|escape }}">{{ kind|escape }}</option>
+{% endfor %}
+</select><br/>
+</span>
+</span>
 <input type="submit" name="submit" value="Create Event"/>
 </form>
 </p>

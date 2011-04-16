@@ -62,10 +62,11 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
 
     def handle_post(self, parent):
         """Respond to a POST that we know contains a valid message to add"""
+        content_type = self.get_write_content_type()
         try:
             message_to_add = self.create_chat(parent)
         except CapabilityDisabledError:
-            self.handle_transient_error()
+            self.handle_transient_error(content_type)
             return
         msg = "Added message"
         chat_location = self.baseurl() + parent.get_relative_url() + "/chat"

@@ -1,12 +1,14 @@
 """Handles a request for a user's friends resource"""
 import httplib
 import logging
+import simplejson as json
 
 from google.appengine.api import users
 
 from handlers.auth import UserAuthorizationHandler
 from handlers.feed import FeedHandler
 from models import prdict_user
+from utils.constants import Constants
 
 class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
     """Handles a request for a user's friends resource
@@ -41,14 +43,9 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
                                'prev_link' : self.xml_escape(prev_link),
                                'next_link' : self.xml_escape(next_link) })
 
-    def render_json(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
-        self.render_template('json/friends_json.json',
-                             { 'user' : parent,
-                               'friends' : entries })
     def is_post_data_valid(self, parent):
         """Checks if request parameters contain a valid user to add"""
-        email = self.request.get("email")
+        email = self.get_email_from_request()
         (is_valid, error_message) = prdict_user.PrdictUser.validate_email(email)
         if not is_valid:
             return (False, error_message)
@@ -61,7 +58,8 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
 
     def handle_post(self, parent):
         """Respond to a POST that we know contains a valid friend to add"""
-        user_to_insert = users.User(self.request.get("email"))
+        email = self.get_email_from_request()
+        user_to_insert = users.User(email)
         if user_to_insert not in parent.friends:
             self.add_to_friends(parent, user_to_insert)
             msg = "New friend added"
@@ -78,3 +76,13 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
         parent.put()
         self.response.set_status(httplib.CREATED)
 
+    def get_email_from_request(self):
+        email = None
+        content_type = self.get_header('Content-Type')
+        if content_type == Constants.FORM_ENCODING:
+            email = self.request.get("email")
+        elif content_type == Constants.JSON_ENCODING:
+            parsed_body = json.loads(self.request.body)
+            if 'email' in parsed_body:
+                email = parsed_body['email']
+        return email

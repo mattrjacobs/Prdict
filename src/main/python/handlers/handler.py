@@ -4,6 +4,7 @@ import dateutil
 import httplib
 import logging
 import os
+import simplejson as json
 import urlparse
 from xml.sax.saxutils import escape
 
@@ -28,6 +29,9 @@ class AbstractHandler(webapp.RequestHandler):
         """Given a single entry, render an HTML view. Optionally also add
         the given message into the view if specified."""
         raise Exception("Must be overridden by subclasses")
+
+    def render_string(self, s):
+        self.response.out.write(s)
     
     def render_template(self, tmplt, args=None):
         """Render a template to UI, and optionally pass it arguments"""
@@ -51,20 +55,52 @@ class AbstractHandler(webapp.RequestHandler):
     def get_release_number():
         return release_number.release_number
 
-    def set_403(self):
+    def set_400(self, template, content_type, message, params = {}):
+        """Returns a message explaining why entry add failed"""
+        self.response.set_status(httplib.BAD_REQUEST)
+        if content_type == "json":
+            return self.render_string(json.dumps(
+                {'status' : 'error',
+                 'message' : message }))
+        else:
+            params.update( { 'msg' : message,
+                             'current_user' : self.get_prdict_user()})
+            return self.render_template(template, params)
+
+    def set_403(self, content_type):
         """Handle a HTTP 403 - Forbidden"""
         self.response.set_status(httplib.FORBIDDEN)
-        self.render_template('403.html', {'current_user' : self.get_prdict_user()})
+        if content_type == "atom":
+            self.render_template('403.xml')
+        elif content_type == "json":
+            self.render_string(json.dumps({ "status" : "error",
+                                            "message" : "Forbidden" }))
+        else:
+            self.render_template("403.html", {'current_user' : self.get_prdict_user()})
 
-    def set_404(self):
+    def set_404(self, content_type):
         """Handle a HTTP 404 - Not Found"""
         self.response.set_status(httplib.NOT_FOUND)
-        self.render_template('404.html', {'current_user' : self.get_prdict_user()})
+        if content_type == "atom":
+            self.render_template("404.xml")
+        elif content_type == "json":
+            self.render_string(json.dumps({ "status" : "error",
+                                            "message" : "Not Found" }))
+        else:
+            self.render_template('404.html', {'current_user' : self.get_prdict_user()})
 
-    def handle_transient_error(self):
+    def handle_transient_error(self, content_type):
         """Handle a HTTP 503 - Service Unavailable"""
         self.response.set_status(httplib.SERVICE_UNAVAILABLE)
-        self.render_template('503.html', {'current_user' : self.get_prdict_user()})
+        if content_type == "atom":
+            self.render_template("503.xml")
+        elif content_type == "json":
+            self.render_string(
+                json.dumps({ 'status' : 'error',
+                             'message' : 'Service Unavailable' }))
+        else:
+            self.render_template('503.html',
+                                 {'current_user' : self.get_prdict_user()})
 
     def set_header(self, header_key, header_value):
         """helper method to set an HTTP header"""
@@ -148,7 +184,16 @@ class AbstractHandler(webapp.RequestHandler):
         #return (self._prefers_json_by_accept_header(hdr), True)
         return (False, False)
 
-    def get_request_type(self):
+    def is_form_request(self):
+        content_type = self.get_header('Content-Type')
+        logging.error("CONTENT TYPE : %s" % content_type)
+        if content_type:
+            content_types = map(lambda x: x.strip(), content_type.split(";"))
+            return Constants.FORM_ENCODING in content_types
+        else:
+            return False
+
+    def get_read_content_type(self):
         """Returns 'atom/json/html', depending on request made"""
         (is_atom, atom_vary) = self.is_atom_request()
         if is_atom:
@@ -158,6 +203,18 @@ class AbstractHandler(webapp.RequestHandler):
             return ("json", json_vary)
         else:
             return ("html", False)
+
+    def get_write_content_type(self):
+        """Returns 'atom/json/form', depending on request made"""
+        content_type = self.get_header("Content-Type")
+        #if is_atom:
+        #    return ("atom", atom_vary)
+        if content_type == Constants.JSON_ENCODING: 
+            return "json"
+        elif content_type == Constants.FORM_ENCODING:
+            return "form"
+        else:
+            return "unknown"
 
     def _etag_matches(self, etag):
         """Determines if given etag matches HTTP Request etag"""
@@ -172,13 +229,6 @@ class AbstractHandler(webapp.RequestHandler):
             return False
         req_lm = dateutil.parse_http_date(self.request.headers['If-Modified-Since'])
         return (req_lm >= dateutil.normalize(lm_date))
-
-    def has_valid_data_media_type(self):
-        """Determines if HTTP request has a content type that is
-        form encoded."""
-        content_type = self.get_header('Content-Type')
-        content_types = map(lambda x: x.strip(), content_type.split(";"))
-        return Constants.FORM_ENCODING in content_types
 
     def modified(self, etag, lm_date):
         """Return true if the data has been modified (based upon the etag
@@ -217,16 +267,21 @@ class AbstractHandler(webapp.RequestHandler):
         Otherwise, return the entry in question."""
         user = self.get_prdict_user()
         entry = self.get_entry(key)
-        if not entry:
-            self.set_404()
-            return
         if access_mode == "read":
+            content_type = self.get_read_content_type()
+            if not entry:
+                self.set_404(content_type)
+                return
             if not self.is_user_authorized_to_read(user, entry):
-                self.set_403()
+                self.set_403(content_type)
                 return None
         if access_mode == "write":
+            content_type = self.get_write_content_type()
+            if not entry:
+                self.set_404(content_type)
+                return
             if not self.is_user_authorized_to_write(user, entry):
-                self.set_403()
+                self.set_403(content_type)
                 return None
         return entry
 
@@ -256,6 +311,17 @@ class AbstractHandler(webapp.RequestHandler):
             entry = None
         self.render_html(entry, msg)
 
+    def allow_overloaded_post_of_child_delete(self, parent_key, child_key):
+        if self.request.get('_method') == "DELETE":
+            return self.delete(parent_key, child_key)
+        self.response.set_status(httplib.BAD_REQUEST)
+        msg = "POST requires '_method=DELETE'"
+        try:
+            entry = db.get(db.Key(encoded = child_key))
+        except db.BadKeyError:
+            entry = None
+        self.render_html(entry, msg)
+
     def in_dev_mode(self):
         """Return true iff the webapp user has a cookie set that enables
         dev-mode.  This cookie is named 'env', and the dev-mode value is
@@ -265,6 +331,17 @@ class AbstractHandler(webapp.RequestHandler):
             return self.request.cookies['env'] == "dev"
         return False
 
+    #delete this once all in svc layer
+    def get_json_str(self, field_name):
+        parsed_json = json.loads(self.request.body)
+        if field_name in parsed_json:
+            return parsed_json[field_name]
+        else:
+            return ""
+
+    def render_json_ok(self):
+        self.render_string(json.dumps({ 'status' : 'ok' }))
+        
     def get_all_sports(self):
         query = db.GqlQuery("SELECT * FROM Sport ORDER BY title ASC")
         return query.fetch(100)
@@ -278,8 +355,15 @@ class AbstractHandler(webapp.RequestHandler):
         return query.fetch(1000)
 
     def get_all_events(self):
-        query = db.GqlQuery("SELECT * FROM Event ORDER BY title ASC")
-        return query.fetch(10000)
+        event_query = db.GqlQuery("SELECT * FROM Event ORDER BY start_date ASC")
+        return event_query.fetch(10000)
+
+    def get_all_sportsevents(self):
+        sportsevent_query = db.GqlQuery("SELECT * FROM SportsEvent ORDER BY start_date ASC")
+        return sportsevent_query.fetch(10000)
+
+    def get_all_game_kinds(self):
+        return ["Regular Season", "Preseason", "Postseason"]
 
     @staticmethod
     def xml_escape(s):

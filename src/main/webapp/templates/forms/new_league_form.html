@@ -4,12 +4,14 @@
 <input type="text" name="title" maxlength="80"/><br/>
 <b>League description:</b>
 <input type="textarea" name="description" maxlength="500"/><br/>
+{% if sports %}
 <b>Sport:</b>
 <select name="sport">
 {% for sport in sports %}
 <option value="{{sport.title}}">{{sport.title|escape}}</option>
 {% endfor %}
 </select>
+{% endif %}
 <input type="submit" name="submit" value="Create League"/>
 </form>
 </p>

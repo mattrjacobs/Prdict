@@ -1,22 +1,22 @@
 {% extends "fragments/base_fragment.html" %}
 
 {% block links %}
-<dt><a href="/events/{{ item.key }}/chat">chat about {{ item.title|escape }}</a></dt>
+<dt><a href="/events/{{ entry.key }}/chat">chat about {{ entry.title|escape }}</a></dt>
 {% endblock %}
 
 {% block extra_form %}
-<dt>Start date: <input type="text" name="start_date" value="{{ item.start_date_str|escape }}"/></dt>
-<dt>End date: <input type="text" name="end_date" value="{{ item.end_date_str|escape }}"/></dt>
-<dt>
+<dt>Start date: <input type="text" name="start_date" value="{{ entry.start_date_str|escape }}"/></dt>
+<dt>End date: <input type="text" name="end_date" value="{{ entry.end_date_str|escape }}"/></dt>
+<input type="hidden" name="type" value="event"/>
 {% endblock %}
 
 {% block other_write_data %}
-<dt>Start Date: {{item.start_date|escape }}</dt>
-<dt>End Date: {{item.end_date|escape }}</dt>
+<dt>Start Date: {{entry.start_date|escape }}</dt>
+<dt>End Date: {{entry.end_date|escape }}</dt>
 {% endblock %}
 
 {% block other_data %}
 <p class="hidden">
-<span class="event_title">{{ item.title|escape }}</span>
+<span class="event_title">{{ entry.title|escape }}</span>
 </p>
 {% endblock %}

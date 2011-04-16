@@ -2,6 +2,7 @@
 
 import logging
 import mox
+import simplejson as json
 import unittest
 import urllib
 
@@ -60,31 +61,96 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.assertTrue(self.user.key() in key_map)
         self.assertTrue(self.friend_user.key() in key_map)
 
-    def testIsPostDataValidFalse(self):
+    def testJson(self):
+        readJson = json.loads(self.impl.to_json(self.user_2,
+                                                self.impl.get_entries(self.user_2)))
+        user = readJson['user']
+        self.assertEquals(user['username'], self.user_2.username)
+        self.assertEquals(user['link'], "/api/users/%s" % self.user_2.key())
+        self.assertEquals(user['friends'],
+                          "/api/users/%s/friends" % self.user_2.key())
+        self.assertEquals(user['email'], self.user_2.email)
+        self.assertTrue(len(user['updated']) > 0)
+        self.assertTrue(len(user['created']) > 0)
+        json_friend_1 = readJson['friends'][0]
+        json_friend_2 = readJson['friends'][1]        
+        if json_friend_1['username'] == self.user.username and \
+               json_friend_2['username'] == self.friend_user.username:
+            friend_1 = json_friend_1
+            friend_2 = json_friend_2
+        elif json_friend_1['username'] == self.friend_user.username and \
+               json_friend_2['username'] == self.user.username:
+            friend_1 = json_friend_2
+            friend_2 = json_friend_1
+        else:
+            self.fail()
+
+        self.assertEquals(friend_1['username'], self.user.username)
+        self.assertEquals(friend_1['link'], "/api/users/%s" % self.user.key())
+        self.assertEquals(friend_1['friends'],
+                          "/api/users/%s/friends" % self.user.key())
+        self.assertEquals(friend_1['email'], self.user.email)
+        self.assertTrue(len(friend_1['updated']) > 0)
+        self.assertTrue(len(friend_1['created']) > 0)
+
+        self.assertEquals(friend_2['username'], self.friend_user.username)
+        self.assertEquals(friend_2['link'], "/api/users/%s" % self.friend_user.key())
+        self.assertEquals(friend_2['friends'],
+                          "/api/users/%s/friends" % self.friend_user.key())
+        self.assertEquals(friend_2['email'], self.friend_user.email)
+        self.assertTrue(len(friend_2['updated']) > 0)
+        self.assertTrue(len(friend_2['created']) > 0)
+            
+
+    def testIsFormPostDataValidFalse(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : ''}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertFalse(is_valid)
 
-    def testIsPostDataValidUnregistered(self):
+    def testIsFormPostDataValidFalse(self):
+        self.impl.request = self.req(json.dumps({ 'email' : ''}), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
+        self.assertFalse(is_valid)
+
+    def testIsFormPostDataValidUnregistered(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : 'unregistered_user@random.com'}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertFalse(is_valid)
 
-    def testIsPostDataValidMyself(self):
-        self.impl.request = self.req(urllib.urlencode({ 'email' : self.email}), "POST")
+    def testIsJsonPostDataValidUnregistered(self):
+        self.impl.request = self.req(json.dumps({ 'email' : 'unregistered_user@random.com'}), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
+        self.assertFalse(is_valid)
+
+    def testIsFormPostDataValidMyself(self):
+        self.impl.request = self.req(urllib.urlencode({'email' : self.email }), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertFalse(is_valid)
 
-    def testIsPostDataValidRegistered(self):
+    def testIsJsonPostDataValidMyself(self):
+        self.impl.request = self.req(json.dumps({'email' : self.email }), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
+        self.assertFalse(is_valid)
+
+    def testIsFormPostDataValidRegistered(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         (is_valid, _) = self.impl.is_post_data_valid(self.user)
         self.assertTrue(is_valid)
 
-    def testHandlePostUserNotAFriendYet(self):
+    def testIsJsonPostDataValidRegistered(self):
+        self.impl.request = self.req(json.dumps({ 'email' : self.friend_email}), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
+        (is_valid, _) = self.impl.is_post_data_valid(self.user)
+        self.assertTrue(is_valid)
+
+    def testHandleFormPostUserNotAFriendYet(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.non_friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(201)
@@ -96,7 +162,19 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.assertTrue(self.non_friend_user.user in map(lambda user: user, self.user.friends))
         self.mox.VerifyAll()
 
-    def testHandlePostGAEReadOnlyErrorPropagatesUp(self):
+    def testHandleJsonPostUserNotAFriendYet(self):
+        self.impl.request = self.req(json.dumps({ 'email' : self.non_friend_email}), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
+        self.impl.response.set_status(201)
+        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithNewMember), mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.handle_post(self.user)
+        self.assertEquals(len(self.user.friends), 2)
+        self.assertTrue(self.non_friend_user.user in map(lambda user: user, self.user.friends))
+        self.mox.VerifyAll()
+
+    def testHandleFormPostGAEReadOnlyErrorPropagatesUp(self):
         self.mox.StubOutWithMock(self.impl, "add_to_friends")
         
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.non_friend_email}), "POST")
@@ -112,9 +190,36 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.assertTrue(exceptionRaised)
         self.mox.VerifyAll()
 
-    def testHandlePostUserAlreadyFriend(self):
+    def testHandleJsonPostGAEReadOnlyErrorPropagatesUp(self):
+        self.mox.StubOutWithMock(self.impl, "add_to_friends")
+        
+        self.impl.request = self.req(json.dumps({ 'email' : self.non_friend_email}), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
+        self.impl.add_to_friends(self.user, mox.IsA(User)).AndRaise(CapabilityDisabledError)
+        self.mox.ReplayAll()
+
+        exceptionRaised = False
+        try:
+            self.impl.handle_post(self.user)
+        except CapabilityDisabledError:
+            exceptionRaised = True
+        self.assertTrue(exceptionRaised)
+        self.mox.VerifyAll()
+
+    def testHandleFormPostUserAlreadyFriend(self):
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
+        self.impl.response.set_status(302)
+        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithOldMembersOnly), mox.IgnoreArg())
+        self.mox.ReplayAll()
+
+        self.impl.handle_post(self.user)
+        self.assertEquals(len(self.user.friends), 1)
+        self.mox.VerifyAll()
+
+    def testHandleJsonPostUserAlreadyFriend(self):
+        self.impl.request = self.req(json.dumps({ 'email' : self.friend_email}), "POST")
+        self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
         self.impl.response.set_status(302)
         self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithOldMembersOnly), mox.IgnoreArg())
         self.mox.ReplayAll()

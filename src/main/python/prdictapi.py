@@ -8,10 +8,14 @@ from handlers.events import EventsHandler
 from handlers.home import HomeHandler
 from handlers.league import LeagueHandler
 from handlers.leagues import LeaguesHandler
+from handlers.league_member import LeagueMemberHandler
+from handlers.league_teams import LeagueTeamsHandler
 from handlers.sport import SportHandler
 from handlers.sports import SportsHandler
+from handlers.sport_leagues import SportLeaguesHandler
 from handlers.team import TeamHandler
-from handlers.teams import TeamsHandler 
+from handlers.teams import TeamsHandler
+from handlers.team_member import TeamMemberHandler
 from handlers.ui.eventchat import EventChatUiHandler
 from handlers.user import UserHandler
 from handlers.userfriend import UserSpecificFriendHandler
@@ -20,10 +24,7 @@ from handlers.users import UsersHandler
 from handlers.version import VersionHandler
 
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-
 from google.appengine.dist import use_library
-use_library('django', '0.96')
 
 urlmap = [('/', HomeHandler),
           ('/api/events', EventsHandler),
@@ -31,8 +32,12 @@ urlmap = [('/', HomeHandler),
           (r'/api/events/([^/]+)/chat', EventChatHandler),
           ('/api/leagues', LeaguesHandler),
           (r'/api/leagues/([^/]+)', LeagueHandler),
+          (r'/api/leagues/([^/]+)/teams', LeagueTeamsHandler),
+          (r'/api/leagues/([^/]+)/teams/([^/]+)', TeamMemberHandler),
           ('/api/sports', SportsHandler),
           (r'/api/sports/([^/]+)', SportHandler),
+          (r'/api/sports/([^/]+)/leagues', SportLeaguesHandler),
+          (r'/api/sports/([^/]+)/leagues/([^/]+)', LeagueMemberHandler),
           ('/api/teams', TeamsHandler),
           (r'/api/teams/([^/]+)', TeamHandler),
           ('/api/users', UsersHandler),
@@ -45,6 +50,8 @@ urlmap = [('/', HomeHandler),
 application = webapp.WSGIApplication(urlmap, debug=True)
 
 def main():
+    use_library('django', '1.2')
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
     run_wsgi_app(application)
         
 if __name__ == "__main__":

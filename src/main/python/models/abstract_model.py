@@ -13,9 +13,16 @@ class AbstractModel(db.Model):
     updated = db.DateTimeProperty(auto_now=True)
 
     @staticmethod
-    def validate_params(title, description):
+    def validate_orig_params(params):
         """Return a (is_valid, error_message) tuple"""
         messages = []
+
+        title = None
+        description = None
+        if "title" in params:
+            title = params["title"]
+        if "description" in params:
+            description = params["description"]
 
         (title_valid, msg) = AbstractModel.validate_title(title)
         if not title_valid:
@@ -63,3 +70,18 @@ class AbstractModel(db.Model):
 
     def get_item_name(self):
         raise Exception("Must be overridden by subclasses")
+
+    @staticmethod
+    def validate_param(validation_result, error_msgs):
+        (param_valid, param_error_result) = validation_result
+        if not param_valid:
+            error_msgs.append(param_error_result)
+        return param_valid
+
+    @staticmethod
+    def parse_int(s):
+        try:
+            num = int(s)
+            return True
+        except ValueError:
+            return False

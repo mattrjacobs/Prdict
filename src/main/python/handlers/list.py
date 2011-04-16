@@ -2,6 +2,7 @@
 from datetime import datetime
 import httplib
 import logging
+import simplejson as json
 
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
@@ -17,68 +18,73 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
 
     def __init__(self):
         self.html = "list.html"
-        self.item_html = "item.html"
+        self.entry_html = "entry.html"
 
     def get(self):
-        """Renders a list, and a template for dding a new member, if the
+        """Renders a list.
+        If HTML, also renders a template for adding a new member, if the
         requesting user is an admin"""
-        user = self.get_prdict_user()
-        can_write = self.is_user_authorized_to_write(user, None)
-        all_items = self.get_all_items()
-        now = datetime.now().strftime(ListHandler.DATE_FORMAT)
-        param_map = self.create_param_map(user, all_items, can_write, now)
-        self.render_template(self.html, param_map)
+        (content_type, vary) = self.get_read_content_type()
+        if vary:
+            self.set_header("Vary", "Accept")
+        if content_type == "atom":
+            self.set_header("Content-Type", Constants.XML_ENCODING)
+            self.render_atom()
+        elif content_type == "json":
+            self.set_header("Content-Type", Constants.JSON_ENCODING)
+            self.render_json()
+        else:
+            user = self.get_prdict_user()
+            can_write = self.is_user_authorized_to_write(user, None)
+            all_entries = self.get_all_entries()
+            now = datetime.now().strftime(ListHandler.DATE_FORMAT)
+            param_map = self.create_param_map(user, all_entries, can_write, now)
+            self.render_template(self.html, param_map)
 
     def post(self):
-        """Attempts to respond to a POST by adding a new item"""
+        """Attempts to respond to a POST by adding a new entry"""
+        content_type = self.get_write_content_type()
         user = self.get_prdict_user()
         if not self.is_user_authorized_to_write(user, None):
-            self.set_403()
+            self.set_403(content_type)
             return None
-        if self.get_header('Content-Type') != Constants.FORM_ENCODING:
-            msg = "Must POST in %s format." % Constants.FORM_ENCODING
+        (is_content_type_ok, are_params_valid, is_db_write_ok,
+         error_msg, new_entry) = self.create_entry(content_type)
+
+        if not is_content_type_ok:
             self.response.set_status(httplib.UNSUPPORTED_MEDIA_TYPE)
-            return self.render_template(self.html, { 'msg': msg,
+            return self.render_template(self.html, { 'msg' : error_msg,
                                                      'current_user' : user})
-        title = self.request.get("title")
-        description = self.request.get("description")
-        (is_valid, error_message) = AbstractModel.validate_params(title, description)
-        (are_others_valid, other_error_msg) = self.validate_other_params()
-        if not is_valid or not are_others_valid:
-            return self.__bad_request_template("%s, %s" % (error_message, other_error_msg))
 
-        try:
-            params = self.create_params(title, description)
-            new_item = self.create_item(params)
-        except CapabilityDisabledError:
-            self.handle_transient_error()
+        if not are_params_valid:
+            return self.set_400(self.html, content_type, error_msg)
+
+        if not is_db_write_ok:
+            self.handle_transient_error(content_type)
             return
-        item_url = "%s/%s" % (self.request.url, new_item.key())
-        self.response.headers['Content-Location'] = item_url
-        self.render_template(self.item_html, { 'item' : new_item,
-                                               'current_user' : user})
 
-    def create_item(self, params):
-        new_item = self.instantiate_new_item(params)
-        new_item.put()
+        entry_url = "%s/%s" % (self.request.url, new_entry.key())
+        self.response.headers['Content-Location'] = entry_url
         self.response.set_status(httplib.CREATED)
-        return new_item
+        if content_type == "atom":
+            raise "Not implemented yet"
+        elif content_type == "json":
+            self.set_header('Content-Type', Constants.JSON_ENCODING)
+            return self.render_json_ok()
+        else:
+            return self.render_template(self.entry_html, { 'entry' : new_entry,
+                                                          'current_user' : user})
 
-    def create_params(self, title, description):
-        raise Exception("Must be implementd by subclass")
+    def render_json(self):
+        json_list = [json.loads(entry.to_json()) for entry in \
+                     self.get_all_entries()]
+        self.render_string(json.dumps(json_list))
 
-    def validate_other_params(self):
-        return (True, None)
+    def render_atom(self):
+        raise "Not implemented yet"
 
-    def instantiate_new_item(self, params):
-        raise Exception("Must be implemented by subclass")
+    def create_entry(self, content_type):
+        return self.get_svc().create_entry(self.request, content_type)
 
-    def create_param_map(self, user, all_items, can_write, now):
-        return { 'current_user' : user, 'items' : all_items,
-                 'can_write' : can_write, 'now' : now }
-
-    def __bad_request_template(self, message):
-        """Returns an HTML template explaining why item add failed"""
-        self.response.set_status(httplib.BAD_REQUEST)
-        return self.render_template(self.html, { 'msg' : message,
-                                                 'current_user' : self.get_prdict_user()})
+    def get_svc(self):
+        raise "Must be implmented by subclasses"

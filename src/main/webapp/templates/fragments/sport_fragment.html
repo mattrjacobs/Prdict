@@ -1,8 +1,5 @@
 {% extends "fragments/base_fragment.html" %}
 
-{% block other_data %}
-<h4>Leagues</h4>
-{% for league in item.leagues %}
-  <a href="/api/leagues/{{ league.key }}">{{ league.title|escape }}</a><br/>
-{% endfor %}
+{% block links %}
+<dt><a href="{{ entry.relative_url }}/leagues">leagues</a></dt>
 {% endblock %}

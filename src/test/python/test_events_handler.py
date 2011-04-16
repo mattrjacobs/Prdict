@@ -67,7 +67,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.post()
@@ -245,7 +245,7 @@ class TestEventsHandler(BaseMockHandlerTest):
                                datetime.strptime(self.start_date, ListHandler.DATE_FORMAT),
                                datetime.strptime(self.end_date, ListHandler.DATE_FORMAT))).AndRaise(CapabilityDisabledError)
         self.impl.response.set_status(503)
-        self.mock_handler.render_template("503.html", mox.IgnoreArg())
+        self.mock_handler.render_template("errors/503.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.post()
@@ -258,7 +258,7 @@ class TestEventsHandler(BaseMockHandlerTest):
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.post()

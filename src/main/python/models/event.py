@@ -1,8 +1,23 @@
-from google.appengine.ext import db
+from abstract_model import AbstractModel
 
 from datetime import datetime
+import logging
+import simplejson as json
 
-from abstract_model import AbstractModel
+from google.appengine.ext import db
+
+class EventEncoder(json.JSONEncoder):
+    def default(self, event):
+        if not isinstance(event, Event):
+            return
+
+        return { 'title' : event.title,
+                 'description' : event.description,
+                 'link' : event.relative_url,
+                 'start_date' : event.start_date_str,
+                 'end_date' : event.end_date_str,
+                 'created' : event.isoformat_created,
+                 'updated' : event.isoformat_updated }
 
 class Event(AbstractModel):
     start_date = db.DateTimeProperty(required=True)
@@ -11,13 +26,17 @@ class Event(AbstractModel):
     @staticmethod
     def validate_dates(start_date, end_date):
         messages = []
-        (start_date_valid, msg) = Event.validate_date(start_date, "start_date")
-        if not start_date_valid:
-            messages.append(msg)
-        (end_date_valid, msg) = Event.validate_date(end_date, "end_date")
-        if not end_date_valid:
-            messages.append(msg)
-        if start_date_valid and end_date_valid:
+        dates_ok = True
+        if not start_date:
+            dates_ok = False
+            messages.append("Start date was null or badly formatted")
+        if not end_date:
+            dates_ok = False
+            messages.append("End date was null or badly formatted")
+        if start_date and end_date and (end_date < start_date):
+            dates_ok = False
+            messages.append("End date cannot be before start date")
+        if dates_ok:
             return (True, None)
         else:
             return (False, ','.join(messages))
@@ -25,26 +44,92 @@ class Event(AbstractModel):
     @staticmethod
     def validate_date(this_date, field_name):
         if not this_date or not this_date.strip():
-            return (False, "Must contain a non-empty '%s' parameter" % field_name)
-        if not Event.is_date_format_valid(this_date):
-            return (False, "'%s' is not formatted correctly - use ISO-8601" % field_name)
-        return (True, None)
+            return (None, "Must contain a non-empty '%s' parameter" % field_name)
+        try:
+            date = datetime.strptime(this_date, "%Y-%m-%d %H:%M:%S")
+            return (date, None)
+        except ValueError:
+            return (None, "'%s' is not formatted correctly - use ISO-8601" % field_name)
 
     @staticmethod
-    def is_date_format_valid(date_as_str):
-        try:
-            date = datetime.strptime(date_as_str, "%Y-%m-%d %H:%M:%S")
-            return True
-        except ValueError:
-            return False
+    def validate_params(params):
+        error_msgs = []
+        (are_orig_valid, orig_error_msg) = \
+                         AbstractModel.validate_orig_params(params)
+        start_date_str = end_date_str = None
+        start_date = end_date = None
 
-    @staticmethod
-    def convert_date_format(date_as_str):
-        try:
-            date = datetime.strptime(date_as_str, "%Y-%m-%d %H:%M:%S")
-            return date
-        except ValueError:
-            return None
+        if "start_date_str" in params:
+            start_date_str = params["start_date_str"]
+            (start_date, start_date_error_msg) = \
+                         Event.validate_date(start_date_str, "start_date")
+            if not start_date:
+                error_msgs.append(start_date_error_msg)
+            else:
+                params["start_date"] = start_date
+        if "end_date_str" in params:
+            end_date_str = params["end_date_str"]
+            (end_date, end_date_error_msg) = \
+                       Event.validate_date(end_date_str, "end_date")
+            if not end_date:
+                error_msgs.append(end_date_error_msg)
+            else:
+                params["end_date"] = end_date
+
+        (are_dates_valid, date_error_msg) = \
+                          Event.validate_dates(start_date, end_date)
+        if are_orig_valid and are_dates_valid:
+            return (True, None)
+        else:
+            if orig_error_msg:
+                error_msgs.append(orig_error_msg)
+            if date_error_msg:
+                error_msgs.append(date_error_msg)
+            return (False, ",".join(error_msgs))
+
+    def validate_subset_params(self, params):
+        error_msgs = []
+        dates_ok = True
+        (are_orig_valid, orig_error_msg) = \
+                         AbstractModel.validate_orig_params(params)
+        start_date_str = end_date_str = None
+        start_date = end_date = None
+
+        if "start_date_str" in params:
+            start_date_str = params["start_date_str"]
+            (start_date, start_date_error_msg) = \
+                         Event.validate_date(start_date_str, "start_date")
+            if not start_date:
+                error_msgs.append(start_date_error_msg)
+                dates_ok = False
+            else:
+                params["start_date"] = start_date
+        if "end_date_str" in params:
+            end_date_str = params["end_date_str"]
+            (end_date, error_msg) = \
+                       Event.validate_date(end_date_str, "end_date")
+            if not end_date:
+                error_msgs.append(end_date_error_msg)
+                dates_ok = False
+            else:
+                params["end_date"] = end_date
+
+        if not start_date:
+            start_date = self.start_date
+        if not end_date:
+            end_date = self.end_date
+
+        (are_both_dates_valid, date_combo_error_msg) = \
+                               Event.validate_dates(start_date, end_date)
+        
+        if are_orig_valid and dates_ok and are_both_dates_valid:
+            return (True, None)
+        else:
+            if orig_error_msg:
+                error_msgs.append(orig_error_msg)
+            if date_combo_error_msg:
+                error_msgs.append(date_combo_error_msg)
+            return (False, ",".join(error_msgs))
 
     def get_start_date_str(self):
         return self.start_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -57,3 +142,6 @@ class Event(AbstractModel):
     def get_item_name(self):
         return "event"
     item_name = property(get_item_name)
+
+    def to_json(self):
+        return EventEncoder(sort_keys=True).encode(self)

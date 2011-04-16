@@ -1,10 +1,15 @@
 {% extends "fragments/base_fragment.html" %}
 
+{% block links %}
+<dt><a href="{{ entry.relative_url }}/teams">teams</a></dt>
+{% endblock %}
+
 {% block extra_form %}
+<a href="{{entry.sport.relative_url}}">{{ entry.sport.title|escape }}</a>
 <dt>Sport: </dt>
 <select name="sport">
 {% for sport in sports %}
-{% ifequal sport.title item.sport.title %}
+{% ifequal sport.title entry.sport.title %}
 <option selected value="{{sport.title|escape}}">{{sport.title|escape}}</option>
 {% else %}
 <option value="{{sport.title|escape}}">{{sport.title|escape}}</option>
@@ -14,13 +19,5 @@
 {% endblock %}
 
 {% block other_write_data %}
-<dt>Sport: <a href="/api/sports/{{item.sport.key}}">{{item.sport.title}}</a></dt>
+<dt>Sport: <a href="/api/sports/{{entry.sport.key}}">{{entry.sport.title}}</a></dt>
 {% endblock %}
-
-{% block other_data %}
-<h4>Teams</h4>
-{% for team in item.teams %}
-  <a href="/api/teams/{{ team.key }}">{{ team.location|escape }} {{ team.title|escape }}</a><br/>
-{% endfor %}
-{% endblock %}
-

@@ -1,9 +1,22 @@
 import dateutil
 import logging
 import re
+import simplejson as json
 
 from google.appengine.api import users
 from google.appengine.ext import db
+
+class PrdictUserEncoder(json.JSONEncoder):
+    def default(self, user):
+        if not isinstance(user, PrdictUser):
+            return
+
+        return { 'email' : user.email,
+                 'username' : user.username,
+                 'link' : user.relative_url,
+                 'friends' : "%s/friends" % user.relative_url,
+                 'created' : user.isoformat_created,
+                 'updated' : user.isoformat_updated }
 
 class PrdictUser(db.Model):
 
@@ -78,6 +91,9 @@ class PrdictUser(db.Model):
     def get_relative_url(self):
         return "/api/users/%s" % (self.key(),)
     relative_url = property(get_relative_url)
+
+    def to_json(self):
+        return PrdictUserEncoder(sort_keys=True).encode(self)
 
 def lookup_user(cookie_user):
     """Given a user instantiated from a cookie, determine if that user is

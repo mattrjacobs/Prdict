@@ -4,6 +4,7 @@ from datetime import datetime
 import logging
 import mox
 import os
+import simplejson as json
 import unittest
 import wsgiref
 
@@ -19,6 +20,7 @@ from models.event import Event
 from models.league import League
 from models.message import Message
 from models.sport import Sport
+from models.sports_event import SportsEvent
 from models.team import Team
 from models.prdict_user import PrdictUser
 
@@ -71,6 +73,7 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.non_friend_user = self._create_user(self.non_friend_username, self.non_friend_email)
         self.admin_user = self._create_user(self.admin_username, self.admin_email) 
         self.user = self._create_user(self.username, self.email, [users.User(self.friend_email)])
+        self.user_key = str(self.user.key())
 
         self.sport = self._create_sport("Sport 1", "")
         self.sport_key = str(self.sport.key())
@@ -78,12 +81,22 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.league = self._create_league("League 1", "League 1 Desc", self.sport)
         self.league_key = str(self.league.key())
 
-        self.team = self._create_team("Team 1", "Team 1 Desc",
-                                      self.league, "Team 1 Loc")
-        self.team_key = str(self.team.key())
+        self.team_1 = self._create_team("Team 1", "Team 1 Desc",
+                                        self.league, "Team 1 Loc")
+        self.team_1_key = str(self.team_1.key())
+
+        self.team_2 = self._create_team("Team 2", "Team 2 Desc",
+                                        self.league, "Team 2 Loc")
+        self.team_2_key = str(self.team_2.key())
 
         self.event = self._create_event("Event 1", "Event 1 Desc", "2012-1-1 08:00:00", "2012-1-1 11:00:00")
         self.event_key = str(self.event.key())
+
+        self.sports_event = self._create_sports_event(
+            "Sports Event 1", "Sports Event Desc 1", "2012-1-1 09:00:00",
+            "2012-1-1 12:00:00", self.team_1, self.team_2, True, 80, 67,
+            "Regular Season", self.league)
+        self.sports_event_key = str(self.sports_event.key())
 
         self.message_1 = self._create_message("This is a message posted by user", self.user, self.event)
         self.message_1_key = str(self.message_1.key())
@@ -112,6 +125,16 @@ class BaseMockHandlerTest(unittest.TestCase):
                        'wsgi.input' : StringIO(body),
                        'SERVER_NAME' : SERVER_NAME,
                        'SERVER_PORT' : SERVER_PORT})
+        req.body = body
+        req.method = method
+        return req
+
+    def reqWithQuery(self, body, method, query_params):
+        req = Request({'wsgi.url_scheme' : URL_SCHEME,
+                       'wsgi.input' : StringIO(body),
+                       'SERVER_NAME' : SERVER_NAME,
+                       'SERVER_PORT' : SERVER_PORT,
+                       'QUERY_STRING' : query_params })
         req.body = body
         req.method = method
         return req
@@ -156,6 +179,21 @@ class BaseMockHandlerTest(unittest.TestCase):
         event_key = str(event.put())
         return event
 
+    def _create_sports_event(self, title, description, start_date_str,
+                             end_date_str, home_team, away_team, completed,
+                             home_team_score, away_team_score, game_kind,
+                             league):
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")
+        end_date = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S")
+        event = SportsEvent(title = title, description = description,
+                            home_team = home_team, away_team = away_team,
+                            completed = completed, home_team_score = \
+                            home_team_score, away_team_score = away_team_score,
+                            game_kind = game_kind, start_date = start_date,
+                            end_date = end_date, league = league)
+        event_key = str(event.put())
+        return event
+
     def _create_message(self, content, author, event):
         message = Message(content = content, author = author, event = event)
         message_key = str(message.put())
@@ -170,3 +208,12 @@ class BaseMockHandlerTest(unittest.TestCase):
         
     def SameUserKey(self, user):
         return user.key() == self.user.key()
+
+    def JsonPostResponseOk(self, responseJson):
+        readJson = json.loads(responseJson)
+        return readJson['status'] == 'ok'
+    
+    def JsonPostResponseError(self, responseJson):
+        readJson = json.loads(responseJson)
+        return readJson['status'] == 'error' and \
+               len(readJson['message']) > 0

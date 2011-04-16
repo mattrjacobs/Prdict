@@ -2,6 +2,7 @@
 
 import logging
 import mox
+import simplejson as json
 import unittest
 import urllib
 
@@ -27,6 +28,19 @@ class TestSportHandler(BaseMockHandlerTest):
     def define_impl(self):
         self.mock_handler = self.mox.CreateMock(SportHandler)
         self.impl = MockSportHandler(self.mock_handler)
+
+    def JsonFromSport(self, sportJson):
+        readJson = json.loads(sportJson)
+        title_ok = self.sport.title == readJson['title']
+        desc_ok = self.sport.description == readJson['description']
+        link_ok = "/api/sports/%s" % self.sport.key() == readJson['link']
+        leagues_ok = "/api/sports/%s/leagues" % self.sport.key() == \
+                     readJson['leagues']
+        created_ok = len(readJson['created']) > 0
+        updated_ok = len(readJson['updated']) > 0
+
+        return title_ok and desc_ok and link_ok and leagues_ok and \
+               created_ok and updated_ok 
 
     def testGetNoUser(self):
         self.remove_user()
@@ -54,6 +68,16 @@ class TestSportHandler(BaseMockHandlerTest):
         self.impl.get(self.sport_key)
         self.mox.VerifyAll()        
 
+    def testGetJsonWithAdminUser(self):
+        self.set_user(self.username, True)
+        self.impl.request = self.reqWithQuery("", "GET", "alt=json")
+        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.mock_handler.render_string(mox.Func(self.JsonFromSport))
+        self.mox.ReplayAll()
+
+        self.impl.get(self.sport_key)
+        self.mox.VerifyAll()
+
 class MockSportHandler(SportHandler):
     def __init__(self, handler):
         self.handler = handler
@@ -64,5 +88,8 @@ class MockSportHandler(SportHandler):
     def render_template(self, template, params = None):
         self.handler.render_template(template, params)
 
+    def render_string(self, s):
+        self.handler.render_string(s)
+        
 if __name__ == '__main__':
     unittest.main()

@@ -1,7 +1,0 @@
-{
- "email" : "{{ user.email|escape }}",
- "username" : "{{ user.username|escape }}",
- "key" : "{{ user.key }}",
- "created" : "{{ user.created }}",
- "updated" : "{{ user.updated }}"
-}
