@@ -11,9 +11,11 @@
 {% endifequal %}
 {% endfor %}
 </select>
+<dt>Location: <input type="text" name="location" value="{{ item.location|escape }}"/></dt>
 {% endblock %}
 
 {% block other_write_data %}
 <dt>League: <a href="/api/leagues/{{item.league.key}}">{{item.league.title}}</a></dt>
+<dt>Location: {{item.location|escape}}</dt>
 {% endblock %}
 

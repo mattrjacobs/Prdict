@@ -4,7 +4,7 @@
 <dt><a href="/events/{{ item.key }}/chat">chat about {{ item.title|escape }}</a></dt>
 {% endblock %}
 
-{% block form %}
+{% block extra_form %}
 <dt>Start date: <input type="text" name="start_date" value="{{ item.start_date_str|escape }}"/></dt>
 <dt>End date: <input type="text" name="end_date" value="{{ item.end_date_str|escape }}"/></dt>
 <dt>

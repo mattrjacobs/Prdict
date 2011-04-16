@@ -14,6 +14,12 @@ class Sport(AbstractModel):
             return sport[0]
         else:
             return None
+
+    def get_leagues(self):
+        query = db.GqlQuery("SELECT * FROM League WHERE sport = :1",
+                            self)
+        return query.fetch(100)
+    leagues = property(get_leagues)
         
     def get_item_name(self):
         return "sport"

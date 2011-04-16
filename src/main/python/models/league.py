@@ -15,8 +15,15 @@ class League(AbstractModel):
         else:
             return None
 
-    sport = db.ReferenceProperty(required=True,reference_class=Sport)
+    def get_teams(self):
+        query = db.GqlQuery("SELECT * FROM Team WHERE league = :1",
+                            self)
+        return query.fetch(100)
+    teams = property(get_teams)
 
     def get_item_name(self):
         return "league"
     item_name = property(get_item_name)
+
+    sport = db.ReferenceProperty(required=True,reference_class=Sport)
+

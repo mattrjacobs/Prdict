@@ -17,3 +17,10 @@
 <dt>Sport: <a href="/api/sports/{{item.sport.key}}">{{item.sport.title}}</a></dt>
 {% endblock %}
 
+{% block other_data %}
+<h4>Teams</h4>
+{% for team in item.teams %}
+  <a href="/api/teams/{{ team.key }}">{{ team.location|escape }} {{ team.title|escape }}</a><br/>
+{% endfor %}
+{% endblock %}
+
