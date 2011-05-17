@@ -1,0 +1,1 @@
+curl -G http://ffapi.fanfeedr.com/basic/api/leagues/f65226d8-fbf7-5033-a7a0-50de55b57968/teams?api_key=hqxv2tyfmmhu68zfn9nfsfsv > nba_teams.json
