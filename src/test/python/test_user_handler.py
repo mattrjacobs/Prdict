@@ -46,7 +46,7 @@ class TestUserHandler(BaseMockHandlerTest):
         self.remove_user()
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.user_key)

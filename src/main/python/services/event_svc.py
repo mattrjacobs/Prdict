@@ -20,46 +20,57 @@ class EventService(BaseService):
         end_date_str = self.get_json_str(parsed_body, "end_date")
         type = self.get_json_str(parsed_body, "type")
 
-        if type.lower() == "sportsevent":
-            home_team_str = self.get_json_str(parsed_body, "home_team")
-            away_team_str = self.get_json_str(parsed_body, "away_team")
-            league = self.get_league_from_request(
-                request, self.get_json_str(parsed_body, "league"))
-            completed = self.get_json_str(parsed_body, "completed")
-            home_team_score = self.get_json_str("home_team_score")
-            away_team_score = self.get_json_str("away_team_score")
-            game_kind = self.get_json_str("game_kind")
-            return self.__create_sports_event_param_map(
-                "sportsevent", title, description, start_date_str, end_date_str,
-                home_team_str, away_team_str, league, completed, home_team_score,
-                away_team_score, game_kind)
+        if type:
+            if type.lower() == "sportsevent":
+                home_team_str = self.get_json_str(parsed_body, "home_team")
+                away_team_str = self.get_json_str(parsed_body, "away_team")
+                league = self.get_league_from_request(
+                    request, self.get_json_str(parsed_body, "league"))
+                completed = self.get_json_str(parsed_body, "completed")
+                home_team_score = self.get_json_str(parsed_body, "home_team_score")
+                away_team_score = self.get_json_str(parsed_body, "away_team_score")
+                game_kind = self.get_json_str(parsed_body, "game_kind")
+                return self.__create_sports_event_param_map(
+                    "sportsevent", title, description, start_date_str, end_date_str,
+                    home_team_str, away_team_str, league, completed, home_team_score,
+                    away_team_score, game_kind)
+            elif type.lower() == "event":
+                return self.__create_event_param_map(
+                    "event", title, description, start_date_str, end_date_str)
+            else:
+                return {}
+            
         else:
-            return self.__create_event_param_map(
-                "event", title, description, start_date_str, end_date_str)
+            return {}
 
     def get_form_params(self, request):
-        title = request.get("title")
-        description = request.get("description")
-        start_date_str = request.get("start_date")
-        end_date_str = request.get("end_date")
-        type = request.get("type")
+        title = self.get_form_str(request, "title")
+        description = self.get_form_str(request, "description")
+        start_date_str = self.get_form_str(request, "start_date")
+        end_date_str = self.get_form_str(request, "end_date")
+        type = self.get_form_str(request, "type")
 
-        if type.lower() == "sportsevent":
-            home_team_str = request.get("home_team")
-            away_team_str = request.get("away_team")
-            league = self.get_league_from_request(request, request.get("league"))
-            completed = request.get("completed")
-            home_team_score = request.get("home_team_score")
-            away_team_score = request.get("away_team_score")
-            game_kind = request.get("game_kind")
-            return self.__create_sports_event_param_map(
-                "sportsevent", title, description, start_date_str, end_date_str,
-                home_team_str, away_team_str, league, completed, home_team_score,
-                away_team_score, game_kind)
+        if type:
+            if type.lower() == "sportsevent":
+                home_team_str = self.get_form_str(request, "home_team")
+                away_team_str = self.get_form_str(request, "away_team")
+                league = self.get_league_from_request(request, self.get_form_str(request, "league"))
+                completed = self.get_form_str(request, "completed")
+                home_team_score = self.get_form_str(request, "home_team_score")
+                away_team_score = self.get_form_str(request, "away_team_score")
+                game_kind = self.get_form_str(request, "game_kind")
+                return self.__create_sports_event_param_map(
+                    "sportsevent", title, description, start_date_str, end_date_str,
+                    home_team_str, away_team_str, league, completed, home_team_score,
+                    away_team_score, game_kind)
+            elif type.lower() == "event":
+                return self.__create_event_param_map(
+                    "event", title, description, start_date_str, end_date_str)
+            else:
+                return {}
         else:
-            return self.__create_event_param_map(
-                "event", title, description, start_date_str, end_date_str)
-
+            return {}
+            
     def __create_event_param_map(self, type, title, description,
                                  start_date_str, end_date_str):
         params = { }
@@ -90,11 +101,11 @@ class EventService(BaseService):
         if league is not None:
             params["league"] = league
         if completed is not None:
-            params["completed"] = completed
+            params["completed_str"] = completed
         if home_team_score is not None:
-            params["home_team_score"] = home_team_score
+            params["home_team_score_str"] = home_team_score
         if away_team_score is not None:
-            params["away_team_score"] = away_team_score
+            params["away_team_score_str"] = away_team_score
         if game_kind is not None:
             params["game_kind"] = game_kind
 

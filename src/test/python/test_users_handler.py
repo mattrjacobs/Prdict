@@ -55,7 +55,7 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.remove_user()
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get()
@@ -65,7 +65,7 @@ class TestUsersHandler(BaseMockHandlerTest):
     def testGetWithNonAdminUser(self):
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get()
@@ -89,7 +89,7 @@ class TestUsersHandler(BaseMockHandlerTest):
               'username' : 'new_user'}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.post()
@@ -445,7 +445,7 @@ class TestUsersHandler(BaseMockHandlerTest):
         
         self.impl.create_user("new_user", mox.IsA(User)).AndRaise(CapabilityDisabledError)
         self.impl.response.set_status(503)
-        self.mock_handler.render_template("errors/503.html", mox.IgnoreArg())
+        self.mock_handler.render_template("503.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.post()
@@ -479,7 +479,7 @@ class TestUsersHandler(BaseMockHandlerTest):
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.post()

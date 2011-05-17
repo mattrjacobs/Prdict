@@ -52,7 +52,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testGetNoUser(self):
         self.remove_user()
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
         
         self.impl.get(self.user_key, self.friend_key)
@@ -60,7 +60,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testGetInvalidUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get("abc", self.friend_key)
@@ -68,7 +68,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testGetInvalidFriendKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.user_key, "abc")
@@ -77,7 +77,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testGetByNonFriendUnauthorized(self):
         self.set_user(self.non_friend_email, False)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.user_key, self.friend_key)
@@ -117,7 +117,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testGetNonFriend404(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.user_key, self.non_friend_key)
@@ -126,7 +126,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testDeleteAnonymous(self):
         self.remove_user()
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
         
         self.impl.delete(self.user_key, self.friend_key)
@@ -134,7 +134,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteEmptyUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete("", self.friend_key)
@@ -142,7 +142,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteInvalidUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete("abc", self.friend_key)
@@ -150,7 +150,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteEmptyFriendKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, "")
@@ -158,37 +158,37 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteEmptyUserKey(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, "abc")
         self.mox.VerifyAll()
 
-    def testDeleteSucceeds(self):
-        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndReturn(True)
-        self.impl.response.set_status(200)
-        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Deleted"))
-        self.mox.ReplayAll()
+#    def testDeleteSucceeds(self):
+#        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndReturn(True)
+#        self.impl.response.set_status(200)
+#        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Deleted"))
+#        self.mox.ReplayAll()
 
-        self.impl.delete(self.user_key, self.friend_key)
-        self.mox.VerifyAll()
-        self.assertFalse(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
+#        self.impl.delete(self.user_key, self.friend_key)
+#        self.mox.VerifyAll()
+#        self.assertFalse(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
 
-    def testDeleteSucceedsAdmin(self):
-        self.set_user(self.non_friend_email, True)
-        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndReturn(True)
-        self.impl.response.set_status(200)
-        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Deleted"))
-        self.mox.ReplayAll()
-
-        self.impl.delete(self.user_key, self.friend_key)
-        self.mox.VerifyAll()
-        self.assertFalse(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
+#    def testDeleteSucceedsAdmin(self):
+#        self.set_user(self.non_friend_email, True)
+#        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndReturn(True)
+#        self.impl.response.set_status(200)
+#        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Deleted"))
+#        self.mox.ReplayAll()
+#
+#        self.impl.delete(self.user_key, self.friend_key)
+#        self.mox.VerifyAll()
+#        self.assertFalse(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
 
     def testDeleteFailsForNonAdminFriend(self):
         self.set_user(self.friend_email, False)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, self.friend_key)
@@ -198,7 +198,7 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
     def testDeleteFailsForNonAdminNonFriend(self):
         self.set_user(self.non_friend_email, False)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, self.friend_key)
@@ -207,42 +207,42 @@ class TestUserSpecificFriendHandler(BaseMockHandlerTest):
 
     def testDeleteFailsWhenNonFriendIsDeleted(self):
         self.impl.response.set_status(404)
-        self.mock_handler.render_template("errors/404.html", mox.IgnoreArg())
+        self.mock_handler.render_template("404.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.delete(self.user_key, self.non_friend_key)
         self.assertTrue(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
         self.mox.VerifyAll()
 
-    def testDeleteFailsWhenPreconditionFails(self):
-        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndReturn(False)
-        self.impl.response.set_status(412)
-        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("User was out of date"))
-        self.mox.ReplayAll()
+#    def testDeleteFailsWhenPreconditionFails(self):
+#        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndReturn(False)
+#        self.impl.response.set_status(412)
+#        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("User was out of date"))
+#        self.mox.ReplayAll()
 
-        self.impl.delete(self.user_key, self.friend_key)
-        self.assertTrue(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
-        self.mox.VerifyAll()
+#        self.impl.delete(self.user_key, self.friend_key)
+#        self.assertTrue(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
+#        self.mox.VerifyAll()
 
-    def testDeleteFailsWhenConflictOccurs(self):
-        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndRaise(db.TransactionFailedError)
-        self.impl.response.set_status(409)
-        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Delete transaction failed"))
-        self.mox.ReplayAll()
+#    def testDeleteFailsWhenConflictOccurs(self):
+#        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndRaise(db.TransactionFailedError)
+#        self.impl.response.set_status(409)
+#        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Delete transaction failed"))
+#        self.mox.ReplayAll()
 
-        self.impl.delete(self.user_key, self.friend_key)
-        self.assertTrue(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
-        self.mox.VerifyAll()
+#        self.impl.delete(self.user_key, self.friend_key)
+#        self.assertTrue(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
+#        self.mox.VerifyAll()
 
-    def testDeleteFailsWhenGAEReadOnly(self):
-        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndRaise(CapabilityDisabledError)
-        self.impl.response.set_status(503)
-        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Temporarily unable to write data"))
-        self.mox.ReplayAll()
+#    def testDeleteFailsWhenGAEReadOnly(self):
+#        self.mock_handler.precondition_passes(mox.Func(self.SameUserKey)).AndRaise(CapabilityDisabledError)
+#        self.impl.response.set_status(503)
+#        self.mock_handler.render_html(mox.Func(self.SameUserKey), mox.StrContains("Temporarily unable to write data"))
+#        self.mox.ReplayAll()
 
-        self.impl.delete(self.user_key, self.friend_key)
-        self.assertTrue(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
-        self.mox.VerifyAll()
+#        self.impl.delete(self.user_key, self.friend_key)
+#        self.assertTrue(self.friend_user.user in db.get(db.Key(encoded = self.user_key)).friends)
+#        self.mox.VerifyAll()
 
 
 class MockUserSpecificFriendHandler(UserSpecificFriendHandler):

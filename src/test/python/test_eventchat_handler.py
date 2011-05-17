@@ -52,7 +52,7 @@ class TestEventChatHandler(BaseMockHandlerTest):
         self.remove_user()
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.response.set_status(403)
-        self.mock_handler.render_template("errors/403.html", mox.IgnoreArg())
+        self.mock_handler.render_template("403.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.event_key)
@@ -117,7 +117,7 @@ class TestEventChatHandler(BaseMockHandlerTest):
         self.impl.create_chat(self.event).AndRaise(CapabilityDisabledError)
         self.impl.response.set_status(503)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
-        self.mock_handler.render_template("errors/503.html", mox.IgnoreArg())
+        self.mock_handler.render_template("503.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.handle_post(self.event)

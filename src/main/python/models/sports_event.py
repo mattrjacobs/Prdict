@@ -68,12 +68,12 @@ class SportsEvent(Event):
             home_team_str = params["home_team_str"]
         if "away_team_str" in params:
             away_team_str = params["away_team_str"]
-        if "completed" in params:
-            completed = params["completed"]
-        if "home_team_score" in params:
-            home_team_score = params["home_team_score"]
-        if "away_team_score" in params:
-            away_team_score = params["away_team_score"]
+        if "completed_str" in params:
+            completed = params["completed_str"]
+        if "home_team_score_str" in params:
+            home_team_score = params["home_team_score_str"]
+        if "away_team_score_str" in params:
+            away_team_score = params["away_team_score_str"]
         if "game_kind" in params:
             game_kind = params["game_kind"]
 

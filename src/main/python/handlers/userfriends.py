@@ -22,6 +22,12 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
         else:
             return []
 
+    def get_parent_name(self):
+        return "user"
+
+    def get_entries_name(self):
+        return "friends"
+
     def render_html(self, parent, entries, prev_link=None, next_link=None,
                     msg = None):
         self.render_template('friends.html',
