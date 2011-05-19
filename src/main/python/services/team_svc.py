@@ -17,18 +17,22 @@ class TeamService(BaseService):
         description = self.get_json_str(parsed_body, "description")
         location = self.get_json_str(parsed_body, "location")
         league = self.get_league_from_request(request, self.get_json_str(parsed_body,  "league"))
+        ref_id = self.get_json_str(parsed_body, "ref_id")
 
-        return self.__create_param_map(title, description, location, league)
+        return self.__create_param_map(title, description, location,
+                                       league, ref_id)
 
     def get_form_params(self, request):
         title = self.get_form_str(request, "title")
         description = self.get_form_str(request, "description")
         location = self.get_form_str(request, "location")
         league = self.get_league_from_request(request, request.get("league"))
+        ref_id = self.get_form_str(request, "ref_id")
 
-        return self.__create_param_map(title, description, location, league)
+        return self.__create_param_map(title, description, location,
+                                       league, ref_id)
 
-    def __create_param_map(self, title, description, location, league):
+    def __create_param_map(self, title, description, location, league, ref_id):
         params = { }
         if title is not None:
             params["title"] = title
@@ -38,6 +42,10 @@ class TeamService(BaseService):
             params["location"] = location
         if league is not None:
             params["league"] = league
+        if ref_id is not None:
+            params["ref_id"] = ref_id
+        else:
+            params["ref_id"] = ""
 
         return params
 
@@ -51,7 +59,9 @@ class TeamService(BaseService):
         new_team = Team(title = params["title"],
                         description = params["description"],
                         location = params["location"],
-                        league = params["league"])
+                        league = params["league"],
+                        ref_id = params["ref_id"])
+
         new_team.put()
         return new_team
 
@@ -64,6 +74,8 @@ class TeamService(BaseService):
             team.location = params["location"]
         if "league" in params:
             team.league = params["league"]
+        if "ref_id" in params:
+            team.ref_id = params["ref_id"]
         return team
 
     def delete_entry_from_parent_in_txn(self, league, team):

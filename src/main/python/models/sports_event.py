@@ -29,6 +29,7 @@ class SportsEventEncoder(json.JSONEncoder):
                  'home_team_score' : event.home_team_score,
                  'away_team_score' : event.away_team_score,
                  'game_kind' : event.game_kind,
+                 'ref_id' : event.ref_id,
                  'link' : event.relative_url,
                  'start_date' : event.start_date_str,
                  'end_date' : event.end_date_str,
@@ -46,6 +47,7 @@ class SportsEvent(Event):
     completed = db.BooleanProperty(required=True, default=False)
     home_team_score = db.IntegerProperty(required=False)
     away_team_score = db.IntegerProperty(required=False)
+    ref_id = db.StringProperty(required=False)
     game_kind = db.CategoryProperty(required=True,
                                     default="Regular Season",
                                     choices=("Regular Season",
@@ -59,7 +61,7 @@ class SportsEvent(Event):
 
         error_msgs = []
         league = home_team_str = away_team_str = completed = home_team_score = \
-                 away_team_score = game_kind = None
+                 away_team_score = ref_id = game_kind = None
         sports_event_ok = True
 
         if "league" in params:
@@ -74,6 +76,8 @@ class SportsEvent(Event):
             home_team_score = params["home_team_score_str"]
         if "away_team_score_str" in params:
             away_team_score = params["away_team_score_str"]
+        if "ref_id" in params:
+            ref_id = params["ref_id"]
         if "game_kind" in params:
             game_kind = params["game_kind"]
 
@@ -167,6 +171,8 @@ class SportsEvent(Event):
             home_team_score = params["home_team_score"]
         if "away_team_score" in params:
             away_team_score = params["away_team_score"]
+        if "ref_id" in params:
+            ref_id = params["ref_id"]
         if "game_kind" in params:
             game_kind = params["game_kind"]
 

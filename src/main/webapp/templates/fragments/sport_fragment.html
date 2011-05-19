@@ -3,3 +3,11 @@
 {% block links %}
 <dt><a href="{{ entry.relative_url }}/leagues">leagues</a></dt>
 {% endblock %}
+
+{% block extra_form %}
+<dt>Ref ID: <input type="text" name="ref_id" value="{{ entry.ref_id|escape }}" maxlength="80"></input></dt>
+{% endblock %}
+
+{% block other_write_data %}
+<dt>Ref ID: {{ entry.ref_id|escape }}</dt>
+{% endblock %}

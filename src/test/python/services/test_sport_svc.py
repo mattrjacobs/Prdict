@@ -13,35 +13,22 @@ class TestSportService(BaseServiceTest):
         BaseServiceTest.setUp(self)
         self.title = "New Sport"
         self.desc = "New Sport Description"
+        self.ref_id = "ref_id"
         self.impl = SportService()
 
     def tearDown(self):
         BaseServiceTest.tearDown(self)
 
-    def testPostEmptyJson(self):
-        req = self.req("", "POST")
-        params = self.impl.get_json_params(req)
-
-        self.assertEquals(len(params), 0)
-
-    def testPostEmptyForm(self):
-        req = self.req("", "POST")
-        params = self.impl.get_form_params(req)
-
-        self.assertEquals(len(params), 0)
-
     def testPostJsonMissingTitle(self):
         req = self.req(json.dumps({ "description" : self.desc }), "POST")
         params = self.impl.get_json_params(req)
 
-        self.assertEquals(len(params), 1)
         self.assertEquals(params["description"], self.desc)
 
     def testPostFormMissingTitle(self):
         req = self.req(urllib.urlencode({ "description" : self.desc }), "POST")
         params = self.impl.get_form_params(req)
 
-        self.assertEquals(len(params), 1)
         self.assertEquals(params["description"], self.desc)
 
     def testPostJsonEmptyTitle(self):
@@ -49,7 +36,6 @@ class TestSportService(BaseServiceTest):
                                     "description" : self.desc }), "POST")
         params = self.impl.get_json_params(req)
 
-        self.assertEquals(len(params), 2)
         self.assertEquals(params["title"], "")
         self.assertEquals(params["description"], self.desc)
 
@@ -58,7 +44,6 @@ class TestSportService(BaseServiceTest):
                                           "description" : self.desc }), "POST")
         params = self.impl.get_form_params(req)
 
-        self.assertEquals(len(params), 2)
         self.assertEquals(params["title"], "")
         self.assertEquals(params["description"], self.desc)
          
@@ -66,14 +51,12 @@ class TestSportService(BaseServiceTest):
         req = self.req(json.dumps({ "title": self.title }), "POST")
         params = self.impl.get_json_params(req)
 
-        self.assertEquals(len(params), 1)
         self.assertEquals(params["title"], self.title)
 
     def testPostFormMissingDesc(self):
         req = self.req(urllib.urlencode({ "title": self.title }), "POST")
         params = self.impl.get_form_params(req)
 
-        self.assertEquals(len(params), 1)
         self.assertEquals(params["title"], self.title)
         
     def testPostJsonEmptyDesc(self):
@@ -81,7 +64,6 @@ class TestSportService(BaseServiceTest):
                                     "description" : "" }), "POST")
         params = self.impl.get_json_params(req)
 
-        self.assertEquals(len(params), 2)
         self.assertEquals(params["title"], self.title)
         self.assertEquals(params["description"], '')
 
@@ -90,27 +72,30 @@ class TestSportService(BaseServiceTest):
                                           "description" : "" }), "POST")
         params = self.impl.get_form_params(req)
 
-        self.assertEquals(len(params), 2)
         self.assertEquals(params["title"], self.title)
         self.assertEquals(params["description"], '')
         
     def testPostFormValid(self):
         req = self.req(urllib.urlencode({ "title": self.title,
-                                          "description" : self.desc }),"POST")
+                                          "description" : self.desc,
+                                          "ref_id" : self.ref_id }),"POST")
         params = self.impl.get_form_params(req)
 
-        self.assertEquals(len(params), 2)
+        self.assertEquals(len(params), 3)
         self.assertEquals(params["title"], self.title)
         self.assertEquals(params["description"], self.desc)
+        self.assertEquals(params["ref_id"], self.ref_id)
         
     def testPostJsonValid(self):
         req = self.req(json.dumps({ "title": self.title,
-                                    "description" : self.desc }), "POST")
+                                    "description" : self.desc,
+                                    "ref_id" : self.ref_id }), "POST")
         params = self.impl.get_json_params(req)
 
-        self.assertEquals(len(params), 2)
+        self.assertEquals(len(params), 3)
         self.assertEquals(params["title"], self.title)
         self.assertEquals(params["description"], self.desc)
+        self.assertEquals(params["ref_id"], self.ref_id)
 
 if __name__ == '__main__':
     unittest.main()

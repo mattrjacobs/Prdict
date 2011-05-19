@@ -16,17 +16,19 @@ class LeagueService(BaseService):
         title = self.get_json_str(parsed_body, "title")
         description = self.get_json_str(parsed_body, "description")
         sport = self.get_sport_from_request(request, self.get_json_str(parsed_body,  "sport"))
+        ref_id = self.get_json_str(parsed_body, "ref_id")
 
-        return self.__create_param_map(title, description, sport)
+        return self.__create_param_map(title, description, sport, ref_id)
 
     def get_form_params(self, request):
         title = self.get_form_str(request, "title")
         description = self.get_form_str(request, "description")
         sport = self.get_sport_from_request(request, request.get("sport"))
 
-        return self.__create_param_map(title, description, sport)
+        ref_id = self.get_form_str(request, "ref_id")
+        return self.__create_param_map(title, description, sport, ref_id)
 
-    def __create_param_map(self, title, description, sport):
+    def __create_param_map(self, title, description, sport, ref_id):
         params = { }
         if title is not None:
             params["title"] = title
@@ -34,6 +36,10 @@ class LeagueService(BaseService):
             params["description"] = description
         if sport is not None:
             params["sport"] = sport
+        if ref_id is not None:
+            params["ref_id"] = ref_id
+        else:
+            params["ref_id"] = ""
 
         return params
 
@@ -46,7 +52,8 @@ class LeagueService(BaseService):
     def create_entry_from_params(self, params):
         new_league = League(title = params["title"],
                             description = params["description"],
-                            sport = params["sport"])
+                            sport = params["sport"],
+                            ref_id = params["ref_id"])
         new_league.put()
         return new_league
 
@@ -57,6 +64,8 @@ class LeagueService(BaseService):
             league.description = params["description"]
         if "sport" in params:
             league.sport = params["sport"]
+        if "ref_id" in params:
+            league.ref_id = params["ref_id"]
         return league
 
     def delete_entry_from_parent_in_txn(self, sport, league):

@@ -16,6 +16,7 @@ class TeamEncoder(json.JSONEncoder):
         return { 'title' : team.title,
                  'description' : team.description,
                  'location' : team.location,
+                 'ref_id' : team.ref_id,
                  'link' : team.relative_url,
                  'league' : team.league.relative_url,
                  'created' : team.isoformat_created,
@@ -24,6 +25,7 @@ class TeamEncoder(json.JSONEncoder):
 class Team(AbstractModel):
     league = db.ReferenceProperty(required=True,reference_class=League)
     location = db.StringProperty(required=True,multiline=False)
+    ref_id = db.StringProperty(required=False)
 
     #Pass in a URL-encoded string.
     # If no ':', then just the name i.e. Colts

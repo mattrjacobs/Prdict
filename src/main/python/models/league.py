@@ -17,6 +17,7 @@ class LeagueEncoder(json.JSONEncoder):
                  'link' : league.relative_url,
                  'teams' : "%s/teams" % league.relative_url,
                  'sport' : league.sport.relative_url,
+                 'ref_id' : league.ref_id,
                  'created' : league.isoformat_created,
                  'updated' : league.isoformat_updated}
 
@@ -88,7 +89,8 @@ class League(AbstractModel):
     item_name = property(get_item_name)
 
     sport = db.ReferenceProperty(required=True, reference_class=Sport)
-
+    ref_id = db.StringProperty(required=False)
+    
     def to_json(self):
         return LeagueEncoder(sort_keys=True).encode(self)
 

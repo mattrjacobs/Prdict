@@ -13,6 +13,7 @@
 <dt>Completed: <input type="text" name="completed" value="{{ entry.completed }}" /></dt>
 <dt>Home team score: <input type="text" name="home_team_score" value="{{ entry.home_team_score }}" /></dt>
 <dt>Away team score: <input type="text" name="away_team_score" value="{{ entry.away_team_score }}" /></dt>
+<dt>Ref ID : <input type="text" name="ref_id" value="{{ entry.ref_id }}" /></dt>
 <dt>Game kind: <input type="text" name="game_kind" value="{{ entry.game_kind }}"/></dt>
 <input type="hidden" name="type" value="sportsevent"/>
 {% endblock %}
@@ -26,6 +27,7 @@
 <dt>Completed: {{ entry.completed }}</dt>
 <dt>Home team score: {{ entry.home_team_score }}</dt>
 <dt>Away team score: {{ entry.away_team_score }}</dt>
+<dt>Ref ID: {entry.ref_id }}</dt>
 <dt>Game kind: {{ entry.game_kind }}</dt>
 {% endblock %}
 

@@ -13,10 +13,12 @@
 {% endfor %}
 </select>
 <dt>Location: <input type="text" name="location" value="{{ entry.location|escape }}"/></dt>
+<dt>Ref ID: <input type="text" name="ref_id" value="{{ entry.ref_id|escape }}" maxlength="80"></input></dt>
 {% endblock %}
 
 {% block other_write_data %}
-<dt>League: <a href="/api/leagues/{{entry.league.key}}">{{entry.league.title}}</a></dt>
-<dt>Location: {{entry.location|escape}}</dt>
+<dt>League: <a href="/api/leagues/{{ entry.league.key }}">{{ entry.league.title }}</a></dt>
+<dt>Location: {{ entry.location|escape }}</dt>
+<dt>Ref ID: {{ entry.ref_id|escape }}</dt>
 {% endblock %}
 

@@ -12,6 +12,7 @@ class SportEncoder(json.JSONEncoder):
 
         return { 'title' : sport.title,
                  'description' : sport.description,
+                 'ref_id' : sport.ref_id,
                  'link' : sport.relative_url,
                  'leagues' : "%s/leagues" % sport.relative_url,
                  'created' : sport.isoformat_created,
@@ -44,11 +45,12 @@ class Sport(AbstractModel):
             valid = valid and AbstractModel.validate_param(
                 AbstractModel.validate_description(params["description"]),
                 error_msgs)
-
         if valid:
             return (True, None)
         else:
             return (False, ",".join(error_msgs))
+
+    ref_id = db.StringProperty(required=False)
 
     def get_leagues(self):
         query = db.GqlQuery("SELECT * FROM League WHERE sport = :1 AND ANCESTOR IS :1",

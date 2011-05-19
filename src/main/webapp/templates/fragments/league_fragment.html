@@ -6,6 +6,7 @@
 
 {% block extra_form %}
 <a href="{{entry.sport.relative_url}}">{{ entry.sport.title|escape }}</a>
+<dt>Ref ID: <input type="text" name="ref_id" value="{{ entry.ref_id|escape }}" maxlength="80"></input></dt>
 <dt>Sport: </dt>
 <select name="sport">
 {% for sport in sports %}
@@ -20,4 +21,5 @@
 
 {% block other_write_data %}
 <dt>Sport: <a href="/api/sports/{{entry.sport.key}}">{{entry.sport.title}}</a></dt>
+<dt>Ref ID: {{ entry.ref_id|escape }}</dt>
 {% endblock %}
