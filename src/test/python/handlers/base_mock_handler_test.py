@@ -203,8 +203,8 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.mock_auth_handler.is_user_authorized_for_entry(mox.Func(self.SameUserKey),
                                                             mox.Func(self.SameEntryKey)).AndReturn(value)
 
-    def SameEntryKey(self, entry):
-        return entry.key() == self.entry.key()
+    def SameSportKey(self, sport):
+        return sport.key() == self.sport.key()
         
     def SameUserKey(self, user):
         return user.key() == self.user.key()

@@ -10,24 +10,28 @@ from google.appengine.ext import db
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
 from base_mock_handler_test import BaseMockHandlerTest
-from handlers.sport import SportHandler 
-from models.sport import Sport
+from handlers.auth import BaseAuthorizationHandler
+from handlers.entry import EntryHandler 
+from models.abstract_model import AbstractModel
+from services.base_svc import BaseService
 from utils.constants import Constants
 
-class TestSportHandler(BaseMockHandlerTest):
+class TestEntryHandler(BaseMockHandlerTest):
     def setUp(self):
         BaseMockHandlerTest.setUp(self)
 
         self.set_user(self.username, False)
-        self.valid_params = { 'title' : 'New Sport',
-                              'description' : 'New Sport Description'}
+        self.valid_params = { 'title' : 'New Entry',
+                              'description' : 'New Entry Description',
+                              'ref_id' : 'ref_id' }
 
     def tearDown(self):
         BaseMockHandlerTest.tearDown(self)
 
     def define_impl(self):
-        self.mock_handler = self.mox.CreateMock(SportHandler)
-        self.impl = MockSportHandler(self.mock_handler)
+        self.mock_handler = self.mox.CreateMock(EntryHandler)
+        self.mock_svc = self.mox.CreateMock(BaseService)
+        self.impl = MockEntryHandler(self.mock_handler, self.mock_svc)
 
     def JsonFromSport(self, sportJson):
         readJson = json.loads(sportJson)
@@ -45,7 +49,7 @@ class TestSportHandler(BaseMockHandlerTest):
     def testGetNoUser(self):
         self.remove_user()
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
-        self.mock_handler.render_template("sport.html", mox.IgnoreArg())
+        self.mock_handler.render_html(mox.Func(self.SameSportKey), mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.sport_key)
@@ -53,7 +57,7 @@ class TestSportHandler(BaseMockHandlerTest):
 
     def testGetWithNonAdminUser(self):
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
-        self.mock_handler.render_template("sport.html", mox.IgnoreArg())
+        self.mock_handler.render_html(mox.Func(self.SameSportKey), mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.sport_key)
@@ -62,7 +66,7 @@ class TestSportHandler(BaseMockHandlerTest):
     def testGetWithAdminUser(self):
         self.set_user(self.username, True)
         self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
-        self.mock_handler.render_template("sport.html", mox.IgnoreArg())
+        self.mock_handler.render_html(mox.Func(self.SameSportKey), mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.sport_key)
@@ -78,18 +82,26 @@ class TestSportHandler(BaseMockHandlerTest):
         self.impl.get(self.sport_key)
         self.mox.VerifyAll()
 
-class MockSportHandler(SportHandler):
-    def __init__(self, handler):
+class MockEntryHandler(EntryHandler, BaseAuthorizationHandler):
+    def __init__(self, handler, svc):
+        EntryHandler.__init__(self)
         self.handler = handler
+        self.svc = svc
         
     def get_prdict_user(self):
         return self.handler.get_prdict_user()
+
+    def render_html(self, entry, msg = None):
+        self.handler.render_html(entry, msg)
 
     def render_template(self, template, params = None):
         self.handler.render_template(template, params)
 
     def render_string(self, s):
         self.handler.render_string(s)
+
+    def get_svc(self):
+        return self.svc
         
 if __name__ == '__main__':
     unittest.main()

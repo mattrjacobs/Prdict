@@ -26,7 +26,6 @@ class TestListHandler(BaseMockHandlerTest):
                               'league' : self.league.title}
 
         self.team_3 = self._create_team("Team 3", "", self.league, "Team 3 Loc")
-#        self.mock_svc = MockService()
 
     def tearDown(self):
         BaseMockHandlerTest.tearDown(self)
