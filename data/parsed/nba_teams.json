@@ -1,0 +1,130 @@
+[
+    {
+        "id": "ca374490-c714-5859-89b4-5f3d396ffa91",
+        "name": "Atlanta Hawks"
+    },
+    {
+        "id": "a68c7d98-4b49-5cbb-bc89-99a7403578f5",
+        "name": "Boston Celtics"
+    },
+    {
+        "id": "8a69a9a2-ece8-5c26-a951-f5af53cb88d1",
+        "name": "Charlotte Bobcats"
+    },
+    {
+        "id": "b7dcc24d-a0b8-55aa-8447-3cb57505f820",
+        "name": "Chicago Bulls"
+    },
+    {
+        "id": "9d5c1b4e-4bbb-5fe8-a239-d1cc81f1a312",
+        "name": "Cleveland Cavaliers"
+    },
+    {
+        "id": "608158c1-b6d9-51d2-aaab-9dac038ad6ff",
+        "name": "Dallas Mavericks"
+    },
+    {
+        "id": "92419983-0e3b-595e-a911-1628c1d516dc",
+        "name": "Denver Nuggets"
+    },
+    {
+        "id": "8ec255af-68bc-5f7f-8a2a-68eba995d490",
+        "name": "Detroit Pistons"
+    },
+    {
+        "id": "ea1afbab-6769-5ff9-a827-343f6f1ade7a",
+        "name": "Eastern All-Stars"
+    },
+    {
+        "id": "75d154f2-2cc2-58b2-9862-3ad8e680d56f",
+        "name": "Golden State Warriors"
+    },
+    {
+        "id": "28da90b0-0c9a-5f13-9021-0d73087512d0",
+        "name": "Houston Rockets"
+    },
+    {
+        "id": "6886a411-9430-57f5-a1b6-34bffc6d8b3d",
+        "name": "Indiana Pacers"
+    },
+    {
+        "id": "8578d35a-1486-53dc-bad7-f0acbd26f506",
+        "name": "LA Clippers"
+    },
+    {
+        "id": "00dbc1f6-872e-59cb-8837-4d9de0ad5d5d",
+        "name": "LA Lakers"
+    },
+    {
+        "id": "a88422e4-52b8-53e3-875a-677f84999ce2",
+        "name": "Memphis Grizzlies"
+    },
+    {
+        "id": "6d36a409-94db-5cfc-a6b6-281a4786f473",
+        "name": "Miami Heat"
+    },
+    {
+        "id": "e5727369-3896-5931-90c3-0f3d41e3b463",
+        "name": "Milwaukee Bucks"
+    },
+    {
+        "id": "d4441e65-ae44-5217-9ac5-3b690edce7df",
+        "name": "Minnesota Timberwolves"
+    },
+    {
+        "id": "fc11c761-59db-5b18-bc99-49d8b9bd083c",
+        "name": "New Orleans Hornets"
+    },
+    {
+        "id": "d4cebce2-d4fb-5bd1-8fbf-00e23a6116da",
+        "name": "NJ Nets"
+    },
+    {
+        "id": "6d206701-1d79-5a70-a55a-0f85190cca05",
+        "name": "NY Knicks"
+    },
+    {
+        "id": "dc544932-af68-5d0e-a0c5-931a946f5ff9",
+        "name": "Oklahoma City Thunder"
+    },
+    {
+        "id": "2f5e7050-a4e3-55e5-a434-53340795c0c0",
+        "name": "Orlando Magic"
+    },
+    {
+        "id": "10558de1-dce9-5797-8ae1-4124f4cc0d55",
+        "name": "Philadelphia 76ers"
+    },
+    {
+        "id": "90365e20-395c-5f40-ab4f-38925a82b515",
+        "name": "Phoenix Suns"
+    },
+    {
+        "id": "4c04ee17-8dea-5dc7-99d1-edbacce6ae86",
+        "name": "Portland Trail Blazers"
+    },
+    {
+        "id": "4bc86f99-1238-5a9e-a9e1-5347fba93adb",
+        "name": "Sacramento Kings"
+    },
+    {
+        "id": "01a8f595-5233-52db-83c6-4528b62e0013",
+        "name": "San Antonio Spurs"
+    },
+    {
+        "id": "658fede8-92f0-5e84-8768-54df72ef06ab",
+        "name": "Toronto Raptors"
+    },
+    {
+        "id": "38ecab68-4253-544f-bc6d-3282b2f15d45",
+        "name": "Utah Jazz"
+    },
+    {
+        "id": "17b71418-17d5-5fe3-859d-7e5fb4bac273",
+        "name": "Washington Wizards"
+    },
+    {
+        "id": "c2004d51-f08f-5f05-bf94-d0ca8360081e",
+        "name": "Western All-Stars"
+    }
+]
