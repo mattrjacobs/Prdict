@@ -2,6 +2,7 @@ from abstract_model import AbstractModel
 
 import logging
 import simplejson as json
+import urllib
 
 from google.appengine.ext import db
 
@@ -14,7 +15,7 @@ class LeagueEncoder(json.JSONEncoder):
 
         return { 'title' : league.title,
                  'description' : league.description,
-                 'link' : league.relative_url,
+                 'self' : league.relative_url,
                  'teams' : "%s/teams" % league.relative_url,
                  'sport' : league.sport.relative_url,
                  'ref_id' : league.ref_id,
@@ -22,6 +23,21 @@ class LeagueEncoder(json.JSONEncoder):
                  'updated' : league.isoformat_updated}
 
 class League(AbstractModel):
+    #should be something like /api/leagues/<key>
+    @staticmethod
+    def parse_league_uri(league_uri):
+        uri_pieces = urllib.unquote(league_uri).strip("/").split("/")
+        try:
+            if len(uri_pieces) == 3:
+                if uri_pieces[0] != "api" or uri_pieces[1] != "leagues":
+                    return None
+                league_key = uri_pieces[2]
+                return db.get(db.Key(encoded = league_key))
+            else:
+                return None
+        except db.BadKeyError:
+            return None
+            
     @staticmethod
     def find_by_name(name):
         query = db.GqlQuery("SELECT * FROM League WHERE title = :1 " +

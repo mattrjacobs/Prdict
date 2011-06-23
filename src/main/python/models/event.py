@@ -13,7 +13,7 @@ class EventEncoder(json.JSONEncoder):
 
         return { 'title' : event.title,
                  'description' : event.description,
-                 'link' : event.relative_url,
+                 'self' : event.relative_url,
                  'start_date' : event.start_date_str,
                  'end_date' : event.end_date_str,
                  'created' : event.isoformat_created,

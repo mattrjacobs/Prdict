@@ -3,6 +3,7 @@ import dateutil
 import httplib
 import logging
 
+from handlers.auth import http_basic_auth
 from handlers.handler import AbstractHandler
 from utils.constants import Constants
 
@@ -60,13 +61,14 @@ class EntryHandler(AbstractHandler):
     def post(self, key):
         """Handles an HTTP POST by only proceeding if it is an
         overloaded PUT or DELETE"""
-        self.allow_overloaded_post_of_put_or_delete(key)
+        content_type = self.get_write_content_type()
+        self.allow_overloaded_post_of_put_or_delete(key, content_type)
 
-    def put(self, key):
+    @http_basic_auth
+    def put(self, user, key):
         """Handles an HTTP PUT by checking if the user is authorized
         then doing the DB write and returning a representation of
         the new resource according to HTTP request"""
-        user = self.get_prdict_user()
         entry_before_put = self.get_authorized_entry(key, "write")
         content_type = self.get_write_content_type()
 

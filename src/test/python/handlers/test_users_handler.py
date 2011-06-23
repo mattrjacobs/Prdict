@@ -37,7 +37,7 @@ class TestUsersHandler(BaseMockHandlerTest):
         readJson = json.loads(json_user)
         return readJson['email'] == self.email and \
                readJson['username'] == self.user.username and \
-               readJson['link'] == "/api/users/%s" % self.user.key() and \
+               readJson['self'] == "/api/users/%s" % self.user.key() and \
                readJson['friends'] == \
                "/api/users/%s/friends" % self.user.key() and \
                len(readJson['created']) > 0 and \

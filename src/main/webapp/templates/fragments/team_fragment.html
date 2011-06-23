@@ -1,23 +1,22 @@
 {% extends "fragments/base_fragment.html" %}
 
 {% block extra_form %}
-<dt>League: </dt>
-<a href="{{entry.league.relative_url}}">{{ entry.league.title|escape }}</a>
+<dt>League: <a href="{{entry.league.relative_url}}">{{ entry.league.title|escape }}</a>
 <select name="league">
 {% for league in leagues %}
 {% ifequal league.title entry.league.title %}
-<option selected value="{{league.title|escape}}">{{league.title|escape}}</option>
+<option selected value="{{league.relative_url|escape}}">{{league.title|escape}}</option>
 {% else %}
-<option value="{{league.title|escape}}">{{league.title|escape}}</option>
+<option value="{{league.relative_url|escape}}">{{league.title|escape}}</option>
 {% endifequal %}
 {% endfor %}
 </select>
-<dt>Location: <input type="text" name="location" value="{{ entry.location|escape }}"/></dt>
-<dt>Ref ID: <input type="text" name="ref_id" value="{{ entry.ref_id|escape }}" maxlength="80"></input></dt>
+<dt>Location: <input type="text" name="location" value="{{ entry.location|escape }}" size="80"/></dt>
+<dt>Ref ID: <input type="text" name="ref_id" value="{{ entry.ref_id|escape }}" size="80"/></dt>
 {% endblock %}
 
 {% block other_write_data %}
-<dt>League: <a href="/api/leagues/{{ entry.league.key }}">{{ entry.league.title }}</a></dt>
+<dt>League: <a href="{{ entry.league.relative_url }}">{{ entry.league.title }}</a></dt>
 <dt>Location: {{ entry.location|escape }}</dt>
 <dt>Ref ID: {{ entry.ref_id|escape }}</dt>
 {% endblock %}

@@ -50,8 +50,6 @@ urlmap = [('/', HomeHandler),
 application = webapp.WSGIApplication(urlmap, debug=True)
 
 def main():
-    use_library('django', '1.2')
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
     run_wsgi_app(application)
         
 if __name__ == "__main__":

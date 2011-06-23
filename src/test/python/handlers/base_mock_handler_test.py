@@ -148,6 +148,7 @@ class BaseMockHandlerTest(unittest.TestCase):
 
     def remove_user(self):
         del os.environ["USER_EMAIL"]
+        os.environ["USER_IS_ADMIN"] = "0"
 
     def _create_user(self, name, email, friends = []):
         user = PrdictUser(username = name, user = users.User(email), friends = friends)

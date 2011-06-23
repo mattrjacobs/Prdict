@@ -2,6 +2,7 @@ from abstract_model import AbstractModel
 
 import logging
 import simplejson as json
+import urllib
 
 from google.appengine.ext import db
 
@@ -19,6 +20,21 @@ class SportEncoder(json.JSONEncoder):
                  'updated' : sport.isoformat_updated }
 
 class Sport(AbstractModel):
+    #should be something like /api/sports/<key>
+    @staticmethod
+    def parse_sport_uri(sport_uri):
+        uri_pieces = urllib.unquote(sport_uri).strip("/").split("/")
+        try:
+            if len(uri_pieces) == 3:
+                if uri_pieces[0] != "api" or uri_pieces[1] != "sports":
+                    return None
+                sport_key = uri_pieces[2]
+                return db.get(db.Key(encoded = sport_key))
+            else:
+                return None
+        except db.BadKeyError:
+            return None
+
     @staticmethod
     def find_by_name(name):
         query = db.GqlQuery("SELECT * FROM Sport WHERE title = :1 LIMIT 1",

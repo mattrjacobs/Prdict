@@ -33,13 +33,13 @@ class TestUserHandler(BaseMockHandlerTest):
         readJson = json.loads(userJson)
         email_ok = self.email == readJson['email']
         username_ok = self.username == readJson['username']
-        link_ok = "/api/users/%s" % self.user.key() == readJson['link']
+        self_ok = "/api/users/%s" % self.user.key() == readJson['self']
         friends_ok = "/api/users/%s/friends" % self.user.key() == \
                      readJson['friends']
         created_ok = len(readJson['created']) > 0
         updated_ok = len(readJson['updated']) > 0
 
-        return email_ok and username_ok and link_ok and friends_ok and \
+        return email_ok and username_ok and self_ok and friends_ok and \
                created_ok and updated_ok 
 
     def testGetNoUser(self):

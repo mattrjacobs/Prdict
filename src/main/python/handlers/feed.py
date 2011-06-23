@@ -16,7 +16,7 @@ import build
 class FeedHandler(AbstractHandler):
     """Parent class for REST-based feed handlers.
     Feeds have 1 parent object and multiple contained entry objects"""
-    DEFAULT_LIMIT = 25
+    DEFAULT_LIMIT = 75
 
     def get_entries(self, parent, limit = DEFAULT_LIMIT, offset = 0):
         """Returns the child entries of a parent,

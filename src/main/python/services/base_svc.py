@@ -202,10 +202,10 @@ class BaseService:
 
     def get_league_from_request(self, request, league_param):
         return self.__parse_from_uri_and_params(request, "leagues", league_param,
-                                                League.find_by_name)
+                                                League.parse_league_uri)
     def get_sport_from_request(self, request, sport_param):
         return self.__parse_from_uri_and_params(request, "sports", sport_param,
-                                                Sport.find_by_name)
+                                                Sport.parse_sport_uri)
 
     def parse_date(self, date_str):
         (date, error_msgs) = Event.validate_date(date_str, "date field")

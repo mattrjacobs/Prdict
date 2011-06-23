@@ -170,7 +170,6 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testJsonPostWithNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
         self.impl.request = self.req(json.dumps(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
         self.impl.response.set_status(403)
@@ -182,7 +181,6 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testPostInvalidContentType(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = "invalid content type"
         self.mock_svc.create_entry(self.impl.request, "unknown").AndReturn((False, False, False, "invalid content type", None))
@@ -208,7 +206,6 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testPostInvalidJsonParams(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
         self.mock_svc.create_entry(self.impl.request, "json").AndReturn((True, False, False, "invalid params", None))
@@ -221,7 +218,7 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testPostDbWriteFailedForm(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.mock_svc.create_entry(self.impl.request, "form").AndReturn((True,
@@ -235,7 +232,6 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testPostDbWriteFailedJson(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
         self.mock_svc.create_entry(self.impl.request, "json").AndReturn((True,
@@ -249,7 +245,6 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testPostSucceededForm(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.mock_svc.create_entry(self.impl.request, "form").AndReturn((True,
@@ -266,7 +261,6 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testPostSucceededJson(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
         self.impl.request = self.req(urllib.urlencode(self.valid_params), "POST")
         self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
         self.mock_svc.create_entry(self.impl.request, "json").AndReturn((True,

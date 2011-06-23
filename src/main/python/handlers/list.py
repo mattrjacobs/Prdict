@@ -7,7 +7,7 @@ import simplejson as json
 from google.appengine.ext import db
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
-from auth import BaseAuthorizationHandler
+from auth import BaseAuthorizationHandler, http_basic_auth
 from handlers.handler import AbstractHandler
 from models import event
 from models.abstract_model import AbstractModel
@@ -47,10 +47,10 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
             param_map = self.create_param_map(user, all_entries, can_write, now)
             self.render_template(self.html, param_map)
 
-    def post(self):
+    @http_basic_auth
+    def post(self, user):
         """Attempts to respond to a POST by adding a new entry"""
         content_type = self.get_write_content_type()
-        user = self.get_prdict_user()
         if not self.is_user_authorized_to_write(user, None):
             self.set_403(content_type)
             return None

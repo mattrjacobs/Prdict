@@ -31,9 +31,9 @@
           $('.away_team_none').remove();
           for (var i in json.teams) {
             var nameAndLoc = json.teams[i].location + " " + json.teams[i].title;
-            var nameAndLeague = escape($('.league_dropdown').attr("value") + ":" + json.teams[i].title);
-            $('.home_team').append('<option value=' + nameAndLeague + '>' + nameAndLoc + '</option>')
-            $('.away_team').append('<option value=' + nameAndLeague + '>' + nameAndLoc + '</option>')
+            var teamUri = json.teams[i].self;
+            $('.home_team').append('<option value=' + teamUri + '>' + nameAndLoc + '</option>')
+            $('.away_team').append('<option value=' + teamUri + '>' + nameAndLoc + '</option>')
           }
         }
       });
@@ -67,7 +67,7 @@
 <select name="league" class="league_dropdown">
 <option selected value="Not selected">Not selected</option>
 {% for league in leagues %}
-<option value="{{league.title|escape}}" id="{{league.key}}">{{league.title|escape}}</option>
+<option value="{{league.relative_url|escape}}" id="{{league.key}}">{{league.title|escape}}</option>
 {% endfor %}
 </select><br/>
 <b>Home team:</b>

@@ -12,25 +12,17 @@ class SportsEventEncoder(json.JSONEncoder):
         if not isinstance(event, SportsEvent):
             return
 
-        def convert_team_to_json(team):
-            return { 'title' : team.title,
-                     'location' : team.location,
-                     'link' : team.relative_url }
-
-        league_json = { 'title' : event.league.title,
-                        'link' : event.league.relative_url }
-        
         return { 'title' : event.title,
                  'description' : event.description,
-                 'home_team' : convert_team_to_json(event.home_team),
-                 'away_team' : convert_team_to_json(event.away_team),
-                 'league' : league_json,
+                 'home_team' : event.home_team.relative_url,
+                 'away_team' : event.away_team.relative_url,
+                 'league' : event.league.relative_url,
                  'completed' : event.completed,
                  'home_team_score' : event.home_team_score,
                  'away_team_score' : event.away_team_score,
                  'game_kind' : event.game_kind,
                  'ref_id' : event.ref_id,
-                 'link' : event.relative_url,
+                 'self' : event.relative_url,
                  'start_date' : event.start_date_str,
                  'end_date' : event.end_date_str,
                  'created' : event.isoformat_created,
@@ -91,14 +83,14 @@ class SportsEvent(Event):
             error_msgs.append("Sports event must have an away team")
             sports_event_ok = False
         if home_team_str:
-            home_team = Team.parse_team_str(home_team_str)
+            home_team = Team.parse_team_uri(home_team_str)
             if not home_team:
                 error_msgs.append("Could not parse home team : %s" % home_team_str)
                 sports_event_ok = False
             else:
                 params["home_team"] = home_team
         if away_team_str:
-            away_team = Team.parse_team_str(away_team_str)
+            away_team = Team.parse_team_uri(away_team_str)
             if not away_team:
                 error_msgs.append("Could not parse away team : %s" % away_team_str)
                 sports_event_ok = False
@@ -177,13 +169,13 @@ class SportsEvent(Event):
             game_kind = params["game_kind"]
 
         if home_team_str:
-            home_team = Team.parse_team_str(home_team_str)
+            home_team = Team.parse_team_uri(home_team_str)
             if not home_team:
                 error_msgs.append("Could not parse home team : %s" % home_team_str)
                 sports_event_ok = False
 
         if away_team_str:
-            away_team = Team.parse_team_str(away_team_str)
+            away_team = Team.parse_team_uri(away_team_str)
             if not away_team:
                 error_msgs.append("Could not parse away team : %s" % away_team_str)
                 sports_event_ok = False

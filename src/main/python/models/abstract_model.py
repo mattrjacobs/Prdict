@@ -45,7 +45,7 @@ class AbstractModel(db.Model):
     
     @staticmethod
     def validate_description(description):
-        if len(description) > 500:
+        if description and len(description) > 500:
             return (False, "Title length must be less than or equal to 500 chars")
         return (True, None)
 

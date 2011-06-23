@@ -17,34 +17,30 @@ class TeamEncoder(json.JSONEncoder):
                  'description' : team.description,
                  'location' : team.location,
                  'ref_id' : team.ref_id,
-                 'link' : team.relative_url,
+                 'self' : team.relative_url,
                  'league' : team.league.relative_url,
                  'created' : team.isoformat_created,
                  'updated' : team.isoformat_updated }
 
 class Team(AbstractModel):
-    league = db.ReferenceProperty(required=True,reference_class=League)
-    location = db.StringProperty(required=True,multiline=False)
+    league = db.ReferenceProperty(required=True, reference_class=League)
+    location = db.StringProperty(required=True, multiline=False)
     ref_id = db.StringProperty(required=False)
 
-    #Pass in a URL-encoded string.
-    # If no ':', then just the name i.e. Colts
-    # If 1 ':', then it's league+name i.e. NFL:Colts
-    # If 2 ':'. then it's unimplemented
+    #should be something like /api/teams/<key>
     @staticmethod
-    def parse_team_str(team_str):
-        team_pieces = urllib.unquote(team_str).split(":")
+    def parse_team_uri(team_uri):
+        uri_pieces = urllib.unquote(team_uri).strip("/").split("/")
         try:
-            if len(team_pieces) == 1:
-                team = Team.find_by_name(team_str, None, None)
-            elif len(team_pieces) == 2:
-                league_str = team_pieces[0]
-                name = team_pieces[1]
-                league = League.find_by_name(league_str)
-                team = Team.find_by_name(name, None, league)
+            if len(uri_pieces) == 3:
+                if uri_pieces[0] != "api" or uri_pieces[1] != "teams":
+                    return None
+                team_key = uri_pieces[2]
+                return db.get(db.Key(encoded = team_key))
+            else:
+                return None
         except db.BadKeyError:
             return None
-        return team
         
     @staticmethod
     def find_by_name(name, location, league):

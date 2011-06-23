@@ -5,9 +5,8 @@
 {% endblock %}
 
 {% block extra_form %}
-<a href="{{entry.sport.relative_url}}">{{ entry.sport.title|escape }}</a>
 <dt>Ref ID: <input type="text" name="ref_id" value="{{ entry.ref_id|escape }}" maxlength="80"></input></dt>
-<dt>Sport: </dt>
+<dt>Sport: <a href="{{entry.sport.relative_url}}">{{ entry.sport.title|escape }}</a>
 <select name="sport">
 {% for sport in sports %}
 {% ifequal sport.title entry.sport.title %}
@@ -16,7 +15,7 @@
 <option value="{{sport.title|escape}}">{{sport.title|escape}}</option>
 {% endifequal %}
 {% endfor %}
-</select>
+</select></dt>
 {% endblock %}
 
 {% block other_write_data %}

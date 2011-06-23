@@ -13,7 +13,7 @@ class PrdictUserEncoder(json.JSONEncoder):
 
         return { 'email' : user.email,
                  'username' : user.username,
-                 'link' : user.relative_url,
+                 'self' : user.relative_url,
                  'friends' : "%s/friends" % user.relative_url,
                  'created' : user.isoformat_created,
                  'updated' : user.isoformat_updated }

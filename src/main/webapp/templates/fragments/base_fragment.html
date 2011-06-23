@@ -7,11 +7,11 @@
 <dt>Title: <input type="text" name="title" maxlength="80" value="{{ entry.title|escape }}"/></dt>
 <dt>Description: <input type="textarea" name="description" maxlength="500" value="{{ entry.description|escape }}"/></dt>
 {% block extra_form %}{% endblock %}
-<dt><input type="submit" name="submit" value="Update {{ entry.entry_name }}"/></dt>
-</form>
-<form action="{{ entry.relative_url }}" method="POST">
+<dt><input type="submit" name="submit" value="Update {{ entry.entry_name }}"/>
+</form></dt>
+<dt><form action="{{ entry.relative_url }}" method="POST">
 <input type="hidden" name="_method" value="DELETE"/>
-<dt><input type="submit" name="submit" value="Delete {{ entry.entry_name }}"/></dt>
+<input type="submit" name="submit" value="Delete {{ entry.entry_name }}"/></dt>
 </form>
 {% else %}
 <dt>Title: {{ entry.title|escape }}</dt>

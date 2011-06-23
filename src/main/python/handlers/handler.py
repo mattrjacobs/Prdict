@@ -179,6 +179,9 @@ class AbstractHandler(webapp.RequestHandler):
             return (query_params["alt"][0] == "json", False)
         if 'Accept' not in self.request.headers:
             return (False, False)
+        accept_hdr = self.request.headers['Accept']
+        if accept_hdr == "application/json":
+            return (True, False)
         #Implement this later - Accept:Vary header for JSON response
         #hdr = self.request.headers['Accept']
         #return (self._prefers_json_by_accept_header(hdr), True)
@@ -186,7 +189,6 @@ class AbstractHandler(webapp.RequestHandler):
 
     def is_form_request(self):
         content_type = self.get_header('Content-Type')
-        logging.error("CONTENT TYPE : %s" % content_type)
         if content_type:
             content_types = map(lambda x: x.strip(), content_type.split(";"))
             return Constants.FORM_ENCODING in content_types
@@ -209,6 +211,7 @@ class AbstractHandler(webapp.RequestHandler):
         content_type = self.get_header("Content-Type")
         #if is_atom:
         #    return ("atom", atom_vary)
+        #TODO: Make this more forgiving...i.e. leave off UTF-8 piece
         if content_type == Constants.JSON_ENCODING: 
             return "json"
         elif content_type == Constants.FORM_ENCODING:
@@ -285,28 +288,36 @@ class AbstractHandler(webapp.RequestHandler):
                 return None
         return entry
 
-    def allow_overloaded_post_of_put_or_delete(self, key):
+    def allow_overloaded_post_of_put_or_delete(self, key, content_type):
         """Lets a subclass handle overloaded POST of PUT or DELETE"""
-        if self.request.get('_method') == 'DELETE':
-            return self.delete(key)
-        elif self.request.get('_method') == 'PUT':
-            return self.put(key)
+        method_type = None
+        if content_type == "json":
+            parsed_json = json.loads(self.request.body)
+            if "_method" in parsed_json:
+                method_type = parsed_json["_method"]
+        elif content_type == "form":
+            method_type = self.request.get("_method")
+        if method_type:
+            if method_type == 'DELETE':
+                return self.delete(key)
+            elif method_type == 'PUT':
+                return self.put(key)
         self.response.set_status(httplib.BAD_REQUEST)
         msg = "POST requires either '_method=DELETE' or '_method=PUT'"
         try:
-            entry = db.get(db.Key(encoded=key))
+            entry = db.get(db.Key(encoded = key))
         except db.BadKeyError:
             entry = None
         self.render_html(entry, msg)
 
-    def allow_overloaded_post_of_delete(self, key):
+    def allow_overloaded_post_of_delete(self, key, content_type):
         """Lets a subclass handle overloaded POST of DELETE"""
         if self.request.get('_method') == 'DELETE':
             return self.delete(key)
         self.response.set_status(httplib.BAD_REQUEST)
         msg = "POST requires '_method=DELETE'"
         try:
-            entry = db.get(db.Key(encoded=key))
+            entry = db.get(db.Key(encoded = key))
         except db.BadKeyError:
             entry = None
         self.render_html(entry, msg)
