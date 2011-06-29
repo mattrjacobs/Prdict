@@ -95,13 +95,16 @@ def get_gae_cookie(appname, hostname, auth_token):
 
     continue_location = "http://%s/" % hostname
     args = {"continue": continue_location, "auth": auth_token}
-    url = "https://%s/_ah/login?%s" % (hostname,
-                               urllib.urlencode(args))
+    url = "http://%s/_ah/login?%s" % (hostname,
+                                      urllib.urlencode(args))
 
     opener = get_opener() # no redirect handler!
     req = urllib2.Request(url)
     try:
         response = opener.open(req)
+        logging.error("RESP CODE : %s" % response.code)
+        logging.error("RESP BODY : %s" % response.read())
+        logging.error("RESP HDRS : %s" % response.headers)
     except urllib2.HTTPError, e:
         response = e
 
