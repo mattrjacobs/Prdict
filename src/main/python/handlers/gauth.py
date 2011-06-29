@@ -37,7 +37,6 @@ def do_auth(appname, hostname, user, password, dev=False, admin=False):
     # get the token
     try:
         auth_token = get_google_authtoken(appname, user, password)
-        logging.error("AUTH TOKEN : %s" % auth_token)
     except AuthError, e:
         if e.reason == "BadAuthentication":
             logging.error( "Invalid username or password." )
@@ -63,7 +62,6 @@ def do_auth(appname, hostname, user, password, dev=False, admin=False):
 
     # now get the cookie
     cookie = get_gae_cookie(appname, hostname, auth_token)
-    logging.error("COOKIE : %s" % cookie)
     assert cookie
     return cookie
 
@@ -102,9 +100,6 @@ def get_gae_cookie(appname, hostname, auth_token):
     req = urllib2.Request(url)
     try:
         response = opener.open(req)
-        logging.error("RESP CODE : %s" % response.code)
-        logging.error("RESP BODY : %s" % response.read())
-        logging.error("RESP HDRS : %s" % response.headers)
     except urllib2.HTTPError, e:
         response = e
 

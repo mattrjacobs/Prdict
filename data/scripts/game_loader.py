@@ -314,7 +314,6 @@ if __name__ == "__main__":
         (uri, fanfeedr_name, schedule_file) = team_map[k]
         print "%s : %s : %s : %s" % (fanfeedr_name, uri, k, schedule_file)
 
-    sys.exit(1)
     games_stored = store_games(team_map, league_uri, options.prdict_url)
     for k in games_stored:
         (found, added) = games_stored[k]
