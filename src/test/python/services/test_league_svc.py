@@ -15,7 +15,7 @@ class TestLeagueService(BaseServiceTest):
         self.desc = "New League Description"
         self.valid_params = { 'title' : self.title,
                               'description' : self.desc,
-                              'sport' : self.sport.title }
+                              'sport' : self.sport.relative_url }
         self.ref_id = "ref_id"
         self.impl = LeagueService()
 
@@ -25,7 +25,7 @@ class TestLeagueService(BaseServiceTest):
 
     def testPostJsonMissingTitle(self):
         req = self.req(json.dumps({ "description" : self.desc,
-                                    "sport" : self.sport.title }), "POST")
+                                    "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_json_params(req)
 
         self.assertEquals(params["description"], self.desc)
@@ -33,7 +33,7 @@ class TestLeagueService(BaseServiceTest):
 
     def testPostFormMissingTitle(self):
         req = self.req(urllib.urlencode({ "description" : self.desc,
-                                          "sport" : self.sport.title }), "POST")
+                                          "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_form_params(req)
 
         self.assertEquals(params["description"], self.desc)
@@ -42,7 +42,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostJsonEmptyTitle(self):
         req = self.req(json.dumps({ "title": "",
                                     "description" : self.desc,
-                                    "sport" : self.sport.title }), "POST")
+                                    "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_json_params(req)
 
         self.assertEquals(params["title"], "")
@@ -52,7 +52,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostFormEmptyTitle(self):
         req = self.req(urllib.urlencode({ "title": "",
                                           "description" : self.desc,
-                                          "sport" : self.sport.title }), "POST")
+                                          "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_form_params(req)
 
         self.assertEquals(params["title"], "")
@@ -61,7 +61,7 @@ class TestLeagueService(BaseServiceTest):
         
     def testPostJsonMissingDesc(self):
         req = self.req(json.dumps({ "title": self.title,
-                                    "sport" : self.sport.title }), "POST")
+                                    "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_json_params(req)
 
         self.assertEquals(params["title"], self.title)
@@ -69,7 +69,7 @@ class TestLeagueService(BaseServiceTest):
 
     def testPostFormMissingDesc(self):
         req = self.req(urllib.urlencode({ "title": self.title,
-                                          "sport" : self.sport.title }), "POST")
+                                          "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_form_params(req)
 
         self.assertEquals(params["title"], self.title)
@@ -78,7 +78,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostJsonEmptyDesc(self):
         req = self.req(json.dumps({ "title": self.title,
                                     "description" : "",
-                                    "sport" : self.sport.title }), "POST")
+                                    "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_json_params(req)
 
         self.assertEquals(params["title"], self.title)
@@ -88,7 +88,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostFormEmptyDesc(self):
         req = self.req(urllib.urlencode({ "title": self.title,
                                           "description" : "",
-                                          "sport" : self.sport.title }), "POST")
+                                          "sport" : self.sport.relative_url }), "POST")
         params = self.impl.get_form_params(req)
 
         self.assertEquals(params["title"], self.title)
@@ -150,7 +150,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostJsonSportFromBodyAndUrlDoNotMatch(self):
         req = self.reqWithPath(json.dumps({ "title": self.title,
                                             "description" : self.desc,
-                                            "sport" : self.sport.title }),
+                                            "sport" : self.sport.relative_url }),
                                "POST",
                                "/api/sports/not-a-sport/leagues")
         params = self.impl.get_json_params(req)
@@ -161,7 +161,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostFormSportFromBodyAndUrlDoNotMatch(self):
         req = self.reqWithPath(urllib.urlencode({ "title": self.title,
                                                   "description" : self.desc,
-                                                  "sport" : self.sport.title }),
+                                                  "sport" : self.sport.relative_url }),
                                "POST",
                                "/api/sports/not-a-sport/leagues")
         params = self.impl.get_form_params(req)
@@ -186,7 +186,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostJsonValidSportFromBody(self):
         req = self.req(json.dumps({ "title": self.title,
                                     "description" : self.desc,
-                                    "sport" : self.sport.title,
+                                    "sport" : self.sport.relative_url,
                                     "ref_id": self.ref_id }), "POST")
         params = self.impl.get_json_params(req)
 
@@ -199,7 +199,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostFormValidSportFromBody(self):
         req = self.req(urllib.urlencode({ "title": self.title,
                                           "description" : self.desc,
-                                          "sport" : self.sport.title,
+                                          "sport" : self.sport.relative_url,
                                           "ref_id" : self.ref_id }), "POST")
         params = self.impl.get_form_params(req)
 
@@ -212,7 +212,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostJsonValidSportFromUrlAndBody(self):
         req = self.reqWithPath(json.dumps({ "title": self.title,
                                             "description" : self.desc,
-                                            "sport" : self.sport.title,
+                                            "sport" : self.sport.relative_url,
                                             "ref_id" : self.ref_id }),
                                "POST",
                                "/api/sports/%s/leagues" % self.sport.key())
@@ -227,7 +227,7 @@ class TestLeagueService(BaseServiceTest):
     def testPostFormValidSportFromUrlAndBody(self):
         req = self.reqWithPath(urllib.urlencode({ "title": self.title,
                                                   "description" : self.desc,
-                                                  "sport" : self.sport.title,
+                                                  "sport" : self.sport.relative_url,
                                                   "ref_id" : self.ref_id }),
                                "POST",
                                "/api/sports/%s/leagues" % self.sport.key())

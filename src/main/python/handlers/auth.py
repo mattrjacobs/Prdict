@@ -17,21 +17,16 @@ def http_basic_auth(method):
     def http_basic_auth_deco(self, *args):
         cookie_user = users.get_current_user()
         user = None
-        logging.error("COOKIE USER : %s" % cookie_user)
         if not cookie_user:
-            logging.error("NO COOKIE USER")
             basic_auth = self.request.headers.get("Authorization")
             if not basic_auth:
-                logging.error("Request does not have auth header")
                 user = None
             else:
-                logging.error("HAS BASIC_AUTH : %s" % basic_auth)
                 username, password = '', ''
                 try:
                     user_info = base64.decodestring(basic_auth[6:])
                     username, password = user_info.split(":")
                 except:
-                    logging.error("Could not parse HTTP Authorization")
                     user = None
                 cookie = None
                 try:
@@ -48,18 +43,13 @@ def http_basic_auth(method):
                     logging.error("Got a failed login attempt for Google Accounts %s" % username)
                     user = None
         elif 'Authorization' in self.request.headers:
-            logging.error("COOKIE USER AND BASIC")
             assert 'USER_ID' in os.environ
             del self.request.headers['Authorization']
             del os.environ['HTTP_AUTHORIZATION']
-            logging.error("Ignored HTTP Authorization")
         if cookie_user:
             user = prdict_user.lookup_user(cookie_user)
             if user:
                 assert isinstance(user, prdict_user.PrdictUser), "%r" % user
-                logging.error("Found user : %s" % user.email)
-        else:
-            logging.error("Anonymous user")
         return method(self, user, *args)
     return http_basic_auth_deco
 

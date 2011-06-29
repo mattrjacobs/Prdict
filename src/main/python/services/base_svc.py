@@ -224,7 +224,7 @@ class BaseService:
                     param_from_uri = obj
                 except db.BadKeyError:
                     return None
-        if param and param_from_uri and param != param_from_uri.title:
+        if param and param_from_uri and param != param_from_uri.relative_url:
             return None
         elif param:
             return validation_func(param)

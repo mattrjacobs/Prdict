@@ -97,9 +97,9 @@ class TestEventService(BaseServiceTest):
                                     "start_date" : self.start_date_str,
                                     "end_date" : self.end_date_str,
                                     "type" : "sportsevent",
-                                    "home_team" : self.team_1.title,
-                                    "away_team" : self.team_2.title,
-                                    "league" : self.league.title,
+                                    "home_team" : self.team_1.relative_url,
+                                    "away_team" : self.team_2.relative_url,
+                                    "league" : self.league.relative_url,
                                     "completed" : self.completed_str,
                                     "home_team_score" : self.home_team_score_str,
                                     "away_team_score" : self.away_team_score_str,
@@ -114,8 +114,8 @@ class TestEventService(BaseServiceTest):
         self.assertEquals(params["start_date_str"], self.start_date_str)
         self.assertEquals(params["end_date_str"], self.end_date_str)
         self.assertEquals(params["type"], "sportsevent")
-        self.assertEquals(params["home_team_str"], self.team_1.title)
-        self.assertEquals(params["away_team_str"], self.team_2.title)
+        self.assertEquals(params["home_team_str"], self.team_1.relative_url)
+        self.assertEquals(params["away_team_str"], self.team_2.relative_url)
         self.assertEquals(str(params["league"].key()), self.league_key)
         self.assertEquals(params["completed_str"], self.completed_str)
         self.assertEquals(params["home_team_score_str"], self.home_team_score_str)
@@ -129,9 +129,9 @@ class TestEventService(BaseServiceTest):
                                           "start_date" : self.start_date_str,
                                           "end_date" : self.end_date_str,
                                           "type" : "sportsevent",
-                                          "home_team" : self.team_1.title,
-                                          "away_team" : self.team_2.title,
-                                          "league" : self.league.title,
+                                          "home_team" : self.team_1.relative_url,
+                                          "away_team" : self.team_2.relative_url,
+                                          "league" : self.league.relative_url,
                                           "completed" : self.completed_str,
                                           "home_team_score" : self.home_team_score_str,
                                           "away_team_score" : self.away_team_score_str,
@@ -146,8 +146,8 @@ class TestEventService(BaseServiceTest):
         self.assertEquals(params["start_date_str"], self.start_date_str)
         self.assertEquals(params["end_date_str"], self.end_date_str)
         self.assertEquals(params["type"], "sportsevent")
-        self.assertEquals(params["home_team_str"], self.team_1.title)
-        self.assertEquals(params["away_team_str"], self.team_2.title)
+        self.assertEquals(params["home_team_str"], self.team_1.relative_url)
+        self.assertEquals(params["away_team_str"], self.team_2.relative_url)
         self.assertEquals(str(params["league"].key()), self.league_key)
         self.assertEquals(params["completed_str"], self.completed_str)
         self.assertEquals(params["home_team_score_str"], self.home_team_score_str)

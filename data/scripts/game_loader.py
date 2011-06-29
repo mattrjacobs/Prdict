@@ -201,6 +201,7 @@ def store_games(team_map, league_uri, prdict_url):
         num_added = 0
         num_found = 0
         (uri, fanfeedr_name, schedule_file) = team_map[k]
+        print "Now working on team : %s" % fanfeedr_name
         
         json_schedule = json.load(open(schedule_file))
         for json_game in json_schedule:
