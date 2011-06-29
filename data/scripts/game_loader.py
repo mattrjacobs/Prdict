@@ -44,8 +44,8 @@ def parse_date(date):
     return dt.replace(microsecond=int(parts[1]))
 
 def authenticated_http(url, data):
-    auth = base64.encodestring('%s:%s' % ("matt@prdict.com",
-                                          "dummy"))[:-1]
+    auth = base64.encodestring('%s:%s' % ("prdictapi.client@gmail.com",
+                                          "cbyQ57UyWWWRC768Xshe"))[:-1]
     post_request = urllib2.Request(url = url,
                                    headers = { "Accept" : "application/json",
                                                "Content-Type" : "application/json; charset=utf-8",
@@ -313,7 +313,7 @@ if __name__ == "__main__":
     for k in team_map.keys():
         (uri, fanfeedr_name, schedule_file) = team_map[k]
         print "%s : %s : %s : %s" % (fanfeedr_name, uri, k, schedule_file)
-    
+
     games_stored = store_games(team_map, league_uri, options.prdict_url)
     for k in games_stored:
         (found, added) = games_stored[k]

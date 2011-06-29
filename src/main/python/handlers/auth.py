@@ -31,10 +31,11 @@ def http_basic_auth(method):
                 cookie = None
                 try:
                     is_dev = self.is_dev_host()
+                    http_host = os.environ["HTTP_HOST"]
                     if is_dev:
-                        cookie = gauth.do_auth(MY_APP_NAME, username, password, True, True)
+                        cookie = gauth.do_auth(MY_APP_NAME, http_host, username, password, True, True)
                     else:
-                        cookie = gauth.do_auth(MY_APP_NAME, username, password, False)
+                        cookie = gauth.do_auth(MY_APP_NAME, http_host, username, password, False)
                     # Give ASCID cookie to client
                     self.response.headers['Set-Cookie'] = cookie
                     self.response.set_status(httplib.UNAUTHORIZED)

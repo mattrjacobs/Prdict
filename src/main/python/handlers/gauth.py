@@ -25,7 +25,7 @@ See also: http://markmail.org/thread/tgth5vmdqjacaxbx
 import logging, md5, urllib, urllib2
 
 
-def do_auth(appname, user, password, dev=False, admin=False):
+def do_auth(appname, hostname, user, password, dev=False, admin=False):
     "This is taken from bits of appcfg, specifically: "
     " google/appengine/tools/appengine_rpc.py "
     "It returns the cookie send by the App Engine Login "
@@ -37,6 +37,7 @@ def do_auth(appname, user, password, dev=False, admin=False):
     # get the token
     try:
         auth_token = get_google_authtoken(appname, user, password)
+        logging.error("AUTH TOKEN : %s" % auth_token)
     except AuthError, e:
         if e.reason == "BadAuthentication":
             logging.error( "Invalid username or password." )
@@ -61,7 +62,8 @@ def do_auth(appname, user, password, dev=False, admin=False):
         raise
 
     # now get the cookie
-    cookie = get_gae_cookie(appname, auth_token)
+    cookie = get_gae_cookie(appname, hostname, auth_token)
+    logging.error("COOKIE : %s" % cookie)
     assert cookie
     return cookie
 
@@ -84,17 +86,16 @@ def do_auth_dev_appserver(email, admin):
         user_id = ''
     return 'dev_appserver_login="%s:%s:%s"; Path=/;' % (email, admin_string, user_id)
 
-def get_gae_cookie(appname, auth_token):
+def get_gae_cookie(appname, hostname, auth_token):
     """
     Send a token to the App Engine login, again stating the name of the
     application to gain authentication for. Returned is a cookie that may be used
     to authenticate HTTP traffic to the application at App Engine.
     """
 
-    continue_location = "http://localhost/"
+    continue_location = "http://%s/" % hostname
     args = {"continue": continue_location, "auth": auth_token}
-    host = "%s.appspot.com" % appname
-    url = "https://%s/_ah/login?%s" % (host,
+    url = "https://%s/_ah/login?%s" % (hostname,
                                urllib.urlencode(args))
 
     opener = get_opener() # no redirect handler!
