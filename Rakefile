@@ -6,6 +6,7 @@
 #                       deployment or running with dev_appserver.py
 #  $ run              : runs the existing webapp with dev_appserver.py
 #  $ run_clean        : runs the webpp with a clear datastore
+#  $ run_sqlite       : runs the webapp with a SQLite datastore
 #  $ git_check_local  : checks if all local files are checked in
 #  $ git_check_remote : checks if local repo is up-to-date
 #  $ update_version   : updates Prdict-API version (in src and target) with 
@@ -185,6 +186,11 @@ end
 desc "run the app in a dev server with a cleared datastore"
 task :run_clean => [:package] do
   sh "bin/run_clean_datastore"
+end
+
+desc "run the app in a dev server with a SQLite datastore"
+task :run_sqlite => [:package] do
+  sh "bin/run_sqlite_datastore"
 end
 
 # for convenience when programming
