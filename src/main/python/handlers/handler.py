@@ -55,7 +55,7 @@ class AbstractHandler(webapp.RequestHandler):
     def get_release_number():
         return release_number.release_number
 
-    def set_400(self, template, content_type, message, params = {}):
+    def set_400(self, template, content_type, user, message, params = {}):
         """Returns a message explaining why entry add failed"""
         self.response.set_status(httplib.BAD_REQUEST)
         if content_type == "json":
@@ -64,10 +64,10 @@ class AbstractHandler(webapp.RequestHandler):
                  'message' : message }))
         else:
             params.update( { 'msg' : message,
-                             'current_user' : self.get_prdict_user()})
+                             'current_user' : user })
             return self.render_template(template, params)
 
-    def set_403(self, content_type):
+    def set_403(self, content_type, user):
         """Handle a HTTP 403 - Forbidden"""
         self.response.set_status(httplib.FORBIDDEN)
         if content_type == "atom":
@@ -76,9 +76,9 @@ class AbstractHandler(webapp.RequestHandler):
             self.render_string(json.dumps({ "status" : "error",
                                             "message" : "Forbidden" }))
         else:
-            self.render_template("403.html", {'current_user' : self.get_prdict_user()})
+            self.render_template("403.html", { 'current_user' : user })
 
-    def set_404(self, content_type):
+    def set_404(self, content_type, user):
         """Handle a HTTP 404 - Not Found"""
         self.response.set_status(httplib.NOT_FOUND)
         if content_type == "atom":
@@ -87,9 +87,9 @@ class AbstractHandler(webapp.RequestHandler):
             self.render_string(json.dumps({ "status" : "error",
                                             "message" : "Not Found" }))
         else:
-            self.render_template('404.html', {'current_user' : self.get_prdict_user()})
+            self.render_template('404.html', { 'current_user' : user })
 
-    def handle_transient_error(self, content_type):
+    def handle_transient_error(self, content_type, user):
         """Handle a HTTP 503 - Service Unavailable"""
         self.response.set_status(httplib.SERVICE_UNAVAILABLE)
         if content_type == "atom":
@@ -99,8 +99,7 @@ class AbstractHandler(webapp.RequestHandler):
                 json.dumps({ 'status' : 'error',
                              'message' : 'Service Unavailable' }))
         else:
-            self.render_template('503.html',
-                                 {'current_user' : self.get_prdict_user()})
+            self.render_template('503.html', { 'current_user' : user })
 
     def set_header(self, header_key, header_value):
         """helper method to set an HTTP header"""
@@ -208,16 +207,17 @@ class AbstractHandler(webapp.RequestHandler):
 
     def get_write_content_type(self):
         """Returns 'atom/json/form', depending on request made"""
-        content_type = self.get_header("Content-Type")
-        #if is_atom:
-        #    return ("atom", atom_vary)
-        #TODO: Make this more forgiving...i.e. leave off UTF-8 piece
-        if content_type == Constants.JSON_ENCODING: 
-            return "json"
-        elif content_type == Constants.FORM_ENCODING:
-            return "form"
-        else:
-            return "unknown"
+        content_type_from_req = self.get_header("Content-Type")
+        if content_type_from_req:
+            content_type_pieces = content_type_from_req.split(";")
+            #if is_atom:
+            #    return ("atom", atom_vary)
+            for content_type in content_type_pieces:
+                if content_type == Constants.JSON_ENCODING: 
+                    return "json"
+                elif content_type == Constants.FORM_ENCODING:
+                    return "form"
+        return "unknown"
 
     def _etag_matches(self, etag):
         """Determines if given etag matches HTTP Request etag"""
@@ -273,18 +273,18 @@ class AbstractHandler(webapp.RequestHandler):
         if access_mode == "read":
             content_type = self.get_read_content_type()
             if not entry:
-                self.set_404(content_type)
+                self.set_404(content_type, user)
                 return
             if not self.is_user_authorized_to_read(user, entry):
-                self.set_403(content_type)
+                self.set_403(content_type, user)
                 return None
         if access_mode == "write":
             content_type = self.get_write_content_type()
             if not entry:
-                self.set_404(content_type)
+                self.set_404(content_type, user)
                 return
             if not self.is_user_authorized_to_write(user, entry):
-                self.set_403(content_type)
+                self.set_403(content_type, user)
                 return None
         return entry
 

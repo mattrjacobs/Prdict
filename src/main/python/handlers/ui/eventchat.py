@@ -1,5 +1,6 @@
 """Handles a request for an event's chat"""
 from datetime import datetime
+import hashlib
 import httplib
 import logging
 import random
@@ -14,8 +15,12 @@ from handlers.auth import EventChatAuthorizationHandler
 from handlers.feed import FeedHandler
 from models.message import Message
 from models import prdict_user
+from services.message_svc import MessageService
 
 class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
+    def __init__(self):
+        self.message_svc = MessageService()
+
     """Handles a request for an event chat resource
     FeedHandler has logic on request processing
     EventChatAuthorizationHandler has logic for authorization"""
@@ -34,13 +39,16 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
         cache_key = "listeners-%s" % str(parent.key())
         rand = random.randint(1000, 9999)
         channel_id = "%s-%s-%s" % (client_id, str(parent.key()), rand)
-        token = channel.create_channel(channel_id)
+        hasher = hashlib.sha1()
+        hasher.update(channel_id)
+        hashed_channel_id = hasher.hexdigest()
+        token = channel.create_channel(hashed_channel_id)
         current_listeners = memcache.get(cache_key)
         if current_listeners:
             if not channel_id in current_listeners:
-                current_listeners.append(channel_id)
+                current_listeners.append(hashed_channel_id)
         else:
-            current_listeners = [channel_id]
+            current_listeners = [hashed_channel_id]
 
         memcache.set(cache_key, current_listeners)
         channel_msg = self.get_channel_message(self.get_prdict_user())
@@ -74,4 +82,5 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
                          'message_time' : datetime.now().strftime(Message.DATE_FORMAT) }
         return simplejson.dumps(chat_message)
                          
-    
+    def get_svc(self):
+        return self.message_svc

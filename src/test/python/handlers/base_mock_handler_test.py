@@ -206,6 +206,12 @@ class BaseMockHandlerTest(unittest.TestCase):
 
     def SameSportKey(self, sport):
         return sport.key() == self.sport.key()
+
+    def SameLeagueKey(self, league):
+        return league.key() == self.league.key()
+
+    def SameTeamKey(self, team):
+        return team.key() == self.team_1.key()
         
     def SameUserKey(self, user):
         return user.key() == self.user.key()

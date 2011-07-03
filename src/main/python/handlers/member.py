@@ -3,6 +3,7 @@ import dateutil
 import httplib
 import logging
 
+from auth import http_basic_auth
 from handlers.handler import AbstractHandler
 from utils.constants import Constants
 
@@ -22,7 +23,8 @@ class MemberHandler(AbstractHandler):
         """Given a single entry, render a JSON view."""
         self.render_string(entry.to_json())
 
-    def get(self, parent_key, child_key):
+    @http_basic_auth
+    def get(self, user, parent_key, child_key):
         """Handles an HTTP GET by checking authorization on the parent
         resource and rendering the child according to HTTP request,
         if authorized"""
@@ -69,7 +71,8 @@ class MemberHandler(AbstractHandler):
         overloaded DELETE"""
         self.allow_overloaded_post_of_child_delete(parent_key, child_key)
 
-    def delete(self, parent_key, child_key):
+    @http_basic_auth
+    def delete(self, user, parent_key, child_key):
         """Handles an HTTP DELETE by checking if the user is authorized
         then doing the DB delete of the member from the list"""
         self.response.set_status(httplib.METHOD_NOT_ALLOWED)

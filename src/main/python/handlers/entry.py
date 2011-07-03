@@ -23,7 +23,8 @@ class EntryHandler(AbstractHandler):
         """Given a single entry, render a JSON view."""
         self.render_string(entry.to_json())
 
-    def get(self, key):
+    @http_basic_auth
+    def get(self, user, key):
         """Handles an HTTP GET by checking authorization and rendering
         the entry according to HTTP request, if authorized"""
         entry = self.get_authorized_entry(key, "read")
@@ -84,7 +85,7 @@ class EntryHandler(AbstractHandler):
 
         if not are_params_valid:
             return self.set_400(self.get_html(entry_before_put),
-                                content_type, error_msg,
+                                content_type, user, error_msg,
                                 params = { "entry" : entry_before_put })
 
         if not preconditions_succeeded:
@@ -118,7 +119,8 @@ class EntryHandler(AbstractHandler):
         else:
             logging.error("I don't know how to handle PUT of content type %s" % content_type)
 
-    def delete(self, key):
+    @http_basic_auth
+    def delete(self, user, key):
         """Handles an HTTP DELETE by checking if the user is authorized
         then doing the DB delete"""
         entry_before_delete = self.get_authorized_entry(key, "write")

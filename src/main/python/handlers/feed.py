@@ -9,14 +9,19 @@ import simplejson as json
 from google.appengine.ext import db
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
+from auth import BaseAuthorizationHandler, http_basic_auth
 from handlers.handler import AbstractHandler
 from utils.constants import Constants
 import build
 
-class FeedHandler(AbstractHandler):
+class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
     """Parent class for REST-based feed handlers.
     Feeds have 1 parent object and multiple contained entry objects"""
     DEFAULT_LIMIT = 75
+
+    def __init__(self):
+        self.html = "parent.html"
+        self.entry_html = "entry.html"
 
     def get_entries(self, parent, limit = DEFAULT_LIMIT, offset = 0):
         """Returns the child entries of a parent,
@@ -58,7 +63,8 @@ class FeedHandler(AbstractHandler):
         """Given a created entry, render it to HTML."""
         raise Exception("Must be overridden by subclasses")
 
-    def get(self, key):
+    @http_basic_auth
+    def get(self, user, key):
         """Handles an HTTP GET by checking if user is authorized then
         returning parent/children according to HTTP request"""
         parent_entry = self.get_authorized_entry(key, "read")
@@ -92,9 +98,10 @@ class FeedHandler(AbstractHandler):
             self.render_html(parent_entry, entries, prev_link, next_link, None)
             return
         else:
-            logging.error("Received a request tpye I can't handle %s" % request_type)
-            
-    def post(self, key):
+            logging.error("Received a request type I can't handle %s" % request_type)
+
+    @http_basic_auth
+    def post(self, user, key):
         """Handles an HTTP POST by checking it is not overloaded PUT or DELETE,
         then checking if user is authorized, then validating new child and
         adding it to the resource."""
@@ -107,12 +114,11 @@ class FeedHandler(AbstractHandler):
                 parent = db.get(db.Key(encoded = key))
             except db.BadKeyError:
                 parent = None
-            self.render_html(parent, None, msg = msg)
+            self.set_400(self.html, content_type, user, msg)
             return
         parent_entry = self.get_authorized_entry(key, "write")
         if not parent_entry:
             return
-        user = self.get_prdict_user()
 
         (is_content_type_ok, are_params_valid, is_db_write_ok,
          error_msg, new_entry) = self.create_entry(content_type)
@@ -123,17 +129,12 @@ class FeedHandler(AbstractHandler):
                                                      'current_user' : user,
                                                      'parent' : parent_entry })
         if not are_params_valid:
-            self.response.set_status(httplib.BAD_REQUEST)
-            return self.render_template(self.html, { 'msg' : error_msg,
-                                                     'current_user' : user,
-                                                     'parent' : parent_entry })
+            return self.set_400(self.html, content_type, user, error_msg)
 
         if not is_db_write_ok:
-            self.response.set_status(httplib.SERVICE_UNAVAILABLE)
-            return self.render_template(self.html, { 'msg' : error_msg,
-                                                     'current_user' : user,
-                                                     'parent' : parent_entry })
+            return self.handle_transient_error(content_type, user)
 
+        self.handle_post_success(parent_entry, new_entry)
         entry_url = "%s/%s" % (self.request.url, new_entry.key())
         self.response.headers['Content-Location'] = entry_url
         self.response.set_status(httplib.CREATED)
@@ -240,6 +241,9 @@ class FeedHandler(AbstractHandler):
 
     def create_entry(self, content_type):
         return self.get_svc().create_entry(self.request, content_type)
+
+    def handle_post_success(self, parent_entry, new_entry):
+        raise "Must be implemented by subclasses"
 
     def get_svc(self):
         raise "Must be implemented by subclasses"

@@ -6,19 +6,20 @@ import simplejson as json
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
+from auth import http_basic_auth
 from handlers.handler import AbstractHandler
 from models import prdict_user
 from utils.constants import Constants
 
 class UsersHandler(AbstractHandler):
     """Handles requests for the resource of all users."""
-    def get(self):
+    @http_basic_auth
+    def get(self, user):
         """Renders a template for adding a new user"""
-        user = self.get_prdict_user()
         content_type = self.get_read_content_type()
         #for now, only permit admin users to access
         if not users.is_current_user_admin():
-            self.set_403(content_type)
+            self.set_403(content_type, user)
             return None
 
         self.render_template('users.html', {'current_user' : user})
@@ -28,13 +29,13 @@ class UsersHandler(AbstractHandler):
                      self.get_all_users()]
         self.render_string(json.dumps(json_list))
 
-    def post(self):
+    @http_basic_auth
+    def post(self, current_user):
         """Attempts to respond to a POST by adding a new user"""
         #for now, only permit admin users to create
-        current_user = self.get_prdict_user()
         content_type = self.get_write_content_type()
         if not users.is_current_user_admin():
-            self.set_403(content_type)
+            self.set_403(content_type, current_user)
             return None
         if content_type == "form":
             email = self.request.get("email")
@@ -57,7 +58,7 @@ class UsersHandler(AbstractHandler):
                                           'current_user' : current_user})
         (is_valid, error_message) = prdict_user.PrdictUser.validate_params(username, email)
         if not is_valid:
-            return self.set_400("users.html", content_type, error_message)
+            return self.set_400("users.html", content_type, current_user, error_message)
         email_user = users.User(email)
         if prdict_user.PrdictUser.user_registered(email):
             user = prdict_user.lookup_user(email_user)
@@ -66,7 +67,7 @@ class UsersHandler(AbstractHandler):
             try:
                 user = self.create_user(username, email_user)
             except CapabilityDisabledError:
-                self.handle_transient_error(content_type)
+                self.handle_transient_error(content_type, current_user)
                 return
         user_url = "%s/%s" % (self.request.url, user.key())
         self.response.headers['Content-Location'] = user_url

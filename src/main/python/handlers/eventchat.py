@@ -13,8 +13,14 @@ from handlers.auth import EventChatAuthorizationHandler
 from handlers.feed import FeedHandler
 from models.message import Message
 from models import prdict_user
+from services.message_svc import MessageService
 
 class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
+    def __init__(self):
+        self.message_svc = MessageService()
+        self.html = "eventchat.html"
+        self.entry_html = "message.html"
+
     """Handles a request for an event chat resource
     FeedHandler has logic on request processing
     EventChatAuthorizationHandler has logic for authorization"""
@@ -39,48 +45,17 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
                                'next_link' : next_link,
                                'msg' : msg})
 
-    def render_atom(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
-        self.render_template('xml/eventchat_atom.xml',
-                             { 'event' : parent,
-                               'messages' : entries,
-                               'self_link' : self.xml_escape(self.request.url),
-                               'base_url' : self.baseurl(),
-                               'prev_link' : self.xml_escape(prev_link),
-                               'next_link' : self.xml_escape(next_link) })
+    def render_atom(self, parent, entries, prev_link=None, next_link=None, msg = None):
+        raise "Not implemented yet"
 
-    def render_json(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
-        self.render_template('json/eventchat_json.json',
-                             { 'event' : parent,
-                               'messages' : entries })
-
-    def is_post_data_valid(self, parent):
-        """Checks if request parameters contain a valid message to add"""
-        content = self.request.get("content")
-        return Message.validate_params(content)
-
-    def handle_post(self, parent):
-        """Respond to a POST that we know contains a valid message to add"""
-        content_type = self.get_write_content_type()
-        try:
-            message_to_add = self.create_chat(parent)
-        except CapabilityDisabledError:
-            self.handle_transient_error(content_type)
-            return
-        msg = "Added message"
-        chat_location = self.baseurl() + parent.get_relative_url() + "/chat"
-
-        self.response.set_status(httplib.CREATED)
-        self.set_header('Content-Location', chat_location)
-        self.render_html(parent, self.get_entries(parent = parent), msg = msg)
-
-        channel_msg = self.get_channel_message(message_to_add)
+    def handle_post_success(self, parent, new_entry):
+        channel_msg = self.get_channel_message(new_entry)
         cache_key = "listeners-%s" % str(parent.key())
         listeners = memcache.get(cache_key)
         if listeners:
             for listener in listeners:
                 channel.send_message(listener, channel_msg)
+
 
     def get_channel_message(self, message):
         chat_message = { 'author' : message.author.username,
@@ -96,3 +71,11 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
         message_to_add.put()
         return message_to_add
 
+    def get_parent_name(self):
+        return "event"
+
+    def get_entries_name(self):
+        return "messages"
+
+    def get_svc(self):
+        return self.message_svc

@@ -1,0 +1,8 @@
+<dl>
+<dt><a href="{{ entry.relative_url }}">self link</a></dt>
+<dt>Content: {{ entry.content|escape }}</dt>
+<dt>Author: {{ entry.author.username|escape }}</dt>
+{% block other_write_data %}{% endblock %}
+<dt>Created: {{ entry.isoformat_created }}</dt>
+<dt>Updated:{{ entry.isoformat_updated }}</dt>
+</dl>

@@ -1,7 +1,7 @@
 """Handles request for a user resource"""
 import httplib
 
-from handlers.auth import UserAuthorizationHandler
+from handlers.auth import UserAuthorizationHandler, http_basic_auth
 from handlers.entry import EntryHandler
 
 class UserHandler(EntryHandler, UserAuthorizationHandler):
@@ -24,7 +24,8 @@ class UserHandler(EntryHandler, UserAuthorizationHandler):
         self.allow_overloaded_post_of_delete(key)
 
     #For now, can't update users - this will change
-    def put(self, key):
+    @http_basic_auth
+    def put(self, user, key):
         return self.response.set_status(httplib.METHOD_NOT_ALLOWED)
 
     def get_html(self, entry):

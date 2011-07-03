@@ -48,7 +48,7 @@ class TestEntryHandler(BaseMockHandlerTest):
 
     def testGetNoUser(self):
         self.remove_user()
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(None)
+        self.mock_handler.get_prdict_user().AndReturn(None)
         self.mock_handler.render_html(mox.Func(self.SameSportKey), mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -56,7 +56,7 @@ class TestEntryHandler(BaseMockHandlerTest):
         self.mox.VerifyAll()
 
     def testGetWithNonAdminUser(self):
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mock_handler.render_html(mox.Func(self.SameSportKey), mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -65,7 +65,7 @@ class TestEntryHandler(BaseMockHandlerTest):
 
     def testGetWithAdminUser(self):
         self.set_user(self.username, True)
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mock_handler.render_html(mox.Func(self.SameSportKey), mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -75,7 +75,7 @@ class TestEntryHandler(BaseMockHandlerTest):
     def testGetJsonWithAdminUser(self):
         self.set_user(self.username, True)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
-        self.mock_handler.get_prdict_user().MultipleTimes(2).AndReturn(self.user)
+        self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mock_handler.render_string(mox.Func(self.JsonFromSport))
         self.mox.ReplayAll()
 

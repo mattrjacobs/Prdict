@@ -21,7 +21,8 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
         self.html = "list.html"
         self.entry_html = "entry.html"
 
-    def get(self):
+    @http_basic_auth
+    def get(self, user):
         """Renders a list.
         If HTML, also renders a template for adding a new member, if the
         requesting user is an admin"""
@@ -40,7 +41,6 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
             self.set_header("Content-Type", Constants.JSON_ENCODING)
             self.render_json(query)
         else:
-            user = self.get_prdict_user()
             can_write = self.is_user_authorized_to_write(user, None)
             all_entries = self.get_all_entries(query)
             now = datetime.now().strftime(ListHandler.DATE_FORMAT)
@@ -52,7 +52,7 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
         """Attempts to respond to a POST by adding a new entry"""
         content_type = self.get_write_content_type()
         if not self.is_user_authorized_to_write(user, None):
-            self.set_403(content_type)
+            self.set_403(content_type, user)
             return None
         (is_content_type_ok, are_params_valid, is_db_write_ok,
          error_msg, new_entry) = self.create_entry(content_type)
@@ -63,10 +63,10 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
                                                      'current_user' : user})
 
         if not are_params_valid:
-            return self.set_400(self.html, content_type, error_msg)
+            return self.set_400(self.html, content_type, user, error_msg)
 
         if not is_db_write_ok:
-            self.handle_transient_error(content_type)
+            self.handle_transient_error(content_type, user)
             return
 
         entry_url = "%s/%s" % (self.request.url, new_entry.key())

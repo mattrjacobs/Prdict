@@ -2,6 +2,7 @@ from abstract_model import AbstractModel
 
 from datetime import datetime
 import logging
+import urllib
 import simplejson as json
 
 from google.appengine.ext import db
@@ -22,6 +23,20 @@ class EventEncoder(json.JSONEncoder):
 class Event(AbstractModel):
     start_date = db.DateTimeProperty(required=True)
     end_date = db.DateTimeProperty(required=True)
+
+    @staticmethod
+    def parse_event_uri(event_uri):
+        uri_pieces = urllib.unquote(event_uri).strip("/").split("/")
+        try:
+            if len(uri_pieces) == 3:
+                if uri_pieces[0] != "api" or uri_pieces[1] != "events":
+                    return None
+                event_key = uri_pieces[2]
+                return db.get(db.Key(encoded = event_key))
+            else:
+                return None
+        except db.BadKeyError:
+            return None
 
     @staticmethod
     def validate_dates(start_date, end_date):

@@ -5,7 +5,7 @@ import logging
 from google.appengine.ext import db
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
-from handlers.auth import FriendsAuthorizationHandler
+from handlers.auth import FriendsAuthorizationHandler, http_basic_auth
 from handlers.entry import EntryHandler
 
 def delete_txn(handler, user, friend):
@@ -34,17 +34,18 @@ class UserSpecificFriendHandler(EntryHandler, FriendsAuthorizationHandler):
                              { 'user' : entry,
                                'base_url' : self.baseurl() } )
 
-    def get(self, user_key, friend_key):
+    @http_basic_auth
+    def get(self, current_user, user_key, friend_key):
         user = self.get_authorized_entry(user_key, "read")
         content_type = self.get_read_content_type()
         if not user:
             return
         friend = self.get_entry(friend_key)
         if not friend:
-            self.set_404(content_type)
+            self.set_404(content_type, current_user)
             return
         if not friend.user in user.friends:
-            self.set_404(content_type)
+            self.set_404(content_type, current_user)
             return
         
         self.handle_http_caching_headers(user)
@@ -53,21 +54,23 @@ class UserSpecificFriendHandler(EntryHandler, FriendsAuthorizationHandler):
     def post(self, user_key, friend_key):
         self.allow_overloaded_post_of_delete(key)
 
-    def put(self, key):
+    @http_basic_auth
+    def put(self, current_user, key):
         return self.response.set_status(httplib.METHOD_NOT_ALLOWED)
 
-    def delete(self, user_key, friend_key):
+    @http_basic_auth
+    def delete(self, current_user, user_key, friend_key):
         content_type = self.get_write_content_type()
         user_before_membership_delete = self.get_authorized_entry(user_key, "write")
         if not user_before_membership_delete:
             return
         friend = self.get_entry(friend_key)
         if not friend:
-            self.set_404(content_type)
+            self.set_404(content_type, current_user)
             return
         
         if not friend.user in user_before_membership_delete.friends:
-            self.set_404(content_type)
+            self.set_404(content_type, current_user)
             return
         try:
             entry, status, msg = \
