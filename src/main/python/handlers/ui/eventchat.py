@@ -35,7 +35,12 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
 
     def render_html(self, parent, entries, prev_link=None, next_link=None,
                     msg = None):
-        client_id = self.get_prdict_user().user.user_id()
+        cookie_user = self.get_prdict_user()
+        if cookie_user:
+            user_id = cookie_user.user.user_id()
+        else:
+            user_id = random.randint(1000, 99999)
+        client_id = user_id
         cache_key = "listeners-%s" % str(parent.key())
         rand = random.randint(1000, 9999)
         channel_id = "%s-%s-%s" % (client_id, str(parent.key()), rand)
@@ -51,12 +56,12 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
             current_listeners = [hashed_channel_id]
 
         memcache.set(cache_key, current_listeners)
-        channel_msg = self.get_channel_message(self.get_prdict_user())
+        channel_msg = self.get_channel_message(None)
         for listener in current_listeners:
             channel.send_message(listener, channel_msg)
 
         self.render_template('ui_eventchat.html',
-                             { 'current_user' : self.get_prdict_user(),
+                             { 'current_user' : cookie_user,
                                'token' : token,
                                'event' : parent,
                                'event_key' : str(parent.key()),
@@ -77,8 +82,12 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
 
     def get_channel_message(self, user):
         """Create a message stating some user just signed in"""
+        if user:
+            username = user.username
+        else:
+            username = "Anonymous"
         chat_message = { 'author' : 'Admin',
-                         'message' : '%s joined' % user.username,
+                         'message' : '%s joined' % username,
                          'message_time' : datetime.now().strftime(Message.DATE_FORMAT) }
         return simplejson.dumps(chat_message)
                          
