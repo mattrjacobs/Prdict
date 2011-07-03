@@ -242,8 +242,9 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
     def create_entry(self, content_type):
         return self.get_svc().create_entry(self.request, content_type)
 
+    #This is a hook for post-POST actions.  By default, do nothing
     def handle_post_success(self, parent_entry, new_entry):
-        raise "Must be implemented by subclasses"
+        pass
 
     def get_svc(self):
         raise "Must be implemented by subclasses"
