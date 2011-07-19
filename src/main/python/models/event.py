@@ -154,6 +154,10 @@ class Event(AbstractModel):
         return self.end_date.strftime("%Y-%m-%d %H:%M:%S")
     end_date_str = property(get_end_date_str)
 
+    def get_nice_start_date_str(self):
+        return self.start_date.strftime("%b %d %H:%M")
+    nice_start_date_str = property(get_nice_start_date_str)
+
     def get_item_name(self):
         return "event"
     item_name = property(get_item_name)
