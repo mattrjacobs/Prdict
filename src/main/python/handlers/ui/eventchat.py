@@ -88,7 +88,7 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
             username = "Anonymous"
         chat_message = { 'author' : 'Admin',
                          'message' : '%s joined' % username,
-                         'message_time' : datetime.now().strftime(Message.DATE_FORMAT) }
+                         'message_time' : datetime.utcnow().strftime(Message.DATE_FORMAT) }
         return simplejson.dumps(chat_message)
                          
     def get_svc(self):

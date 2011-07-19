@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta, tzinfo
 import base64
 import cookielib
 import iso8601
@@ -194,6 +193,18 @@ def download_team_schedules(teams, prdict_url, team_dir):
 
 def store_games(team_map, league_uri, prdict_url):
 
+    class EstTzInfo(tzinfo):
+        def utcoffset(self, dt): return timedelta(hours=-4)
+        def dst(self, dt): return timedelta(0)
+        def tzname(self, dt): return 'EST+04EDT'
+        def olsen_name(self): return 'US/Eastern'
+
+    class UstTzInfo(tzinfo):
+        def utcoffset(self, dt): return timedelta(hours=0)
+        def dst(self, dt): return timedelta(0)
+        def tzname(self, dt): return 'UST'
+        def olsen_name(self): return 'UST' 
+
     # Key: Team name, Value (#already there, #added)
     games_stored = {}
 
@@ -217,9 +228,9 @@ def store_games(team_map, league_uri, prdict_url):
                 print "Did not find event : %s, creating it..." % game_ref_id
                 home_team_uri = _get_uri_by_team(team_map, home_name)
                 away_team_uri = _get_uri_by_team(team_map, away_name)
-                parsed_date = parse_date(date)
+                parsed_date = parse_date(date).replace(tzinfo = EstTzInfo()).astimezone(UstTzInfo())
                 end_date = timedelta(hours=4) + parsed_date
-                completed = end_date < datetime.now()
+                completed = end_date < datetime.utcnow().replace(tzinfo = UstTzInfo())
                 start_date_str = parsed_date.strftime("%Y-%m-%d %H:%M:%S")
                 end_date_str = end_date.strftime("%Y-%m-%d %H:%M:%S")
                 new_event = { "type" : "sportsevent",
@@ -289,6 +300,7 @@ if __name__ == "__main__":
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar))
     urllib2.install_opener(opener)
 
+    print "Starting up..."
     league_uri = store_league(options.prdict_url, options.league_name, options.league_ref_id)
     print "League URI : %s" % league_uri
 

@@ -1,7 +1,8 @@
 from handlers.handler import AbstractHandler
 
-from datetime import datetime
+import datetime
 import logging
+import os
 
 from google.appengine.api import memcache
 from google.appengine.ext import db
@@ -16,12 +17,13 @@ class EventTimingTaskHandler(AbstractHandler):
         return [prdict_user.lookup_user(u) for u in user.friends[0 : num]] 
 
     def get_past_events(self, num):
-        query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date < :1 ORDER BY end_date DESC", datetime.now())
+        query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date < :1 ORDER BY end_date DESC", datetime.datetime.utcnow())
+        end = datetime.datetime.utcnow()
         return query.fetch(num, 0)
 
     def get_current_events(self, num):
-        end_in_future_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date > :1 ORDER BY end_date ASC", datetime.now())
-        start_in_past_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 ORDER BY start_date DESC", datetime.now())
+        end_in_future_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date > :1 ORDER BY end_date ASC", datetime.datetime.utcnow())
+        start_in_past_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 ORDER BY start_date DESC", datetime.datetime.utcnow())
         end_in_future = end_in_future_query.fetch(num * 2, 0)
         start_in_past = start_in_past_query.fetch(num * 2, 0)
         current_events = []
@@ -31,7 +33,7 @@ class EventTimingTaskHandler(AbstractHandler):
         return current_events
 
     def get_next_events(self, num):
-        query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date > :1 ORDER BY start_date ASC", datetime.now())
+        query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date > :1 ORDER BY start_date ASC", datetime.datetime.utcnow())
         return query.fetch(num, 0)
 
     # used for cron
@@ -61,3 +63,5 @@ class EventTimingTaskHandler(AbstractHandler):
             return hdr.lower() == "true"
         else:
             return False
+
+        

@@ -27,7 +27,7 @@ class MessageService(BaseService):
 
     def __create_param_map(self, content, event):
         params = { }
-        created = datetime.datetime.now()
+        created = datetime.datetime.utcnow()
         author = AbstractHandler.get_prdict_user()
 
         if content is not None:

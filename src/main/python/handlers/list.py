@@ -43,7 +43,7 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
         else:
             can_write = self.is_user_authorized_to_write(user, None)
             all_entries = self.get_all_entries(query)
-            now = datetime.now().strftime(ListHandler.DATE_FORMAT)
+            now = datetime.utcnow().strftime(ListHandler.DATE_FORMAT)
             param_map = self.create_param_map(user, all_entries, can_write, now)
             self.render_template(self.html, param_map)
 
