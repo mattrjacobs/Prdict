@@ -35,3 +35,6 @@ handlers:
 
 - url: /.*
   script: prdictapi.py
+
+inbound_services:
+  - channel_presence
