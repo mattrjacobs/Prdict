@@ -12,21 +12,21 @@ This is the Prdict homepage.  Welcome
 <h4>In-Progress Events</h4>
 <table>
 {% for event in current_events %}
-  <tr><td>{{ event.nice_start_date_str }} (UTC for now)</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
+  <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
 {% endfor %}
 </table>
 
 <h4>Most Recent Events</h4>
 <table>
 {% for event in past_events %}
-  <tr><td>{{ event.nice_start_date_str }} (UTC for now)</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
+  <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
 {% endfor %}
 </table>
 
 <h4>Upcoming Events</h4>
 <table>
 {% for event in future_events %}
-  <tr><td>{{ event.nice_start_date_str }} (UTC for now)</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
+  <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
 {% endfor %}
 </table>
 

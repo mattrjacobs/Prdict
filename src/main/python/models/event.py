@@ -4,6 +4,7 @@ from datetime import datetime
 import logging
 import urllib
 import simplejson as json
+from utils import timezones
 
 from google.appengine.ext import db
 
@@ -157,6 +158,10 @@ class Event(AbstractModel):
     def get_nice_start_date_str(self):
         return self.start_date.strftime("%b %d %H:%M")
     nice_start_date_str = property(get_nice_start_date_str)
+
+    def get_nice_start_date_est(self):
+        return self.start_date.replace(tzinfo = timezones.UstTzInfo()).astimezone(timezones.EstTzInfo()).strftime("%b %d %I:%M %p") + " EST"
+    nice_start_date_est = property(get_nice_start_date_est)
 
     def get_item_name(self):
         return "event"
