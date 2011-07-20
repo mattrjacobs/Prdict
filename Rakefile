@@ -132,7 +132,7 @@ task :package => [:static_dir] do
   sh "cp src/main/webapp/cron.yaml target/webapp/cron.yaml"
   sh "cp src/main/webapp/index.yaml target/webapp/index.yaml"
   sh "cp -r src/main/webapp/static/* target/webapp/static-`cat target/build.txt`"
-  sh "cp -r src/main/webapp/gae_mini_profiler target/webapp/gae_mini_profiler"
+  sh "rsync -av --exclude=.git src/main/webapp/gae_mini_profiler target/webapp/"
   sh "bin/rpackage src/main/python target/webapp"
   sh "bin/rpackage src/main/webapp/templates target/webapp/templates"
   sh "sed -f target/build.sed -i '' target/webapp/build.py"
