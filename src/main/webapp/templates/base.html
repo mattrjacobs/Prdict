@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     {% block scriptinclude %}
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     {% endblock %}
     <title>{% block title %}Prdict{% endblock %}</title>
     <link rel="stylesheet" href="/static-{{ build }}/css/prdict.css" type="text/css"/>
@@ -47,5 +48,6 @@
 	</center>
       </div>
     </div>
+    {% profiler_includes %}
   </body>
 </html>

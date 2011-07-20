@@ -19,6 +19,12 @@ handlers:
   static_files: static-%BUILD%/google76098d9def48f10d.html
   upload: static-%BUILD%/google76098d9def48f10d.html
 
+- url: /gae_mini_profiler/static
+  static_dir: gae_mini_profiler/static
+
+- url: /gae_mini_profiler/.*
+  script: gae_mini_profiler/main.py
+  
 - url: /dev/populate
   login: admin
   script: prdictapi.py

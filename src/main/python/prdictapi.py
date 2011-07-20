@@ -23,6 +23,8 @@ from handlers.userfriends import UserFriendsHandler
 from handlers.users import UsersHandler
 from handlers.version import VersionHandler
 
+from gae_mini_profiler import profiler
+
 import os
 from google.appengine.dist import use_library
 
@@ -47,7 +49,7 @@ urlmap = [('/', HomeHandler),
           ('/dev/populate', DevDataPopulateHandler),
           (r'/events/([^/]+)/chat', EventChatUiHandler),
           ('/version', VersionHandler)]
-application = webapp.WSGIApplication(urlmap, debug=True)
+application = profiler.ProfilerWSGIMiddleware(webapp.WSGIApplication(urlmap, debug=True))
 
 def main():
     run_wsgi_app(application)
