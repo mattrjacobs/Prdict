@@ -6,7 +6,10 @@
 #                       deployment or running with dev_appserver.py
 #  $ run              : runs the existing webapp with dev_appserver.py
 #  $ run_clean        : runs the webpp with a clear datastore
-#  $ run_sqlite       : runs the webapp with a SQLite datastore
+#  $ run_sqlite       : runs the webapp with a SQLite datastore in $TMPDIR
+#  $ backup_sqlite    : saves the current SQLite datastore to a new path in $TMPDIR
+#  $ clear_sqlite     : deletes the SQLite datastore
+#  $ restore_sqlite   : restores the SQLite datastore from its backup
 #  $ git_check_local  : checks if all local files are checked in
 #  $ git_check_remote : checks if local repo is up-to-date
 #  $ update_version   : updates Prdict-API version (in src and target) with 
@@ -191,6 +194,21 @@ end
 desc "run the app in a dev server with a SQLite datastore"
 task :run_sqlite => [:package] do
   sh "bin/run_sqlite_datastore"
+end
+
+desc "saves the SQLite DB to a new path in $TMPDIR"
+task :backup_sqlite do
+  sh "cp $TMPDIR/dev_appserver.datastore $TMPDIR/dev_appserver.datastore.backup"
+end
+
+desc "clears the SQLite DB"
+task :clear_sqlite do
+  sh "rm $TMPDIR/dev_appserver.datastore"
+end
+
+desc "restores the SQLite DB from its backup"
+task :restore_sqlite do
+  sh "cp $TMPDIR/dev_appserver.datastore.backup $TMPDIR/dev_appserver.datastore"
 end
 
 # for convenience when programming
