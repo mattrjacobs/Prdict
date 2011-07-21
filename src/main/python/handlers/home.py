@@ -41,15 +41,10 @@ class HomeHandler(AbstractHandler):
                                'future_events' : self.get_next_events(10) })
 
     def get_past_events(self, num):
-        start = datetime.datetime.utcnow()
         query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date < :1 ORDER BY end_date DESC", datetime.datetime.utcnow())
-        end = datetime.datetime.utcnow()
-        woo = query.fetch(num, 0)
-        logging.error("PAST EVENTS : %s" % (end - start))
-        return woo
+        return query.fetch(num, 0)
     
     def get_current_events(self, num):
-        start = datetime.datetime.utcnow()
         end_in_future_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date > :1 ORDER BY end_date ASC", datetime.datetime.utcnow())
         start_in_past_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 ORDER BY start_date DESC", datetime.datetime.utcnow())
         end_in_future = end_in_future_query.fetch(num * 2, 0)
@@ -58,14 +53,9 @@ class HomeHandler(AbstractHandler):
         for event in end_in_future:
             if str(event.key()) in map(lambda event: str(event.key()), start_in_past):
                 current_events.append(event)
-        end = datetime.datetime.utcnow()
-        logging.error("CURRENT : %s" % (end - start))
         return current_events
             
     def get_next_events(self, num):
-        start = datetime.datetime.utcnow()
         query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date > :1 ORDER BY start_date ASC", datetime.datetime.utcnow())
-        woo = query.fetch(num, 0)
-        end = datetime.datetime.utcnow()
-        logging.error("NEXT : %s" % (end - start))
-        return woo
+        return query.fetch(num, 0)
+        
