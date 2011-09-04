@@ -34,10 +34,9 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
             return []
 
     def render_html(self, parent, entries, prev_link=None, next_link=None,
-                    msg = None):
-        cookie_user = self.get_prdict_user()
-        if cookie_user:
-            user_id = cookie_user.user.user_id()
+                    msg = None, user = None):
+        if user:
+            user_id = user.user.user_id()
         else:
             user_id = random.randint(1000, 99999)
         client_id = user_id
@@ -61,7 +60,7 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
             channel.send_message(listener, channel_msg)
 
         self.render_template('ui_eventchat.html',
-                             { 'current_user' : cookie_user,
+                             { 'current_user' : user,
                                'token' : token,
                                'event' : parent,
                                'event_key' : str(parent.key()),
@@ -82,6 +81,9 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
 
     def get_channel_message(self, user):
         """Create a message stating some user just signed in"""
+        logging.error("USER : %s" % user)
+        if user:
+            logging.error("USER : %s" % user.username)
         if user:
             username = user.username
         else:

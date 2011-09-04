@@ -1,5 +1,9 @@
 {% extends "fragments/base_fragment.html" %}
 
+{% block links %}
+<a href="/teams/{{entry.key|escape}}/schedule">Schedule</a>
+{% endblock %}
+
 {% block extra_form %}
 <dt>League: <a href="{{entry.league.relative_url}}">{{ entry.league.title|escape }}</a>
 <select name="league">

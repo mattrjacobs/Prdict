@@ -154,7 +154,7 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.non_friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(201)
-        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithNewMember), mox.IgnoreArg())
+        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithNewMember), mox.IgnoreArg(), mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.handle_post(self.user)
@@ -166,7 +166,7 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(json.dumps({ 'email' : self.non_friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
         self.impl.response.set_status(201)
-        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithNewMember), mox.IgnoreArg())
+        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithNewMember), mox.IgnoreArg(), mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.handle_post(self.user)
@@ -210,7 +210,7 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(urllib.urlencode({ 'email' : self.friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.FORM_ENCODING
         self.impl.response.set_status(302)
-        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithOldMembersOnly), mox.IgnoreArg())
+        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithOldMembersOnly), mox.IgnoreArg(), mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.handle_post(self.user)
@@ -221,7 +221,7 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         self.impl.request = self.req(json.dumps({ 'email' : self.friend_email}), "POST")
         self.impl.request.headers["Content-Type"] = Constants.JSON_ENCODING
         self.impl.response.set_status(302)
-        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithOldMembersOnly), mox.IgnoreArg())
+        self.mock_handler.render_html(self.user, mox.Func(self.FriendsListWithOldMembersOnly), mox.IgnoreArg(), mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.handle_post(self.user)
@@ -232,8 +232,8 @@ class MockUserFriendsHandler(UserFriendsHandler):
     def __init__(self, handler):
         self.handler = handler
 
-    def render_html(self, user, friends, msg = None):
-        self.handler.render_html(user, friends, msg)
+    def render_html(self, user, friends, msg = None, cookie_user = None):
+        self.handler.render_html(user, friends, msg, cookie_user)
 
     def render_template(self, template):
         self.handler.render_template(template)

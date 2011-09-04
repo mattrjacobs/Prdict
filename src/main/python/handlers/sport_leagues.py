@@ -22,9 +22,9 @@ class SportLeaguesHandler(FeedHandler, BaseAuthorizationHandler):
             return []
 
     def render_html(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
+                    msg=None, user = None):
         self.render_template("sport_leagues.html",
-                             { 'current_user' : self.get_prdict_user(),
+                             { 'current_user' : user,
                                'parent' : parent,
                                'entries' : entries,
                                'self_link' : self.request.url,

@@ -16,6 +16,7 @@ def http_basic_auth(method):
     @functools.wraps(method)
     def http_basic_auth_deco(self, *args):
         cookie_user = users.get_current_user()
+        logging.error("COOKIE USER : %s" % cookie_user)
         user = None
         if not cookie_user:
             basic_auth = self.request.headers.get("Authorization")

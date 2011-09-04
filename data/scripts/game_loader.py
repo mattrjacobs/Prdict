@@ -178,7 +178,7 @@ def download_team_schedules(teams, prdict_url, team_dir):
         except IOError:
             print "File not already present"
             url = "%s/teams/%s/events?api_key=%s" % \
-                  (fanfeedr_base, team_id, api_key)
+                  (fanfeedr_base, team["id"], api_key)
             try:
                 response = urllib2.urlopen(url)
                 games_json = response.read()
@@ -188,7 +188,6 @@ def download_team_schedules(teams, prdict_url, team_dir):
                 file_map[team["id"]] = filename
             except urllib2.HTTPError:
                 print "HTTP ERROR retrieving schedule from Fanfeedr"
-                sys.exit(1)
     return file_map
 
 def store_games(team_map, league_uri, prdict_url):

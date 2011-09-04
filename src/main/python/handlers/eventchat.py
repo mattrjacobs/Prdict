@@ -34,9 +34,9 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
             return []
 
     def render_html(self, parent, entries, prev_link=None, next_link=None,
-                    msg = None):
+                    msg = None, user = None):
          self.render_template('eventchat.html',
-                             { 'current_user' : self.get_prdict_user(),
+                             { 'current_user' : user,
                                'event' : parent,
                                'event_key' : str(parent.key()),
                                'messages' : entries,

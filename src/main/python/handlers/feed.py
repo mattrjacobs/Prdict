@@ -29,7 +29,7 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         raise Exception("Must be overridden by subclasses")
 
     def render_html(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
+                    msg=None, user=None):
         """Given a parent object and a list of entries related to the
         parent, render an HTML view.  If pagination links are provided,
         use them in the view."""
@@ -95,7 +95,7 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
             self.render_json(parent_entry, entries)
             return
         elif content_type == "html":
-            self.render_html(parent_entry, entries, prev_link, next_link, None)
+            self.render_html(parent_entry, entries, prev_link, next_link, None, user)
             return
         else:
             logging.error("Received a request type I can't handle %s" % request_type)

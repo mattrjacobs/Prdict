@@ -42,7 +42,8 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
                                       mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg())
+                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
+                                      None)
         self.mox.ReplayAll()
 
         self.impl.get(self.parent_key)
@@ -53,7 +54,8 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
                                       mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg())
+                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
+                                      mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.parent_key)
@@ -65,7 +67,8 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
                                       mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg())
+                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
+                                      mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.parent_key)
@@ -247,8 +250,8 @@ class MockFeedHandler(FeedHandler, BaseAuthorizationHandler):
     def get_prdict_user(self):
         return self.handler.get_prdict_user()
 
-    def render_html(self, parent, entries, prev_link, next_link, msg):
-        self.handler.render_html(parent, entries, prev_link, next_link, msg)
+    def render_html(self, parent, entries, prev_link, next_link, msg, user):
+        self.handler.render_html(parent, entries, prev_link, next_link, msg, user)
 
     def render_template(self, template, params = None):
         self.handler.render_template(template, params)
