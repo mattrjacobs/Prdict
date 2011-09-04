@@ -21,25 +21,16 @@ class TeamScheduleHandler(FeedHandler, BaseAuthorizationHandler):
             away_games = away_query.fetch(limit/2, 0)
             all_games = []
             for i in range(0, len(home_games) + len(away_games)):
-                logging.info("I : %s" % i)
-                if len(home_games) > 0:
-                    logging.info("COMPARING HOME : %s" % home_games[0].start_date)
-                if len(away_games) > 0:
-                    logging.info("COMPARING AWAY : %s" % away_games[0].start_date)
                 if len(away_games) == 0:
-                    logging.info("SELECTED HOME GAME : %s" % home_games[0])
                     all_games.append(home_games[0])
                     home_games.pop(0)
                 elif len(home_games) == 0:
-                    logging.info("SELECTED AWAY GAME : %s" % away_games[0])
                     all_games.append(away_games[0])
                     away_games.pop(0)
                 elif home_games[0].start_date < away_games[0].start_date:
-                    logging.info("SELECTED HOME GAME : %s" % home_games[0])
                     all_games.append(home_games[0])
                     home_games.pop(0)
                 else:
-                    logging.info("SELECTED AWAY GAME : %s" % away_games[0])
                     all_games.append(away_games[0])
                     away_games.pop(0)
 
