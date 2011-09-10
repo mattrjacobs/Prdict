@@ -1,9 +1,9 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-from handlers.task.eventtiming import EventTimingTaskHandler
+from handlers.task.scoreupdate import ScoreUpdateTaskHandler
 
-urlmap = [('/task/events/timing', EventTimingTaskHandler)]
+urlmap = [('/task/score_update', ScoreUpdateTaskHandler)]
 application = webapp.WSGIApplication(urlmap, debug=True)
 
 def main():

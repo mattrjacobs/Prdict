@@ -36,6 +36,27 @@ class AbstractModel(db.Model):
             return (False, ','.join(messages))
 
     @staticmethod
+    def validate_subset_orig_params(params):
+        """Return a (is_valid, error_message) tuple"""
+        messages = []
+
+        title_valid = desc_valid = True
+        if "title" in params:
+            (title_valid, title_msg) = AbstractModel.validate_title(params["title"])
+            if not title_valid:
+                messages.append(title_msg)
+
+        if "description" in params:
+            (desc_valid, msg) = AbstractModel.validate_description(params["description"])
+            if not desc_valid:
+                messages.append(msg)
+            
+        if title_valid and desc_valid:
+            return (True, None)
+        else:
+            return (False, ','.join(messages))
+
+    @staticmethod
     def validate_title(title):
         if not title or not title.strip():
             return (False, "Must specify a non-empty 'title' parameter.")

@@ -1,0 +1,4 @@
+cron:
+  - description: update scores
+    url: /tasks/score_update
+    schedule: every 5 minutes

@@ -107,7 +107,7 @@ class Event(AbstractModel):
         error_msgs = []
         dates_ok = True
         (are_orig_valid, orig_error_msg) = \
-                         AbstractModel.validate_orig_params(params)
+                         AbstractModel.validate_subset_orig_params(params)
         start_date_str = end_date_str = None
         start_date = end_date = None
 

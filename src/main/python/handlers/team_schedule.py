@@ -13,12 +13,12 @@ class TeamScheduleHandler(FeedHandler, BaseAuthorizationHandler):
         self.team_svc = TeamService()
         self.html = "team_schedule.html"
 
-    def get_entries(self, parent, limit = 1000, offset = 0):
+    def get_entries(self, parent, limit, offset = 0):
         if parent:
             home_query = db.GqlQuery("SELECT * FROM SportsEvent where home_team = :1 ORDER BY start_date ASC", parent.key())
             away_query = db.GqlQuery("SELECT * FROM SportsEvent where away_team = :1 ORDER BY start_date ASC", parent.key())
-            all_home_games = home_query.fetch(limit, 0)
-            all_away_games = away_query.fetch(limit, 0)
+            all_home_games = home_query.fetch(1000, 0)
+            all_away_games = away_query.fetch(1000, 0)
             all_sorted_games = self.merge_lists(all_home_games, all_away_games)
             return all_sorted_games[offset:offset + limit]
         else:

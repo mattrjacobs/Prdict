@@ -1,0 +1,18 @@
+{
+  "away_team": {
+    "id": "d69fbb27-43c1-58d9-90f4-dc6489a4aebd",
+    "name": "Chicago Cubs",
+    "score": 1
+  },
+  "date": "2011-09-10T13:10:00.000000Z",
+  "home_team": {
+    "id": "120afaf3-6e47-53f4-99ca-a55804f270b1",
+    "name": "NY Mets",
+    "score": 0
+  },
+  "id": "981a3049-7291-52f1-b05b-a918a53d47d6",
+  "name": "Chicago Cubs @ NY Mets",
+  "season_type": "regular",
+  "season_year": 2011,
+  "status": "Bottom  4 Inning"
+}

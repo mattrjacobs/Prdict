@@ -129,7 +129,7 @@ end
 
 desc "generate resources for inclusion in the package"
 task :package => [:static_dir] do
-  #sh "cp src/main/webapp/cron.yaml target/webapp/cron.yaml"
+  sh "cp src/main/webapp/cron.yaml target/webapp/cron.yaml"
   sh "cp src/main/webapp/index.yaml target/webapp/index.yaml"
   sh "cp -r src/main/webapp/static/* target/webapp/static-`cat target/build.txt`"
   sh "rsync -av --exclude=.git src/main/webapp/gae_mini_profiler target/webapp/"

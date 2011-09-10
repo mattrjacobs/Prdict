@@ -20,19 +20,6 @@ class HomeHandler(AbstractHandler):
         else:
             top_friends = []
 
-        #event_timings = memcache.get('event_timing')
-        #if event_timings:
-        #    past_events = event_timings['past']
-        #    current_events = event_timings['current']
-        #    future_events = event_timings['future']
-        #else:
-        #    past_events = []
-        #    current_events = []
-        #    future_events = []
-
-        
-
-        
         self.render_template("home.html",
                              { 'current_user' : user,
                                'top_friends' : top_friends,

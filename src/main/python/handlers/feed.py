@@ -17,7 +17,7 @@ import build
 class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
     """Parent class for REST-based feed handlers.
     Feeds have 1 parent object and multiple contained entry objects"""
-    DEFAULT_LIMIT = 75
+    DEFAULT_LIMIT = 1000
 
     def __init__(self):
         self.html = "parent.html"

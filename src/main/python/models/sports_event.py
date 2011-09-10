@@ -59,8 +59,8 @@ class SportsEvent(Event):
                               Event.validate_params(params)
 
         error_msgs = []
-        league = home_team_str = away_team_str = completed = home_team_score = \
-                 away_team_score = ref_id = game_kind = None
+        league = home_team_str = away_team_str = completed_str = home_team_score_str = \
+                 away_team_score_str = ref_id = game_kind = None
         sports_event_ok = True
 
         if "league" in params:
@@ -70,11 +70,11 @@ class SportsEvent(Event):
         if "away_team_str" in params:
             away_team_str = params["away_team_str"]
         if "completed_str" in params:
-            completed = params["completed_str"]
+            completed_str = params["completed_str"]
         if "home_team_score_str" in params:
-            home_team_score = params["home_team_score_str"]
+            home_team_score_str = params["home_team_score_str"]
         if "away_team_score_str" in params:
-            away_team_score = params["away_team_score_str"]
+            away_team_score_str = params["away_team_score_str"]
         if "ref_id" in params:
             ref_id = params["ref_id"]
         if "game_kind" in params:
@@ -112,27 +112,27 @@ class SportsEvent(Event):
         if home_team and away_team and str(home_team.key()) == str(away_team.key()):
             error_msgs.append("Team cannot play itself")
             sports_event_ok = False
-        if completed:
-            if not completed.lower() in ("true", "false"):
+        if completed_str:
+            if not completed_str.lower() in ("true", "false"):
                 error_msgs.append("Could not parse completed for Sports Event")
                 sports_event_ok = False
             else:
-                params["completed"] = completed.lower() == "true"
-        if home_team_score:
-            if not AbstractModel.parse_int(home_team_score):
+                params["completed"] = completed_str.lower() == "true"
+        if home_team_score_str:
+            if not AbstractModel.parse_int(home_team_score_str):
                 error_msgs.append("Could not parse home team score for Sports Event")
-                sports_event_ok = False            
+                sports_event_ok = False
             else:
-                params["home_team_score"] = int(home_team_score)
+                params["home_team_score"] = int(home_team_score_str)
         else:
             params["home_team_score"] = 0
 
-        if away_team_score:
-            if not AbstractModel.parse_int(away_team_score):
+        if away_team_score_str:
+            if not AbstractModel.parse_int(away_team_score_str):
                 error_msgs.append("Could not parse away team score for Sports Event")
                 sports_event_ok = False
             else:
-                params["away_team_score"] = int(away_team_score)
+                params["away_team_score"] = int(away_team_score_str)
         else:
             params["away_team_score"] = 0
         if game_kind:
@@ -154,8 +154,8 @@ class SportsEvent(Event):
         error_msgs = []
         if base_event_error_msg:
             error_msgs.append(base_event_error_msg)
-        league = home_team_str = away_team_str = completed = home_team_score = \
-                 away_team_score = game_kind = home_team = away_team = None
+        league = home_team_str = away_team_str = completed_str = home_team_score_str = \
+                 away_team_score_str = game_kind = home_team = away_team = None
         sports_event_ok = is_base_event_valid
 
         if "league" in params:
@@ -164,12 +164,12 @@ class SportsEvent(Event):
             home_team_str = params["home_team_str"]
         if "away_team_str" in params:
             away_team_str = params["away_team_str"]
-        if "completed" in params:
-            completed = params["completed"]
-        if "home_team_score" in params:
-            home_team_score = params["home_team_score"]
-        if "away_team_score" in params:
-            away_team_score = params["away_team_score"]
+        if "completed_str" in params:
+            completed_str = params["completed_str"]
+        if "home_team_score_str" in params:
+            home_team_score_str = params["home_team_score_str"]
+        if "away_team_score_str" in params:
+            away_team_score_str = params["away_team_score_str"]
         if "ref_id" in params:
             ref_id = params["ref_id"]
         if "game_kind" in params:
@@ -218,27 +218,27 @@ class SportsEvent(Event):
                    str(self.home_team.key()):
                 error_msgs.append("Team cannot play itself")
                 sports_event_ok = False
-        if completed:
-            if not completed.lower() in ("true", "false"):
+        if completed_str:
+            if not completed_str.lower() in ("true", "false"):
                 error_msgs.append("Could not parse completed for Sports Event")
-                sports_event_ok = False
+                completed_ok = False
             else:
-                params["completed"] = completed.lower() == "true"
-        if home_team_score:
-            if not AbstractModel.parse_int(home_team_score):
+                params["completed"] = completed_str.lower() == "true"
+        if home_team_score_str:
+            if not AbstractModel.parse_int(home_team_score_str):
                 error_msgs.append("Could not parse home team score for Sports Event")
                 sports_event_ok = False            
             else:
-                params["home_team_score"] = int(home_team_score)
+                params["home_team_score"] = int(home_team_score_str)
         else:
             params["home_team_score"] = 0
 
-        if away_team_score:
-            if not AbstractModel.parse_int(away_team_score):
+        if away_team_score_str:
+            if not AbstractModel.parse_int(away_team_score_str):
                 error_msgs.append("Could not parse away team score for Sports Event")
                 sports_event_ok = False
             else:
-                params["away_team_score"] = int(away_team_score)
+                params["away_team_score"] = int(away_team_score_str)
         else:
             params["away_team_score"] = 0
         if game_kind:

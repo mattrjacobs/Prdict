@@ -1,0 +1,18 @@
+{
+  "away_team": {
+    "id": "af3afa0f-67d1-549b-b27b-29e824e59df6",
+    "name": "Chicago White Sox",
+    "score": 15
+  },
+  "date": "2011-04-01T15:05:00.000000Z",
+  "home_team": {
+    "id": "384b89dd-3840-591c-9f22-81013718cc07",
+    "name": "Cleveland Indians",
+    "score": 10
+  },
+  "id": "357ada6c-da20-5d92-95f6-e78dcc0abfb9",
+  "name": "Chicago White Sox @ Cleveland Indians",
+  "season_type": "regular",
+  "season_year": 2011,
+  "status": "FINAL"
+}
