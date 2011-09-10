@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if team %}
+<h1>{{ team.location }} {{ team.title }}</h1>
+<hr/>
+<a href="/leagues/{{ team.league.title }}">League</a>
+<a href="{{ self_link }}/schedule">Schedule</a>
+{% endif %}
+{% endblock %}
