@@ -28,6 +28,7 @@ class SportsEventEncoder(json.JSONEncoder):
                  'game_kind' : event.game_kind,
                  'ref_id' : event.ref_id,
                  'self' : event.relative_url,
+                 'key' : str(event.key()),
                  'start_date' : event.start_date_str,
                  'nice_start_date_est' : event.nice_start_date_est,
                  'end_date' : event.end_date_str,

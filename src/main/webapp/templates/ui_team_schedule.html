@@ -21,7 +21,8 @@
                             '<a href="/leagues/' + event.league.title + 
                             '/teams/' + event.away_team.title + '">' + 
                             event.away_team.location + ' ' + event.away_team.title + 
-                            '</a></td><td>';
+                            '</a></td><td><a href="/events/' + 
+                            event.key + '/chat">Chat</a></td>';
           $('.schedule').append(scheduleRow);
         } 
       }
@@ -39,6 +40,6 @@
 
 {% block entries %}
 <table name="schedule" class="schedule">
-<tr><th>Date</th><th>Home</th><th>Away</th></tr>
+<tr><th>Date</th><th>Home</th><th>Away</th><th></th></tr>
 </table>
 {% endblock %}
