@@ -94,9 +94,8 @@ class League(AbstractModel):
             return (False, "Sport is null")
 
     def get_teams(self):
-        query = db.GqlQuery("SELECT * FROM Team WHERE league = :1",
+        query = db.GqlQuery("SELECT * FROM Team WHERE league = :1 ORDER BY location",
                             self)
-        query.ancestor(self)
         return query.fetch(100)
     teams = property(get_teams)
 

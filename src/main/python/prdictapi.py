@@ -18,6 +18,7 @@ from handlers.teams import TeamsHandler
 from handlers.team_member import TeamMemberHandler
 from handlers.team_schedule import TeamScheduleHandler
 from handlers.ui.eventchat import EventChatUiHandler
+from handlers.ui.league import LeagueUiHandler
 from handlers.user import UserHandler
 from handlers.userfriend import UserSpecificFriendHandler
 from handlers.userfriends import UserFriendsHandler
@@ -49,7 +50,8 @@ urlmap = [('/', HomeHandler),
           (r'/api/users/([^/]+)/friends/([^/]+)', UserSpecificFriendHandler),
           ('/dev/populate', DevDataPopulateHandler),
           (r'/events/([^/]+)/chat', EventChatUiHandler),
-          ('/teams/([^/]+)/schedule', TeamScheduleHandler),
+          (r'/leagues/([^/]+)', LeagueUiHandler),
+          (r'/teams/([^/]+)/schedule', TeamScheduleHandler),
           ('/version', VersionHandler)]
 application = profiler.ProfilerWSGIMiddleware(webapp.WSGIApplication(urlmap, debug=True))
 

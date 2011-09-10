@@ -8,6 +8,12 @@ from models.team import Team
 from services.base_svc import BaseService
 
 class TeamService(BaseService):
+    def get_teams_by_league_name(self, league_name):
+        query = db.GqlQuery("SELECT * FROM Team where league.name = :1 ORDER BY title", league_name)
+        foo = query.fetch(100, 0)
+        logging.error("TEAMS : %s" % foo)
+        return foo
+
     def get_json_params(self, request):
         try:
             parsed_body = json.loads(request.body)

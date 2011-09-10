@@ -1,0 +1,20 @@
+{% extends "base_feed.html" %}
+
+{% block parent %}
+{% if league %}
+<h1>{{ league.title|escape }}</h1>
+<hr/>
+{% endif %}
+{% endblock %}
+
+{% block entries %}
+{% if teams %}
+<table>
+{% for team in teams %}
+  <tr>
+    <td><a href="{{ self_link }}/teams/{{ team.title }}">{{ team.location }} {{ team.title }}</a></td>
+  </tr>
+{% endfor %}
+</table>
+{% endif %}
+{% endblock %}
