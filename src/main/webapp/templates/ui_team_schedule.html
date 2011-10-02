@@ -13,6 +13,7 @@
       success : function(json) {
         for (var event_idx in json.schedule) {
           var event = json.schedule[event_idx];
+          var scoreStr = event.home_team.score + " - " + event.away_team.score;
           var scheduleRow = '<tr><td>' + event.nice_start_date_est + '</td><td>' +
                             '<a href="/leagues/' + event.league.title + 
                             '/teams/' + event.home_team.title + '">' + 
@@ -21,7 +22,7 @@
                             '<a href="/leagues/' + event.league.title + 
                             '/teams/' + event.away_team.title + '">' + 
                             event.away_team.location + ' ' + event.away_team.title + 
-                            '</a></td><td><a href="/events/' + 
+                            '</a></td><td>' + scoreStr + '</td><td><a href="/events/' + 
                             event.key + '/chat">Chat</a></td>';
           $('.schedule').append(scheduleRow);
         } 
@@ -40,6 +41,6 @@
 
 {% block entries %}
 <table name="schedule" class="schedule">
-<tr><th>Date</th><th>Home</th><th>Away</th><th></th></tr>
+<tr><th>Date</th><th>Home</th><th>Away</th><th>Score</th><th></th></tr>
 </table>
 {% endblock %}
