@@ -27,15 +27,12 @@ from handlers.userfriends import UserFriendsHandler
 from handlers.users import UsersHandler
 from handlers.version import VersionHandler
 
-from handlers.fix_completed import FixCompletedHandler
-
 from gae_mini_profiler import profiler
 
 import os
 from google.appengine.dist import use_library
 
 urlmap = [('/', HomeHandler),
-          ('/fix_completed', FixCompletedHandler),
           ('/api/events', EventsHandler),
           (r'/api/events/([^/]+)', EventHandler),
           (r'/api/events/([^/]+)/chat', EventChatHandler),
