@@ -238,7 +238,7 @@ def store_games(team_map, league_uri, prdict_url):
                               "home_team" : home_team_uri,
                               "away_team" : away_team_uri,
                               "league" : league_uri,
-                              "completed" : str(completed).lower(),
+                              "completed" : 'false',
                               "game_kind" : "Regular Season",
                               "ref_id" : game_ref_id,
                               "start_date" : start_date_str,

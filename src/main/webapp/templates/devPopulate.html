@@ -14,8 +14,6 @@ You just added the following entries to the datastore:
   <a href="/api/events/{{ event.key }}">{{ event.title|escape }}</a>
 {% endfor %}
 
-<a href="/task/events/timing">Run the event calculation cron</a>
-
 <h4>Sports</h4>
 {% for sport in sports %}
   <a href="/api/sports/{{ sport.key }}">{{ sport.title|escape }}</a>

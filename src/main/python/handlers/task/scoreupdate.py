@@ -27,7 +27,6 @@ class ScoreUpdateTaskHandler(AbstractHandler):
 
     def handle_score_update(self):
         logging.info("Got request to do a score update")
-        logging.info("First, checking what games are incomplete and past start_time")
         query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 AND completed = false ORDER BY start_date ASC", datetime.datetime.utcnow())
         current_games = query.fetch(20, 0)
         logging.info("NUM CURRENT : %d" % len(current_games))
@@ -36,9 +35,6 @@ class ScoreUpdateTaskHandler(AbstractHandler):
             logging.info("GAME : %s" % game.title)
             logging.info("GAME START : %s" % game.nice_start_date_est)
             logging.info("REF ID : %s" % game.ref_id)
-            logging.info("HOME SCORE : %s" % game.home_team_score)
-            logging.info("AWAY SCORE : %s" % game.away_team_score)
-            logging.info("COMPLETED? : %s" % game.completed)
             if self.score_svc.can_get_score(game):
                 score = self.score_svc.get_score(game)
                 score["type"] = "sportsevent"
