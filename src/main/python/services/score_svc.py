@@ -17,6 +17,8 @@ class ScoreService:
         logging.info("HOUR CHECKED : %s" % hour_at_req)
         logging.info("HOUR AT START : %s" % self.current_hour)
         if hour_at_req == self.current_hour:
+            logging.info("MAX ALLOWED : %d" % ScoreService.MAX_REQS_PER_HOUR)
+            logging.info("NUM USED : %d" % self.reqs_per_hour)
             if self.reqs_this_hour < ScoreService.MAX_REQS_PER_HOUR:
                 logging.info("Allowing this request, since not at limit yet")
                 self.reqs_this_hour = self.reqs_this_hour + 1

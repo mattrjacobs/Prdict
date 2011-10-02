@@ -32,10 +32,10 @@ class ScoreUpdateTaskHandler(AbstractHandler):
         logging.info("NUM CURRENT : %d" % len(current_games))
         logging.info("For each game, update it's score and potentially close it out")
         for game in current_games:
-            logging.info("GAME : %s" % game.title)
-            logging.info("GAME START : %s" % game.nice_start_date_est)
-            logging.info("REF ID : %s" % game.ref_id)
             if self.score_svc.can_get_score(game):
+                logging.info("GAME : %s" % game.title)
+                logging.info("GAME START : %s" % game.nice_start_date_est)
+                logging.info("REF ID : %s" % game.ref_id)
                 score = self.score_svc.get_score(game)
                 score["type"] = "sportsevent"
                 score["ref_id"] = game.ref_id
