@@ -219,6 +219,13 @@ class AbstractHandler(webapp.RequestHandler):
                     return "form"
         return "unknown"
 
+    def get_query(self):
+        query_param = self.request.get("q")
+        if query_param:
+            if ":" in query_param:
+                return query_param.split(":", 2)
+        return None
+
     def _etag_matches(self, etag):
         """Determines if given etag matches HTTP Request etag"""
         req_etags = map(lambda s: s.strip(),

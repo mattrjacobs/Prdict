@@ -1,0 +1,22 @@
+{% extends "base_feed.html" %}
+
+{% block parent %}
+{% if parent %}
+<h1>Seasons for : {{ parent.title|escape }}</h1>
+<p><a href="{{ self_link }}">self link</a></p>
+<hr/>
+{% endif %}
+{% endblock %}
+
+{% block entries %}
+{% if entries %}
+{% for entry in entries %}
+  {% include "fragments/season_fragment.html" %}
+  <hr/>
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block new_entry %}
+{% include "forms/new_season_form.html" %}
+{% endblock %}

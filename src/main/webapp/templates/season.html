@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Prdict | {{ entry.title|escape }} | {{ entry.league.title|escape }}{% endblock %}
+
+{% block head %}
+    <link rel="self" href="{{ entry.relative_url }}?alt=xml" type="application/atom+xml"/>
+    <link rel="self" href="{{ entry.relative_url }}?alt=json" type="application/json"/>
+{% endblock %}
+
+{% block content %}
+{% if entry %}
+<h1>Season : {{entry.title|escape}} | {{entry.league.title|escape}}</h1>
+{% include "fragments/season_fragment.html" %}
+{% endif %}
+{% endblock %}

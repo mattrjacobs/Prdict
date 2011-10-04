@@ -24,12 +24,14 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
     """Handles a request for an event chat resource
     FeedHandler has logic on request processing
     EventChatAuthorizationHandler has logic for authorization"""
-    def get_entries(self, parent, limit = 1000, offset = 0):
+    def get_entries(self, parent, query, limit = 1000, offset = 0):
         """Get chat for the event subject to limit/offset parameters"""
         if parent:
-            query = db.GqlQuery("SELECT * FROM Message WHERE event = :1 ORDER BY created DESC",
-                                parent.key())
-            return query.fetch(limit, offset)
+            if query:
+                gql_query = db.GqlQuery("SELECT * FROM Message WHERE event = :1 AND %s = :2 ORDER BY created DESC" % query[0], parent.key(), query[1])
+            else:
+                gql_query = db.GqlQuery("SELECT * FROM Message WHERE event = :1 ORDER BY created DESC", parent.key())            
+            return gql_query.fetch(limit, offset)
         else:
             return []
 

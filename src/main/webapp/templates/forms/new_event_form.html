@@ -19,12 +19,15 @@
     });
 
     $('.league_dropdown').change( function() {
+      $('.home_team_dynamic').remove();
+      $('.away_team_dynamic').remove();
+      $('.season_dynamic').remove();
       $.ajax({
         url      : "/api/leagues/" + $(this).children("option:selected").attr("id") + "/teams" + "?alt=json",
         type     : "GET",
         dataType : "json",
         error    : function() {
-           console.error("Encountered error making AJAX call to league resource!");
+           console.error("Encountered error making AJAX call to league teams resource!");
         },
         success  : function(json) {
           $('.home_team_none').remove();
@@ -32,8 +35,24 @@
           for (var i in json.teams) {
             var nameAndLoc = json.teams[i].location + " " + json.teams[i].title;
             var teamUri = json.teams[i].self;
-            $('.home_team').append('<option value=' + teamUri + '>' + nameAndLoc + '</option>')
-            $('.away_team').append('<option value=' + teamUri + '>' + nameAndLoc + '</option>')
+            $('.home_team').append('<option value=' + teamUri + ' class="home_team_dynamic">' + nameAndLoc + '</option>')
+            $('.away_team').append('<option value=' + teamUri + ' class="away_team_dynamic">' + nameAndLoc + '</option>')
+          }
+        }
+      });
+      $.ajax({
+        url      : "/api/leagues/" + $(this).children("option:selected").attr("id") + "/seasons" + "?alt=json",
+        type     : "GET",
+        dataType : "json",
+        error    : function() {
+           console.error("Encountered error making AJAX call to league seasons resource!");
+        },
+        success  : function(json) {
+          $('.season_none').remove();
+          for (var i in json.seasons) {
+            var seasonTitle = json.seasons[i].title;
+            var seasonUri = json.seasons[i].self;
+            $('.season').append('<option value=' + seasonUri + ' class="season_dynamic">' + seasonTitle + '</option>')
           }
         }
       });
@@ -69,6 +88,10 @@
 {% for league in leagues %}
 <option value="{{league.relative_url|escape}}" id="{{league.key}}">{{league.title|escape}}</option>
 {% endfor %}
+</select><br/>
+<b>Season</b>
+<select name="season" class="season">
+<option selected disabled="disabled" value="No season selected" class="season_none">No season selected</option>
 </select><br/>
 <b>Home team:</b>
 <select name="home_team" class="home_team">

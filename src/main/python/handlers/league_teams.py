@@ -14,10 +14,13 @@ class LeagueTeamsHandler(FeedHandler, BaseAuthorizationHandler):
         self.html = "league_teams.html"
         self.entry_html = "team.html"
 
-    def get_entries(self, parent, limit = 100, offset = 0):
+    def get_entries(self, parent, query, limit = 100, offset = 0):
         if parent:
-            query = db.GqlQuery("SELECT * FROM Team where league = :1 ORDER BY title", parent.key())
-            return query.fetch(limit, offset)
+            if query:
+                gql_query = db.GqlQuery("SELECT * FROM Team where league = :1 AND %s = :2 ORDER BY title" % query[0], parent.key(), query[1])
+            else:
+                gql_query = db.GqlQuery("SELECT * FROM Team where league = :1 ORDER BY title", parent.key())
+            return gql_query.fetch(limit, offset)
         else:
             return []
 

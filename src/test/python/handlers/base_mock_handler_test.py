@@ -19,6 +19,7 @@ from google.appengine.ext.webapp import Response
 from models.event import Event
 from models.league import League
 from models.message import Message
+from models.season import Season
 from models.sport import Sport
 from models.sports_event import SportsEvent
 from models.team import Team
@@ -81,6 +82,9 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.league = self._create_league("League 1", "League 1 Desc", self.sport)
         self.league_key = str(self.league.key())
 
+        self.season = self._create_season("2011", self.league)
+        self.season_key = str(self.season.key())
+
         self.team_1 = self._create_team("Team 1", "Team 1 Desc",
                                         self.league, "Team 1 Loc")
         self.team_1_key = str(self.team_1.key())
@@ -95,7 +99,7 @@ class BaseMockHandlerTest(unittest.TestCase):
         self.sports_event = self._create_sports_event(
             "Sports Event 1", "Sports Event Desc 1", "2012-1-1 09:00:00",
             "2012-1-1 12:00:00", self.team_1, self.team_2, True, 80, 67,
-            "Regular Season", self.league)
+            "Regular Season", self.league, self.season)
         self.sports_event_key = str(self.sports_event.key())
 
         self.message_1 = self._create_message("This is a message posted by user", self.user, self.event)
@@ -166,6 +170,11 @@ class BaseMockHandlerTest(unittest.TestCase):
         league_key = str(league.put())
         return league
 
+    def _create_season(self, title, league):
+        season = Season(title = title, league = league)
+        season_key = str(season.put())
+        return season
+
     def _create_team(self, title, description, league, location):
         team = Team(title = title, description = description, league =
                     league, location = location)
@@ -183,7 +192,7 @@ class BaseMockHandlerTest(unittest.TestCase):
     def _create_sports_event(self, title, description, start_date_str,
                              end_date_str, home_team, away_team, completed,
                              home_team_score, away_team_score, game_kind,
-                             league):
+                             league, season):
         start_date = datetime.strptime(start_date_str, "%Y-%m-%d %H:%M:%S")
         end_date = datetime.strptime(end_date_str, "%Y-%m-%d %H:%M:%S")
         event = SportsEvent(title = title, description = description,
@@ -191,7 +200,7 @@ class BaseMockHandlerTest(unittest.TestCase):
                             completed = completed, home_team_score = \
                             home_team_score, away_team_score = away_team_score,
                             game_kind = game_kind, start_date = start_date,
-                            end_date = end_date, league = league)
+                            end_date = end_date, league = league, season = season)
         event_key = str(event.put())
         return event
 

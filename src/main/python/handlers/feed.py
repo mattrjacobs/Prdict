@@ -23,20 +23,20 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         self.html = "parent.html"
         self.entry_html = "entry.html"
 
-    def get_entries(self, parent, limit = DEFAULT_LIMIT, offset = 0):
+    def get_entries(self, parent, query = None, limit = DEFAULT_LIMIT, offset = 0):
         """Returns the child entries of a parent,
         starting at offset and a max of limit."""
         raise Exception("Must be overridden by subclasses")
 
-    def render_html(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None, user=None):
+    def render_html(self, parent, entries, prev_link=None,
+                    next_link=None, msg=None, user=None):
         """Given a parent object and a list of entries related to the
         parent, render an HTML view.  If pagination links are provided,
         use them in the view."""
         raise Exception("Must be overridden by subclasses")
 
-    def render_atom(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
+    def render_atom(self, parent, entries, prev_link=None,
+                    next_link=None, msg=None):
         """Given a parent object and a list of entries related to the
         parent, render an ATOM view.  If pagination links are provided,
         use them in the view."""
@@ -70,8 +70,9 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         parent_entry = self.get_authorized_entry(key, "read")
         if not parent_entry:
             return
+        query = self.get_query()
         (error_found, entries, prev_link, next_link) = \
-                      self._handle_pagination(parent_entry)
+                      self._handle_pagination(parent_entry, query)
         if error_found:
             return
         feed_etag = self._calculate_etag(parent_entry, entries)
@@ -148,7 +149,7 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
             return self.render_template(self.entry_html, { 'entry' : new_entry,
                                                            'current_user' : user })
 
-    def _handle_pagination(self, parent):
+    def _handle_pagination(self, parent, query):
         """Use request info to determine which children to return"""
         offset = 0
         start = self.request.get('start-index')
@@ -178,7 +179,7 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
                 return (True, None, None, None)
         # the trick is: ask for one more row than you really want; if you
         # get the extra row then you know you need a next link
-        entries = self.get_entries(parent, limit + 1, offset)
+        entries = self.get_entries(parent, query, limit + 1, offset)
 
         # calculation of next and prev links
         prev_start, prev_max, next_start, next_max = \

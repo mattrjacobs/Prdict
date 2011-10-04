@@ -45,17 +45,17 @@ class TestUserFriendsHandler(BaseMockHandlerTest):
         return True
 
     def testGetEntriesNoUser(self):
-        entries = self.impl.get_entries(None)
+        entries = self.impl.get_entries(parent = None, query = None)
         self.assertEquals(len(entries), 0) 
 
     def testGetEntriesUserWithOneFriend(self):
-        entries = self.impl.get_entries(self.user)
+        entries = self.impl.get_entries(parent = self.user, query = None)
         self.assertEquals(len(entries), 1)
         key_map = map(lambda friend: friend.key(), entries)
         self.assertTrue(self.friend_user.key() in key_map)
 
     def testGetEntriesUserWithTwoFriends(self):
-        entries = self.impl.get_entries(self.user_2)
+        entries = self.impl.get_entries(parent = self.user_2, query = None)
         self.assertEquals(len(entries), 2)
         key_map = map(lambda friend: friend.key(), entries)
         self.assertTrue(self.user.key() in key_map)

@@ -27,11 +27,7 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
         If HTML, also renders a template for adding a new member, if the
         requesting user is an admin"""
         (content_type, vary) = self.get_read_content_type()
-        query_param = self.request.get("q")
-        query = None
-        if query_param:
-            if ":" in query_param:
-                query = query_param.split(":", 2)
+        query = self.get_query()
         if vary:
             self.set_header("Vary", "Accept")
         if content_type == "atom":

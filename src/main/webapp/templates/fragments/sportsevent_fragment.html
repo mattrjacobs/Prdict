@@ -8,6 +8,7 @@
 <dt>Start date: <input type="text" name="start_date" value="{{ entry.start_date_str|escape }}"/></dt>
 <dt>End date: <input type="text" name="end_date" value="{{ entry.end_date_str|escape }}"/></dt>
 <dt>League: <input type="text" name="league" value="{{ entry.league.relative_url|escape }}" size="120"/></dt>
+<dt>Season: <input type="text" name="season" value="{{ entry.season.relative_url|escape }}" size="120"/></dt>
 <dt>Home team: <input type="text" name="home_team" value="{{ entry.home_team.relative_url|escape }}" size="120"/></dt>
 <dt>Away team: <input type="text" name="away_team" value="{{ entry.away_team.relative_url|escape }}" size="120"/></dt>
 <dt>Completed: <input type="text" name="completed" value="{{ entry.completed }}" /></dt>
@@ -22,6 +23,7 @@
 <dt>Start Date: {{entry.start_date|escape }}</dt>
 <dt>End Date: {{entry.end_date|escape }}</dt>
 <dt>League: {{ entry.league.title|escape }}</dt>
+<dt>Season: {{ entry.season.title|escape }}</dt>
 <dt>Home team: {{ entry.home_team.relative_url|escape }}</dt>
 <dt>Away team: {{ entry.away_team.relative_url|escape }}</dt>
 <dt>Completed: {{ entry.completed }}</dt>

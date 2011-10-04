@@ -1,0 +1,15 @@
+<p>Create a new season:<br/>
+<form method="POST" action="{{ self_link }}">
+<b>Season name:</b>
+<input type="text" name="title" maxlength="80"/><br/>
+{% if leagues %}
+<b>League:</b>
+<select name="league">
+{% for league in leagues %}
+<option value="{{league.relative_url}}">{{league.title|escape}}</option>
+{% endfor %}
+</select>
+{% endif %}
+<input type="submit" name="submit" value="Create Season"/>
+</form>
+</p>

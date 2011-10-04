@@ -13,7 +13,8 @@ class TeamScheduleHandler(FeedHandler, BaseAuthorizationHandler):
         self.team_svc = TeamService()
         self.html = "team_schedule.html"
 
-    def get_entries(self, parent, limit, offset = 0):
+    def get_entries(self, parent, query, limit, offset = 0):
+        # ignoring the query here for now
         if parent:
             home_query = db.GqlQuery("SELECT * FROM SportsEvent where home_team = :1 ORDER BY start_date ASC", parent.key())
             away_query = db.GqlQuery("SELECT * FROM SportsEvent where away_team = :1 ORDER BY start_date ASC", parent.key())

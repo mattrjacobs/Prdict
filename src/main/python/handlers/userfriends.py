@@ -14,8 +14,9 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
     """Handles a request for a user's friends resource
     FeedHandler has logic on request processing
     UserAuthorizationHandler has logic for authorization"""
-    def get_entries(self, parent, limit = 25, offset = 0):
+    def get_entries(self, parent, query, limit = 25, offset = 0):
         """Get friends of the user subject to limit/offset parameters"""
+        #ignore the query for now
         if parent:
             return [prdict_user.lookup_user(u)
                     for u in parent.friends[offset:offset+limit]]
@@ -74,7 +75,8 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
             msg = "Already friends with %s" % user_to_insert
         friends_location = self.baseurl() + parent.get_relative_url() + "/friends"
         self.set_header('Content-Location', friends_location)
-        self.render_html(parent, self.get_entries(parent = parent), msg = msg)
+        friends = self.get_entries(parent = parent, query = None)
+        self.render_html(parent, friends, msg = msg)
 
     def add_to_friends(self, parent, user_to_insert):
         """Add a friend to the parent user and update HTTP status"""

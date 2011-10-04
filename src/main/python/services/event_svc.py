@@ -4,6 +4,7 @@ import simplejson as json
 from google.appengine.ext import db
 
 from models.event import Event
+from models.season import Season
 from models.sports_event import SportsEvent
 from models.team import Team
 from services.base_svc import BaseService
@@ -26,6 +27,7 @@ class EventService(BaseService):
                 away_team_str = self.get_json_str(parsed_body, "away_team")
                 league = self.get_league_from_request(
                     request, self.get_json_str(parsed_body, "league"))
+                season_uri = self.get_json_str(parsed_body, "season")
                 completed = self.get_json_str(parsed_body, "completed")
                 home_team_score = self.get_json_str(parsed_body, "home_team_score")
                 away_team_score = self.get_json_str(parsed_body, "away_team_score")
@@ -33,8 +35,8 @@ class EventService(BaseService):
                 game_kind = self.get_json_str(parsed_body, "game_kind")
                 return self.__create_sports_event_param_map(
                     "sportsevent", title, description, start_date_str, end_date_str,
-                    home_team_str, away_team_str, league, completed, home_team_score,
-                    away_team_score, ref_id, game_kind)
+                    home_team_str, away_team_str, league, season_uri, completed,
+                    home_team_score, away_team_score, ref_id, game_kind)
             elif type.lower() == "event":
                 return self.__create_event_param_map(
                     "event", title, description, start_date_str, end_date_str)
@@ -56,6 +58,7 @@ class EventService(BaseService):
                 home_team_str = self.get_form_str(request, "home_team")
                 away_team_str = self.get_form_str(request, "away_team")
                 league = self.get_league_from_request(request, self.get_form_str(request, "league"))
+                season_uri = self.get_form_str(request, "season")
                 completed = self.get_form_str(request, "completed")
                 home_team_score = self.get_form_str(request, "home_team_score")
                 away_team_score = self.get_form_str(request, "away_team_score")
@@ -63,8 +66,8 @@ class EventService(BaseService):
                 game_kind = self.get_form_str(request, "game_kind")
                 return self.__create_sports_event_param_map(
                     "sportsevent", title, description, start_date_str, end_date_str,
-                    home_team_str, away_team_str, league, completed, home_team_score,
-                    away_team_score, ref_id, game_kind)
+                    home_team_str, away_team_str, league, season_uri, completed,
+                    home_team_score, away_team_score, ref_id, game_kind)
             elif type.lower() == "event":
                 return self.__create_event_param_map(
                     "event", title, description, start_date_str, end_date_str)
@@ -91,7 +94,7 @@ class EventService(BaseService):
 
     def __create_sports_event_param_map(self, type, title, description,
                                         start_date_str, end_date_str, home_team_str,
-                                        away_team_str, league,
+                                        away_team_str, league, season_uri,
                                         completed, home_team_score,
                                         away_team_score, ref_id, game_kind):
         params = self.__create_event_param_map(type, title, description,
@@ -102,6 +105,8 @@ class EventService(BaseService):
             params["away_team_str"] = away_team_str
         if league is not None:
             params["league"] = league
+        if season_uri is not None:
+            params["season_uri"] = season_uri
         if completed is not None:
             params["completed_str"] = completed
         if home_team_score is not None:
@@ -152,6 +157,7 @@ class EventService(BaseService):
                                                start_date = params["start_date"],
                                                end_date = params["end_date"],
                                                league = params["league"],
+                                               season = params["season"],
                                                home_team = params["home_team"],
                                                away_team = params["away_team"],
                                                completed = params["completed"],
@@ -164,6 +170,7 @@ class EventService(BaseService):
                                                start_date = params["start_date"],
                                                end_date = params["end_date"],
                                                league = params["league"],
+                                               season = params["season"],
                                                home_team = params["home_team"],
                                                away_team = params["away_team"],
                                                completed = params["completed"],
@@ -193,6 +200,8 @@ class EventService(BaseService):
                 event.away_team_score = params["away_team_score"]
             if "league" in params:
                 event.league = params["league"]
+            if "season" in params:
+                event.season = params["season"]
             if "home_team" in params:
                 event.home_team = params["home_team"]
             if "away_team" in params:

@@ -100,6 +100,7 @@ class TestEventService(BaseServiceTest):
                                     "home_team" : self.team_1.relative_url,
                                     "away_team" : self.team_2.relative_url,
                                     "league" : self.league.relative_url,
+                                    "season" : self.season.relative_url,
                                     "completed" : self.completed_str,
                                     "home_team_score" : self.home_team_score_str,
                                     "away_team_score" : self.away_team_score_str,
@@ -108,7 +109,7 @@ class TestEventService(BaseServiceTest):
                        "POST")
         params = self.impl.get_json_params(req)
 
-        self.assertEquals(len(params), 13)
+        self.assertEquals(len(params), 14)
         self.assertEquals(params["title"], self.title)
         self.assertEquals(params["description"], self.desc)
         self.assertEquals(params["start_date_str"], self.start_date_str)
@@ -117,6 +118,7 @@ class TestEventService(BaseServiceTest):
         self.assertEquals(params["home_team_str"], self.team_1.relative_url)
         self.assertEquals(params["away_team_str"], self.team_2.relative_url)
         self.assertEquals(str(params["league"].key()), self.league_key)
+        self.assertEquals(params["season_uri"], self.season.relative_url)
         self.assertEquals(params["completed_str"], self.completed_str)
         self.assertEquals(params["home_team_score_str"], self.home_team_score_str)
         self.assertEquals(params["away_team_score_str"], self.away_team_score_str)
@@ -132,6 +134,7 @@ class TestEventService(BaseServiceTest):
                                           "home_team" : self.team_1.relative_url,
                                           "away_team" : self.team_2.relative_url,
                                           "league" : self.league.relative_url,
+                                          "season" : self.season.relative_url,
                                           "completed" : self.completed_str,
                                           "home_team_score" : self.home_team_score_str,
                                           "away_team_score" : self.away_team_score_str,
@@ -140,7 +143,7 @@ class TestEventService(BaseServiceTest):
                        "POST")
         params = self.impl.get_form_params(req)
 
-        self.assertEquals(len(params), 13)
+        self.assertEquals(len(params), 14)
         self.assertEquals(params["title"], self.title)
         self.assertEquals(params["description"], self.desc)
         self.assertEquals(params["start_date_str"], self.start_date_str)
@@ -149,6 +152,7 @@ class TestEventService(BaseServiceTest):
         self.assertEquals(params["home_team_str"], self.team_1.relative_url)
         self.assertEquals(params["away_team_str"], self.team_2.relative_url)
         self.assertEquals(str(params["league"].key()), self.league_key)
+        self.assertEquals(params["season_uri"], self.season.relative_url)
         self.assertEquals(params["completed_str"], self.completed_str)
         self.assertEquals(params["home_team_score_str"], self.home_team_score_str)
         self.assertEquals(params["away_team_score_str"], self.away_team_score_str)

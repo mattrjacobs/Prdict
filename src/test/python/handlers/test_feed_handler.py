@@ -40,7 +40,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.remove_user()
         self.mock_handler.get_prdict_user().AndReturn(None)
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
                                       mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
                                       None)
@@ -52,7 +52,7 @@ class TestFeedHandler(BaseMockHandlerTest):
     def testHtmlGetWithNonAdminUser(self):
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
                                       mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
                                       mox.IgnoreArg())
@@ -65,7 +65,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.set_user(self.username, True)
         self.mock_handler.get_prdict_user().AndReturn(self.admin_user)
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
                                       mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
                                       mox.IgnoreArg())
@@ -79,7 +79,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_prdict_user().AndReturn(None)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_string(mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -91,7 +91,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_string(mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -103,7 +103,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_prdict_user().AndReturn(self.admin_user)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
         self.mock_handler.render_string(mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -241,8 +241,8 @@ class MockFeedHandler(FeedHandler, BaseAuthorizationHandler):
         self.handler = handler
         self.svc = svc
 
-    def get_entries(self, parent, limit, offset):
-        return self.handler.get_entries(parent, limit, offset)
+    def get_entries(self, parent, query, limit, offset):
+        return self.handler.get_entries(parent, query, limit, offset)
 
     def create_param_map(self, user, all_entries, can_write, now):
         return {}

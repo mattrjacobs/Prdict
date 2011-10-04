@@ -37,6 +37,13 @@ def get_teams_by_league(prdict_url, league_uri):
     resp = urllib2.urlopen(get_request)
     return json.loads(resp.read())
 
+def get_seasons_by_league(prdict_url, league_uri, season_name):
+    get_request = urllib2.Request(url = "%s%s/seasons?q=title:%s" %
+                                  (prdict_url, league_uri, season_name),
+                                  headers = { "Accept" : "application/json" })
+    resp = urllib2.urlopen(get_request)
+    return json.loads(resp.read())
+
 def parse_date(date):
     parts = date.strip('Z').split('.')
     dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
@@ -111,6 +118,22 @@ def store_league(prdict_url, league_name, league_ref_id):
         else:
             print "Did not find league of correct name, not adding Ref ID and aborting..."
             sys.exit(1)
+
+def get_season_uri(prdict_url, league_uri, season_name):
+    league_seasons_json = get_seasons_by_league(prdict_url, league_uri, season_name)
+    seasons_by_title = league_seasons_json["seasons"]
+    if len(seasons_by_title) > 0:
+        return seasons_by_title[0]["self"]
+    else:
+        print "Need to create this season"
+        new_season_json = { "title" : season_name,
+                            "league" : league_uri }
+        post_url = "%s%s/seasons" % (prdict_url, league_uri)
+        post_resp = authenticated_http(post_url, new_season_json)
+        if post_resp == "ok":
+            return get_season_uri(prdict_url, league_uri, season_name)
+        else:
+            print "Not able to create the season, aborting..."
 
 def load_teams_from_league(league_file):
     print "Using League file : %s" % league_file
@@ -190,7 +213,7 @@ def download_team_schedules(teams, prdict_url, team_dir):
                 print "HTTP ERROR retrieving schedule from Fanfeedr"
     return file_map
 
-def store_games(team_map, league_uri, prdict_url):
+def store_games(team_map, league_uri, season_uri, prdict_url):
 
     class EstTzInfo(tzinfo):
         def utcoffset(self, dt): return timedelta(hours=-4)
@@ -237,6 +260,7 @@ def store_games(team_map, league_uri, prdict_url):
                               "home_team" : home_team_uri,
                               "away_team" : away_team_uri,
                               "league" : league_uri,
+                              "season" : season_uri,
                               "completed" : 'false',
                               "game_kind" : "Regular Season",
                               "ref_id" : game_ref_id,
@@ -271,6 +295,7 @@ if __name__ == "__main__":
     parser.add_option('-p', action="store", dest="prdict_url")
     parser.add_option('-n', action="store", dest="league_name")
     parser.add_option('-r', action="store", dest="league_ref_id")
+    parser.add_option('-s', action="store", dest="season_name")
     (options, args) = parser.parse_args()
     if not options.league_file:
         print "League file is required"
@@ -290,6 +315,9 @@ if __name__ == "__main__":
     if not options.league_name:
         print "League name is required"
         sys.exit(1)
+    if not options.season_name:
+        print "Season name is required"
+        sys.exit(1)
     if not options.league_ref_id:
         print "League Ref ID is required"
         sys.exit(1)
@@ -301,6 +329,9 @@ if __name__ == "__main__":
     print "Starting up..."
     league_uri = store_league(options.prdict_url, options.league_name, options.league_ref_id)
     print "League URI : %s" % league_uri
+
+    season_uri = get_season_uri(options.prdict_url, league_uri, options.season_name)
+    print "Season URI : %s" % season_uri
 
     teams = load_teams_from_league(options.league_file)
     print "Found %d teams" % len(teams)
@@ -324,7 +355,7 @@ if __name__ == "__main__":
         (uri, fanfeedr_name, schedule_file) = team_map[k]
         print "%s : %s : %s : %s" % (fanfeedr_name, uri, k, schedule_file)
 
-    games_stored = store_games(team_map, league_uri, options.prdict_url)
+    games_stored = store_games(team_map, league_uri, season_uri, options.prdict_url)
     for k in games_stored:
         (found, added) = games_stored[k]
         print "%s : Found : %d, Added : %d" % (k, found, added)

@@ -5,6 +5,8 @@ import simplejson as json
 
 from abstract_model import AbstractModel
 from event import Event
+from league import League
+from season import Season
 from team import Team
 
 class SportsEventEncoder(json.JSONEncoder):
@@ -24,6 +26,8 @@ class SportsEventEncoder(json.JSONEncoder):
                                  'score' : event.away_team_score },
                  'league' : { 'uri' : event.league.relative_url,
                               'title' : event.league.title },
+                 'season' : { 'uri' : event.season.relative_url,
+                              'title' : event.season.title },
                  'completed' : event.completed,
                  'game_kind' : event.game_kind,
                  'ref_id' : event.ref_id,
@@ -36,7 +40,8 @@ class SportsEventEncoder(json.JSONEncoder):
                  'updated' : event.isoformat_updated }
 
 class SportsEvent(Event):
-    league = db.ReferenceProperty(required=True)
+    league = db.ReferenceProperty(required=True, reference_class=League)
+    season = db.ReferenceProperty(required=True, reference_class=Season)
     home_team = db.ReferenceProperty(required=True,
                                      collection_name='home_team',
                                      reference_class=Team)
@@ -60,11 +65,13 @@ class SportsEvent(Event):
 
         error_msgs = []
         league = home_team_str = away_team_str = completed_str = home_team_score_str = \
-                 away_team_score_str = ref_id = game_kind = None
+                 away_team_score_str = ref_id = game_kind = season_uri = season = None
         sports_event_ok = True
 
         if "league" in params:
             league = params["league"]
+        if "season_uri" in params:
+            season_uri = params["season_uri"]
         if "home_team_str" in params:
             home_team_str = params["home_team_str"]
         if "away_team_str" in params:
@@ -83,6 +90,16 @@ class SportsEvent(Event):
         if not league:
             error_msgs.append("Sports Event must have a league")
             sports_event_ok = False
+        if not season_uri:
+            error_msgs.append("Sports Event must have a season")
+            sports_event_ok = False
+        if season_uri:
+            season = Season.parse_season_uri(season_uri)
+            if not season:
+                error_msgs.append("Could not parse season URI : %s" % season_uri)
+                sports_event_ok = False
+            else:
+                params["season"] = season
         if not home_team_str:
             error_msgs.append("Sports Event must have a home team")
             sports_event_ok = False
@@ -111,6 +128,9 @@ class SportsEvent(Event):
             sports_event_ok = False
         if home_team and away_team and str(home_team.key()) == str(away_team.key()):
             error_msgs.append("Team cannot play itself")
+            sports_event_ok = False
+        if league and season and not str(league.key()) == str(season.league.key()):
+            error_msgs.append("Season must be part of league")
             sports_event_ok = False
         if completed_str:
             if not completed_str.lower() in ("true", "false"):
@@ -155,11 +175,13 @@ class SportsEvent(Event):
         if base_event_error_msg:
             error_msgs.append(base_event_error_msg)
         league = home_team_str = away_team_str = completed_str = home_team_score_str = \
-                 away_team_score_str = game_kind = home_team = away_team = None
+                 away_team_score_str = game_kind = home_team = away_team = season_uri = None
         sports_event_ok = is_base_event_valid
 
         if "league" in params:
             league = params["league"]
+        if "season_uri" in params:
+            season_uri = params["season_uri"]
         if "home_team_str" in params:
             home_team_str = params["home_team_str"]
         if "away_team_str" in params:
@@ -204,7 +226,16 @@ class SportsEvent(Event):
                    str(self.away_team.key()):
                 error_msgs.append("Away team and league are incompatible")
                 sports_event_ok = False
-
+        if season_uri:
+            season = Season.parse_season_uri(season_uri)
+            if not season:
+                error_msgs.append("Could not parse season URI : %s" % season_uri)
+                sports_event_ok = False
+            elif league and not str(league.key()) == str(season.league.key()):
+                error_msgs.append("Season and league are incompatible")
+                sports_event_ok = False
+            else:
+                params["season"] = season
         if home_team:
             if away_team and str(home_team.key()) == str(away_team.key()):
                 error_msgs.append("Team cannot play itself")

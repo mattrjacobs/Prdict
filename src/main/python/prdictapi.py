@@ -9,6 +9,8 @@ from handlers.home import HomeHandler
 from handlers.league import LeagueHandler
 from handlers.leagues import LeaguesHandler
 from handlers.league_member import LeagueMemberHandler
+from handlers.league_season import LeagueSeasonMemberHandler
+from handlers.league_seasons import LeagueSeasonsHandler
 from handlers.league_teams import LeagueTeamsHandler
 from handlers.sport import SportHandler
 from handlers.sports import SportsHandler
@@ -38,6 +40,8 @@ urlmap = [('/', HomeHandler),
           (r'/api/events/([^/]+)/chat', EventChatHandler),
           ('/api/leagues', LeaguesHandler),
           (r'/api/leagues/([^/]+)', LeagueHandler),
+          (r'/api/leagues/([^/]+)/seasons', LeagueSeasonsHandler),
+          (r'/api/leagues/([^/]+)/seasons/([^/]+)', LeagueSeasonMemberHandler),
           (r'/api/leagues/([^/]+)/teams', LeagueTeamsHandler),
           (r'/api/leagues/([^/]+)/teams/([^/]+)', TeamMemberHandler),
           ('/api/sports', SportsHandler),
