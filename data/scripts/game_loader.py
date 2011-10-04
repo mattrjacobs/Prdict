@@ -234,7 +234,6 @@ def store_games(team_map, league_uri, prdict_url):
                 end_date_str = end_date.strftime("%Y-%m-%d %H:%M:%S")
                 new_event = { "type" : "sportsevent",
                               "title" : name,
-                              "description" : "",
                               "home_team" : home_team_uri,
                               "away_team" : away_team_uri,
                               "league" : league_uri,

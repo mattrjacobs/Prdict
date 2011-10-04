@@ -134,26 +134,43 @@ class EventService(BaseService):
     def create_entry_from_params(self, params):
         type = params["type"]
         if type == "event":
-            new_event = Event(title = params["title"],
-                              description = params["description"],
-                              start_date = params["start_date"],
-                              end_date = params["end_date"])
+            if "description" in params:
+                new_event = Event(title = params["title"],
+                                  description = params["description"],
+                                  start_date = params["start_date"],
+                                  end_date = params["end_date"])
+            else:
+                new_event = Event(title = params["title"],
+                                  start_date = params["start_date"],
+                                  end_date = params["end_date"])
             new_event.put()
             return new_event
         if type == "sportsevent":
-            new_sports_event = \
-                SportsEvent(title = params["title"],
-                            description = params["description"],
-                            start_date = params["start_date"],
-                            end_date = params["end_date"],
-                            league = params["league"],
-                            home_team = params["home_team"],
-                            away_team = params["away_team"],
-                            completed = params["completed"],
-                            home_team_score = params["home_team_score"],
-                            away_team_score = params["away_team_score"],
-                            ref_id = params["ref_id"],
-                            game_kind = params["game_kind"])
+            if "description" in params:
+                new_sports_event = SportsEvent(title = params["title"],
+                                               description = params["description"],
+                                               start_date = params["start_date"],
+                                               end_date = params["end_date"],
+                                               league = params["league"],
+                                               home_team = params["home_team"],
+                                               away_team = params["away_team"],
+                                               completed = params["completed"],
+                                               home_team_score = params["home_team_score"],
+                                               away_team_score = params["away_team_score"],
+                                               ref_id = params["ref_id"],
+                                               game_kind = params["game_kind"])
+            else:
+                new_sports_event = SportsEvent(title = params["title"],
+                                               start_date = params["start_date"],
+                                               end_date = params["end_date"],
+                                               league = params["league"],
+                                               home_team = params["home_team"],
+                                               away_team = params["away_team"],
+                                               completed = params["completed"],
+                                               home_team_score = params["home_team_score"],
+                                               away_team_score = params["away_team_score"],
+                                               ref_id = params["ref_id"],
+                                               game_kind = params["game_kind"])                
             new_sports_event.put()
             return new_sports_event
 
