@@ -31,7 +31,7 @@ from handlers.version import VersionHandler
 
 from handlers.fix_season import FixSeasonHandler
 
-from gae_mini_profiler import profiler
+#from gae_mini_profiler import profiler
 
 import os
 from google.appengine.dist import use_library
@@ -64,7 +64,8 @@ urlmap = [('/', HomeHandler),
           (r'/leagues/([^/]+)/teams/([^/]+)/schedule', TeamScheduleUiHandler),
           ('/fix_season', FixSeasonHandler),
           ('/version', VersionHandler)]
-application = profiler.ProfilerWSGIMiddleware(webapp.WSGIApplication(urlmap, debug=True))
+#application = profiler.ProfilerWSGIMiddleware(webapp.WSGIApplication(urlmap, debug=True))
+application = webapp.WSGIApplication(urlmap, debug=True)
 
 def main():
     run_wsgi_app(application)
