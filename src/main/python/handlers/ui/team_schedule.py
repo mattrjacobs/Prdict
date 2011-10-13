@@ -10,8 +10,10 @@ from models.team import Team
 class TeamScheduleUiHandler(AbstractHandler, BaseAuthorizationHandler):
     @http_basic_auth
     def get(self, user, league_name, team_name):
-        league = League.find_by_name(league_name)
-        team = Team.find_by_name(name = team_name, location = None, league = league)
+        escaped_league_name = urllib.unquote(league_name)
+        escaped_team_name = urllib.unquote(team_name)
+        league = League.find_by_name(escaped_league_name)
+        team = Team.find_by_name(name = escaped_team_name, location = None, league = league)
         if team:
             self.render_html(team = team, msg = None, user = user)
         else:

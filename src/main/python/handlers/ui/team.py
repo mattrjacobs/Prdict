@@ -1,4 +1,5 @@
 import logging
+import urllib
 
 from google.appengine.api import users
 from google.appengine.ext import db
@@ -11,8 +12,10 @@ from models.team import Team
 class TeamUiHandler(AbstractHandler, BaseAuthorizationHandler):
     @http_basic_auth
     def get(self, user, league_name, team_name):
-        league = League.find_by_name(league_name)
-        team = Team.find_by_name(name = team_name, location = None, league = league)
+        escaped_league_name = urllib.unquote(league_name)
+        escaped_team_name = urllib.unquote(team_name)
+        league = League.find_by_name(escaped_league_name)
+        team = Team.find_by_name(name = escaped_team_name, location = None, league = league)
         if team:
             self.render_html(team, user = user)
         else:
