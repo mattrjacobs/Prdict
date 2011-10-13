@@ -29,11 +29,14 @@ class ScoreUpdateTaskHandler(AbstractHandler):
     def handle_score_update(self):
         query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 AND completed = false ORDER BY start_date ASC", datetime.datetime.utcnow())
         current_games = query.fetch(25, 0)
+        logging.info("NUM GAMES w/o score : %s" % len(current_games))
         for game in current_games:
+            logging.info("THIS GAME %s @ %s : %s" % (game.away_team.title, game.home_team.title, game.start_date_str))
             if self.score_svc.can_get_score(game):
                 #this prevents us from exceeding Fanfeedr QPS limit
                 time.sleep(1)
                 score = self.score_svc.get_score(game)
+                logging.info("Received score : %s" % str(score))
                 score["type"] = "sportsevent"
                 score["ref_id"] = game.ref_id
                 self.request.body = json.dumps(score)
