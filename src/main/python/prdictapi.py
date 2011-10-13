@@ -29,8 +29,6 @@ from handlers.userfriends import UserFriendsHandler
 from handlers.users import UsersHandler
 from handlers.version import VersionHandler
 
-from handlers.fix_season import FixSeasonHandler
-
 #from gae_mini_profiler import profiler
 
 import os
@@ -62,7 +60,6 @@ urlmap = [('/', HomeHandler),
           (r'/leagues/([^/]+)', LeagueUiHandler),
           (r'/leagues/([^/]+)/teams/([^/]+)', TeamUiHandler),
           (r'/leagues/([^/]+)/teams/([^/]+)/schedule', TeamScheduleUiHandler),
-          ('/fix_season', FixSeasonHandler),
           ('/version', VersionHandler)]
 #application = profiler.ProfilerWSGIMiddleware(webapp.WSGIApplication(urlmap, debug=True))
 application = webapp.WSGIApplication(urlmap, debug=True)
