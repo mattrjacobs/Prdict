@@ -262,6 +262,7 @@ def store_games(team_map, league_uri, season_uri, prdict_url):
                               "league" : league_uri,
                               "season" : season_uri,
                               "completed" : 'false',
+                              "cancelled" : 'false',
                               "game_kind" : "Regular Season",
                               "ref_id" : game_ref_id,
                               "start_date" : start_date_str,

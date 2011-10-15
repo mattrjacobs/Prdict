@@ -24,6 +24,11 @@
                             event.away_team.location + ' ' + event.away_team.title + 
                             '</a></td><td>' + scoreStr + '</td><td><a href="/events/' + 
                             event.key + '/chat">Chat</a></td>';
+          if (event.cancelled) {
+              scheduleRow = scheduleRow + '<td>Cancelled</td>';
+          } else {
+              scheduleRow = scheduleRow + '<td></td>';
+          }
           $('.schedule').append(scheduleRow);
         } 
       }
@@ -41,6 +46,6 @@
 
 {% block entries %}
 <table name="schedule" class="schedule">
-<tr><th>Date</th><th>Home</th><th>Away</th><th>Score</th><th></th></tr>
+<tr><th>Date</th><th>Home</th><th>Away</th><th>Score</th><th></th><th></th></tr>
 </table>
 {% endblock %}
