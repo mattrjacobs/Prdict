@@ -48,7 +48,7 @@ class ScoreUpdateTaskHandler(AbstractHandler):
                 score["type"] = "sportsevent"
                 score["ref_id"] = game.ref_id
                 date_diff = utcnow - game.start_date
-                if "home_tem_score" in score and score["home_team_score"] == 0 and \
+                if "home_team_score" in score and score["home_team_score"] == 0 and \
                    "away_team_score" in score and score["away_team_score"] == 0 and \
                    date_diff.days > 1:
                     logging.info("Marking this game as cancelled")
