@@ -2,3 +2,7 @@ cron:
   - description: update scores
     url: /task/score_update
     schedule: every 5 minutes
+
+  - description: mark uncancelled
+    url: /task/mark_uncancelled
+    schedule: every 2 minutes
