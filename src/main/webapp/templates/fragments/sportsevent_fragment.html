@@ -12,6 +12,7 @@
 <dt>Home team: <input type="text" name="home_team" value="{{ entry.home_team.relative_url|escape }}" size="120"/></dt>
 <dt>Away team: <input type="text" name="away_team" value="{{ entry.away_team.relative_url|escape }}" size="120"/></dt>
 <dt>Completed: <input type="text" name="completed" value="{{ entry.completed }}" /></dt>
+<dt>Cancelled: <input type="text" name="cancelled" value="{{ entry.cancelled }}" /></dt>
 <dt>Home team score: <input type="text" name="home_team_score" value="{{ entry.home_team_score }}" /></dt>
 <dt>Away team score: <input type="text" name="away_team_score" value="{{ entry.away_team_score }}" /></dt>
 <dt>Ref ID : <input type="text" name="ref_id" value="{{ entry.ref_id }}" /></dt>
@@ -27,6 +28,7 @@
 <dt>Home team: {{ entry.home_team.relative_url|escape }}</dt>
 <dt>Away team: {{ entry.away_team.relative_url|escape }}</dt>
 <dt>Completed: {{ entry.completed }}</dt>
+<dt>Cancelled: {{ entry.cancelled }}</dt>
 <dt>Home team score: {{ entry.home_team_score }}</dt>
 <dt>Away team score: {{ entry.away_team_score }}</dt>
 <dt>Ref ID: {{ entry.ref_id }}</dt>

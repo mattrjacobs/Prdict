@@ -29,6 +29,7 @@ class SportsEventEncoder(json.JSONEncoder):
                  'season' : { 'uri' : event.season.relative_url,
                               'title' : event.season.title },
                  'completed' : event.completed,
+                 'cancelled' : event.cancelled,
                  'game_kind' : event.game_kind,
                  'ref_id' : event.ref_id,
                  'self' : event.relative_url,
@@ -49,6 +50,7 @@ class SportsEvent(Event):
                                      collection_name='away_team',
                                      reference_class=Team)
     completed = db.BooleanProperty(required=True, default=False)
+    cancelled = db.BooleanProperty(required=True, default=False)
     home_team_score = db.IntegerProperty(required=False)
     away_team_score = db.IntegerProperty(required=False)
     ref_id = db.StringProperty(required=False)
@@ -64,7 +66,8 @@ class SportsEvent(Event):
                               Event.validate_params(params)
 
         error_msgs = []
-        league = home_team_str = away_team_str = completed_str = home_team_score_str = \
+        league = home_team_str = away_team_str = completed_str = cancelled_str = \
+                 home_team_score_str = \
                  away_team_score_str = ref_id = game_kind = season_uri = season = None
         sports_event_ok = True
 
@@ -78,6 +81,8 @@ class SportsEvent(Event):
             away_team_str = params["away_team_str"]
         if "completed_str" in params:
             completed_str = params["completed_str"]
+        if "cancelled_str" in params:
+            cancelled_str = params["cancelled_str"]
         if "home_team_score_str" in params:
             home_team_score_str = params["home_team_score_str"]
         if "away_team_score_str" in params:
@@ -138,6 +143,12 @@ class SportsEvent(Event):
                 sports_event_ok = False
             else:
                 params["completed"] = completed_str.lower() == "true"
+        if cancelled_str:
+            if not cancelled_str.lower() in ("true", "false"):
+                error_msgs.append("Could not parse cancelled for Sports Event")
+                sports_event_ok = False
+            else:
+                params["cancelled"] = cancelled_str.lower() == "true"
         if home_team_score_str:
             if not AbstractModel.parse_int(home_team_score_str):
                 error_msgs.append("Could not parse home team score for Sports Event")
@@ -174,7 +185,8 @@ class SportsEvent(Event):
         error_msgs = []
         if base_event_error_msg:
             error_msgs.append(base_event_error_msg)
-        league = home_team_str = away_team_str = completed_str = home_team_score_str = \
+        league = home_team_str = away_team_str = completed_str = cancelled_str = \
+                 home_team_score_str = \
                  away_team_score_str = game_kind = home_team = away_team = season_uri = None
         sports_event_ok = is_base_event_valid
 
@@ -188,6 +200,8 @@ class SportsEvent(Event):
             away_team_str = params["away_team_str"]
         if "completed_str" in params:
             completed_str = params["completed_str"]
+        if "cancelled_str" in params:
+            cancelled_str = params["cancelled_str"]
         if "home_team_score_str" in params:
             home_team_score_str = params["home_team_score_str"]
         if "away_team_score_str" in params:
@@ -255,6 +269,12 @@ class SportsEvent(Event):
                 completed_ok = False
             else:
                 params["completed"] = completed_str.lower() == "true"
+        if cancelled_str:
+            if not cancelled_str.lower() in ("true", "false"):
+                error_msgs.append("Could not parse cancelled for Sports Event")
+                cancelled_ok = False
+            else:
+                params["cancelled"] = cancelled_str.lower() == "true"
         if home_team_score_str:
             if not AbstractModel.parse_int(home_team_score_str):
                 error_msgs.append("Could not parse home team score for Sports Event")
