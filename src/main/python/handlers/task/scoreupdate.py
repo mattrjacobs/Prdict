@@ -30,10 +30,14 @@ class ScoreUpdateTaskHandler(AbstractHandler):
         utcnow = datetime.datetime.utcnow()
         initial_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 AND completed = false ORDER BY start_date ASC", utcnow)
         current_games = initial_query.fetch(25, 0)
+        logging.info("Got %d initial games" % len(current_games))
         for game in current_games:
+            logging.info("INIT GAME %s @ %s : %s, cancelled: %s" % (game.away_team.title, game.home_team.title, game.start_date_str, game.cancelled)) 
             if not game.cancelled:
+                logging.info("Marking this game as uncancelled")
                 game.cancelled = False
                 game.put()
+                
         uncancelled_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 AND completed = false AND cancelled = false ORDER BY start_date ASC", utcnow)
         current_games = uncancelled_query.fetch(25, 0)
                 
