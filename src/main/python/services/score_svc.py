@@ -38,6 +38,7 @@ class ScoreService:
         resp = urlfetch.fetch(url, deadline = 10)
         if resp.status_code == 200:
             json_resp = json.loads(resp.content)
+            logging.info("GAME STATUS : %s" % json_resp["status"])
             return { 'home_team_score' : json_resp["home_team"]["score"],
                      'away_team_score' : json_resp["away_team"]["score"],
                      'completed' : str(json_resp["status"].lower() == "final") }
