@@ -42,6 +42,6 @@ class ScoreService:
             logging.info("GAME STATUS : %s" % json_resp["status"])
             return { 'home_team_score' : json_resp["home_team"]["score"],
                      'away_team_score' : json_resp["away_team"]["score"],
-                     'completed' : str(json_resp["status"].lower() == "final") }
+                     'completed' : str(json_resp["status"].lower().strip() == "final") }
         else:
             return { }
