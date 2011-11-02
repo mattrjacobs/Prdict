@@ -50,7 +50,7 @@ urlmap = [('/', HomeHandler),
           (r'/api/sports/([^/]+)/leagues/([^/]+)', LeagueMemberHandler),
           ('/api/teams', TeamsHandler),
           (r'/api/teams/([^/]+)', TeamHandler),
-          (r'/api/teams/([^/]+)/schedule', TeamScheduleHandler),
+          (r'/api/teams/([^/]+)/seasons/([^/]+)/schedule', TeamScheduleHandler),
           ('/api/users', UsersHandler),
           (r'/api/users/([^/]+)', UserHandler),
           (r'/api/users/([^/]+)/friends', UserFriendsHandler),
@@ -59,7 +59,7 @@ urlmap = [('/', HomeHandler),
           (r'/events/([^/]+)/chat', EventChatUiHandler),
           (r'/leagues/([^/]+)', LeagueUiHandler),
           (r'/leagues/([^/]+)/teams/([^/]+)', TeamUiHandler),
-          (r'/leagues/([^/]+)/teams/([^/]+)/schedule', TeamScheduleUiHandler),
+          (r'/leagues/([^/]+)/teams/([^/]+)/seasons/([^/]+)/schedule', TeamScheduleUiHandler),
           ('/version', VersionHandler)]
 #application = profiler.ProfilerWSGIMiddleware(webapp.WSGIApplication(urlmap, debug=True))
 application = webapp.WSGIApplication(urlmap, debug=True)

@@ -99,6 +99,12 @@ class League(AbstractModel):
         return query.fetch(100)
     teams = property(get_teams)
 
+    def get_seasons(self):
+        query = db.GqlQuery("SELECT * FROM Season WHERE league = :1 ORDER BY title",
+                            self)
+        return query.fetch(100)
+    seasons = property(get_seasons)
+
     def get_item_name(self):
         return "league"
     item_name = property(get_item_name)

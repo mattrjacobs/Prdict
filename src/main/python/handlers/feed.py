@@ -99,7 +99,7 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
             self.render_html(parent_entry, entries, prev_link, next_link, None, user)
             return
         else:
-            logging.error("Received a request type I can't handle %s" % request_type)
+            logging.error("Received a content type I can't handle %s" % content_type)
 
     @http_basic_auth
     def post(self, user, key):

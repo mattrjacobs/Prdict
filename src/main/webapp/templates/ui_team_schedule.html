@@ -4,15 +4,15 @@
 <script type='text/javascript'>
   $(document).ready(function(){
     $.ajax({
-      url : "/api/teams/{{ team.key }}/schedule?alt=json",
+      url : "/api/teams/{{ team.key }}/seasons/{{ season.key }}/schedule?alt=json",
       type : "GET",
       dataType : "json",
       error : function() {
         console.error("Encountered error making AJAX call to team schedule resource!")
       },
       success : function(json) {
-        for (var event_idx in json.schedule) {
-          var event = json.schedule[event_idx];
+        for (var event_idx in json.games) {
+          var event = json.games[event_idx];
           var scoreStr = event.home_team.score + " - " + event.away_team.score;
           var scheduleRow = '<tr><td>' + event.nice_start_date_est + '</td><td>' +
                             '<a href="/leagues/' + event.league.title + 
@@ -39,7 +39,7 @@
 
 {% block parent %}
 {% if team %}
-<h1>{{team.location}} {{team.title}} Schedule</h1>
+<h1>{{team.location}} {{team.title}} {{season.title}} Schedule</h1>
 <hr/>
 {% endif %}
 {% endblock %}

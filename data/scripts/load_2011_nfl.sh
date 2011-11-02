@@ -1,0 +1,1 @@
+python game_loader.py -l ../parsed/nfl_teams.json -t ../raw -p http://localhost:8080 -n NFL -s 2011 -r 13962b74-cab5-5d0a-93c8-466b6a3fa342

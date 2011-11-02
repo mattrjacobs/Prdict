@@ -40,15 +40,15 @@ class Season(AbstractModel):
         except db.BadKeyError:
             return None
             
-#    @staticmethod
-#    def find_by_name(name):
-#        query = db.GqlQuery("SELECT * FROM League WHERE title = :1 " +
-#                            "LIMIT 1", name)
-#        league = query.fetch(1)
-#        if len(league) > 0:
-#            return league[0]
-#        else:
-#            return None
+    @staticmethod
+    def find_by_league_and_name(league, name):
+        query = db.GqlQuery("SELECT * FROM Season WHERE league = :1 AND title = :2 " +
+                            "LIMIT 1", league, name)
+        season = query.fetch(1)
+        if len(season) > 0:
+            return season[0]
+        else:
+            return None
 
     @staticmethod
     def validate_params(params):
