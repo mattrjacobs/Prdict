@@ -15,11 +15,6 @@ class UserHandler(EntryHandler, UserAuthorizationHandler):
                                'current_user' : current_user,
                                'user' : entry })
 
-    def render_atom(self, entry):
-        self.render_template('xml/user_atom.xml',
-                             { 'user' : entry,
-                               'base_url' : self.baseurl() } )
-
     def post(self, key):
         self.allow_overloaded_post_of_delete(key)
 

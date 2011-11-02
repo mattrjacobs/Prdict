@@ -23,10 +23,6 @@ class SportHandler(EntryHandler, BaseAuthorizationHandler):
                                'can_write' : can_write,
                                'entry' : entry})
 
-    def render_atom(self, league):
-        self.render_template('xml/sport_atom.xml',
-                             { 'entry' : entry, 'base_url' : self.baseurl() })
-
     def get_svc(self):
         return self.sport_svc
 

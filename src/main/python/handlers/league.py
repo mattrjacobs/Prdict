@@ -27,10 +27,6 @@ class LeagueHandler(EntryHandler, BaseAuthorizationHandler):
                                'entry' : entry,
                                'sports' : self.get_all_sports() })
 
-    def render_atom(self, league):
-        self.render_template('xml/league_atom.xml',
-                             { 'entry' : entry, 'base_url' : self.baseurl() })
-
     def get_svc(self):
         return self.league_svc
 

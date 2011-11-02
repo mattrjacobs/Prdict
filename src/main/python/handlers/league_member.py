@@ -11,7 +11,7 @@ from services.league_svc import LeagueService
 
 class LeagueMemberHandler(MemberHandler, BaseAuthorizationHandler):
     """Handles a request for an league resource that is part of a sport.
-    EntryHandler has logic for HTTP operations
+    MemberHandler has logic for HTTP operations
     LeagueAuthorizationHandler has logic for authorization."""
     def __init__(self):
         self.league_svc = LeagueService()
@@ -27,10 +27,6 @@ class LeagueMemberHandler(MemberHandler, BaseAuthorizationHandler):
                                'can_write' : can_write,
                                'entry' : entry,
                                'sports' : self.get_all_sports() })
-
-    def render_atom(self, league):
-        self.render_template('xml/league_atom.xml',
-                             { 'entry' : entry, 'base_url' : self.baseurl() })
 
     def is_parent_of(self, sport, league):
         return str(league.key()) in [str(l.key()) for l in sport.leagues]

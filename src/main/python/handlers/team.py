@@ -26,10 +26,6 @@ class TeamHandler(EntryHandler, BaseAuthorizationHandler):
                                'entry' : entry,
                                'leagues' : self.get_all_leagues() })
 
-    def render_atom(self, team):
-        self.render_template('xml/team_atom.xml',
-                             { 'entry' : entry, 'base_url' : self.baseurl() })
-
     def get_svc(self):
         return self.team_svc
 

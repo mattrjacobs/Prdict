@@ -27,10 +27,6 @@ class LeagueSeasonMemberHandler(MemberHandler, BaseAuthorizationHandler):
                                'entry' : entry,
                                'leagues' : self.get_all_leagues() })
 
-    def render_atom(self, league):
-        self.render_template('xml/season_atom.xml',
-                             { 'entry' : entry, 'base_url' : self.baseurl() })
-
     def is_parent_of(self, league, season):
         return str(season.league.key()) == str(league.key())
 

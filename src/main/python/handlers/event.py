@@ -24,10 +24,6 @@ class EventHandler(EntryHandler, BaseAuthorizationHandler):
                                'can_write' : can_write,
                                'entry' : entry})
 
-    def render_atom(self, entry):
-        self.render_template("xml/%s_atom.xml" % entry.kind().lower(),
-                             { 'entry' : entry, 'base_url' : self.baseurl() })
-
     def get_svc(self):
         return self.event_svc
 

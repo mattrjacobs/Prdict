@@ -29,11 +29,6 @@ class UserSpecificFriendHandler(EntryHandler, FriendsAuthorizationHandler):
                                             'current_user' : current_user,
                                             'user' : entry })
 
-    def render_atom(self, entry):
-        self.render_template('xml/user_atom.xml',
-                             { 'user' : entry,
-                               'base_url' : self.baseurl() } )
-
     @http_basic_auth
     def get(self, current_user, user_key, friend_key):
         user = self.get_authorized_entry(user_key, "read")

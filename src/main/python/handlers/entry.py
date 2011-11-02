@@ -17,7 +17,7 @@ class EntryHandler(AbstractHandler):
 
     def render_atom(self, entry):
         """Given a single entry, render an ATOM view."""
-        raise Exception("Must be overridden by subclasses")
+        self.render_string(entry.to_xml())
 
     def render_json(self, entry):
         """Given a single entry, render a JSON view."""
