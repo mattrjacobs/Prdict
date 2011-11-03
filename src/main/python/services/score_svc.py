@@ -42,6 +42,13 @@ class ScoreService:
             logging.info("GAME STATUS : %s" % json_resp["status"])
             return { 'home_team_score' : json_resp["home_team"]["score"],
                      'away_team_score' : json_resp["away_team"]["score"],
-                     'completed' : str("status" in json_resp and json_resp["status"].lower().strip() == "final") }
+                     'completed' : str(get_completed(json_resp))
         else:
             return { }
+
+    def get_completed(self, json):
+        if "status" not in json:
+            return False
+        else:
+            status_str = json["status"]
+            return status_str.lower().strip() == "final"
