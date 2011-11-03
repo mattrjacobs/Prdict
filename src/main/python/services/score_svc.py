@@ -51,4 +51,7 @@ class ScoreService:
             return False
         else:
             status_str = json["status"]
-            return status_str.lower().strip() == "final"
+            if status_str is None:
+                return False
+            else:
+                return status_str.lower().strip() == "final"
