@@ -4,37 +4,44 @@
 <meta name="google-site-verification" content="a05vvuun0ZefRCjWBBC-QZCqo6JoJ-Y-Ezl50nDwNJ8" />
 {% endblock %}
 
-{% block message %}
-This is the Prdict homepage.  Welcome
-{% endblock %}
-
 {% block content %}
-<h4>In-Progress Events</h4>
-<table>
-{% for event in current_events %}
-  <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
-{% endfor %}
-</table>
-
-<h4>Most Recent Events</h4>
-<table>
-{% for event in past_events %}
-  <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
-{% endfor %}
-</table>
-
-<h4>Upcoming Events</h4>
-<table>
-{% for event in future_events %}
-  <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
-{% endfor %}
-</table>
-
-{% if current_user %}
-<h4>Your Friends</h4>
-{% for friend in top_friends %}
-  <a href="{{ friend.relative_url }}">{{ friend.username|escape }}</a>
-{% endfor %}
-{% endif %}
-
+<div class="hero-unit">
+  <h1>Think you know sports?</h1>
+  <p>Prdict lets you match wits against your friends during every game and win prizes for coming out on top.</p> 
+  <p><a class="btn primary large" href="/about">How does it work? &raquo;</a></p>
+</div>
+<div class="row">
+  <div class="span4">
+    <h4>In-Progress Events</h4>
+    <table>
+      {% for event in current_events %}
+        <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="span4">
+    <h4>Most Recent Events</h4>
+    <table>
+      {% for event in past_events %}
+        <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="span4">
+    <h4>Upcoming Events</h4>
+    <table>
+      {% for event in future_events %}
+        <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="span4">
+    {% if current_user %}
+    <h4>Your Friends</h4>
+      {% for friend in top_friends %}
+        <a href="{{ friend.relative_url }}">{{ friend.username|escape }}</a>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

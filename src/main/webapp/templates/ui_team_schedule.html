@@ -40,12 +40,22 @@
 {% block parent %}
 {% if team %}
 <h1>{{team.location}} {{team.title}} {{season.title}} Schedule</h1>
-<hr/>
 {% endif %}
 {% endblock %}
 
 {% block entries %}
-<table name="schedule" class="schedule">
-<tr><th>Date</th><th>Home</th><th>Away</th><th>Score</th><th></th><th></th></tr>
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Home</th>
+      <th>Away</th>
+      <th>Score</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody class="schedule">
+  </tbody>
 </table>
 {% endblock %}

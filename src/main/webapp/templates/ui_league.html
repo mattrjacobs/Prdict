@@ -1,4 +1,15 @@
-{% extends "base_feed.html" %}
+{% extends "base_list.html" %}
+
+{% block script %}
+{% if league %}
+  
+  <script type='text/javascript'>
+    $(document).ready(function() {
+      $('.{{league.title}}_nav').attr('active', true);
+    });
+  </script>
+{% endif %}
+{% endblock %}
 
 {% block parent %}
 {% if league %}

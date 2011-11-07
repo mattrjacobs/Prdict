@@ -3,7 +3,6 @@
 {% block content %}
 {% if team %}
 <h1>{{ team.location }} {{ team.title }}</h1>
-<hr/>
 <a href="/leagues/{{ team.league.title }}">League</a>
 {% for season in seasons %}
   <a href="{{ self_link }}/seasons/{{ season.title }}/schedule">{{ season.title }} Schedule</a>
