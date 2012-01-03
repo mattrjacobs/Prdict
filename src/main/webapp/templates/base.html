@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
@@ -14,7 +14,7 @@
     {% endblock %}
     <style type="text/css">
       body {
-        padding-top: 60px;
+      padding-top: 60px;
       }
     </style>
   </head>
@@ -33,8 +33,8 @@
           </ul>
           {% if login_link %}
           <form action="{{ login_link }}" class="pull-right">
-            <input class="input-small" type="text" placeholder="Username">
-            <input class="input-small" type="password" placeholder="Password">
+            <input class="input-small" type="text" placeholder="Username"/>
+            <input class="input-small" type="password" placeholder="Password"/>
             <button class="btn" type="submit">Sign in</button>
           </form>
           {% endif %}
@@ -47,8 +47,12 @@
         </div>
       </div>
     </div>
-    <div class="container">
-      <div id="content">
+    <div class="container-fluid">
+      <div class="sidebar">
+        {% block sidebar %}
+        {% endblock %}
+      </div>
+      <div class="content">
         {% block message %}
         {% if msg %}
         <p>{{ msg|escape }}</p>
@@ -58,8 +62,10 @@
         {% endblock %}
       </div>
     </div>
-    <footer>
-      <p>&copy; 2011 Prdict LLC</p>
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; 2012 Prdict LLC</p>
+      </div>
     </footer>
   </body>
 </html>

@@ -7,7 +7,7 @@
 {% block content %}
 <div class="hero-unit">
   <h1>Think you know sports?</h1>
-  <p>Prdict lets you match wits against your friends during every game and win prizes for coming out on top.</p> 
+  <p>Prdict lets you match wits with your friends during every game and win prizes for coming out on top.</p> 
   <p><a class="btn primary large" href="/about">How does it work? &raquo;</a></p>
 </div>
 <div class="row">
@@ -23,7 +23,7 @@
         <div class="row">{{event.away_team_score}}</div>
         <div class="row">{{event.home_team_score}}</div>
       </div>
-      <div class="span2"><a href="/events/{{ event.key }}/chat" class="btn small primary">Prdict</a>
+      <div class="span2"><a href="/events/{{ event.key }}/chat" class="btn primary">Prdict!</a>
       </div>
     </div>
     <p/>
@@ -46,7 +46,6 @@
     </div>
     <p/>
     {% endfor %}
-
   </div>
   <div class="span4">
     <h3>Upcoming</h3>
@@ -61,6 +60,21 @@
     </div>
     <p/>
     {% endfor %}
+  </div>
+  <div class="span2">
+    <h5>Game Filter</h5>
+    <form>
+      <fieldset>
+        <div class="clearfix">
+          <select class="small" name="league" id="league">
+            <option>All</option>
+            <option>NFL</option>
+            <option>NBA</option>
+          </select>
+          <input type="submit" class="btn primary" value="Filter"/>
+        </div>
+      </fieldset>
+    </form> 
   </div>
 </div>
 {% endblock %}
