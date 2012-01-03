@@ -13,60 +13,48 @@
 <div class="row">
   <div class="span6">
     <h4>In-Progress Events</h4>
-    <table class="condensed-table">
-      <tbody>
-        {% for event in current_events %}
-          <tr>
-            <td>
-              <table class="condensed-table">
-                <tbody>
-                  <tr><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small primary">Prdict</a></td></tr>
-                  <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <ul class="unstyled">
+      {% for event in current_events %}
+        <li>
+          <table class="condensed-table">
+            <tbody>
+              <tr><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small primary">Prdict</a></td></tr>
+              <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
+            </tbody>
+          </table>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
   <div class="span6">
     <h4>Most Recent Events</h4>
-    <table class="condensed-table">
-      <tbody>
-        {% for event in past_events %}
-          <tr>
-            <td>
-              <table class="condensed-table">
-                <tbody>
-                  <tr></td><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small info">Chat Log</a></td></tr>
-                  <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <ul class="unstyled">
+      {% for event in past_events %}
+      <li>
+        <table class="condensed-table">
+          <tbody>
+            <tr></td><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small default">Chat Log</a></td></tr>
+           <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
+          </tbody>
+        </table>
+      </li>
+      {% endfor %}
+    </ul>
   </div>
   <div class="span4">
     <h4>Upcoming Events</h4>
-    <table>
-      <tbody>
-        {% for event in future_events %}
-          <tr>
-            <td>
-              <table class="condensed-table">
-                <tbody>
-                  <tr><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small primary">Chat</a></td></tr>
-                  <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <ul class="unstyled">
+      {% for event in future_events %}
+        <li>
+          <table class="condensed-table">
+            <tbody>
+              <tr><td width="75%">{{event.away_team.title}}</td><td width="25%"><a href="/events/{{ event.key }}/chat" class="btn small default">Chat</a></td></tr>
+              <tr><td>{{event.home_team.title}}</td><td></td></tr>
+            </tbody>
+          </table>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
 {% endblock %}
