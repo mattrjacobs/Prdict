@@ -4,6 +4,22 @@
 <meta name="google-site-verification" content="a05vvuun0ZefRCjWBBC-QZCqo6JoJ-Y-Ezl50nDwNJ8" />
 {% endblock %}
 
+{% block sidebar %}
+<h5>Game Filter</h5>
+<form>
+  <fieldset>
+    <div class="clearfix">
+      <select class="small" name="league" id="league">
+        <option>All</option>
+        <option>NFL</option>
+        <option>NBA</option>
+      </select>
+      <input type="submit" class="btn primary" value="Filter"/>
+    </div>
+  </fieldset>
+</form> 
+{% endblock %}
+
 {% block content %}
 <div class="hero-unit">
   <h1>Think you know sports?</h1>
@@ -60,21 +76,6 @@
     </div>
     <p/>
     {% endfor %}
-  </div>
-  <div class="span2">
-    <h5>Game Filter</h5>
-    <form>
-      <fieldset>
-        <div class="clearfix">
-          <select class="small" name="league" id="league">
-            <option>All</option>
-            <option>NFL</option>
-            <option>NBA</option>
-          </select>
-          <input type="submit" class="btn primary" value="Filter"/>
-        </div>
-      </fieldset>
-    </form> 
   </div>
 </div>
 {% endblock %}
