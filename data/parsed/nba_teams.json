@@ -32,10 +32,6 @@
         "name": "Detroit Pistons"
     },
     {
-        "id": "ea1afbab-6769-5ff9-a827-343f6f1ade7a",
-        "name": "Eastern All-Stars"
-    },
-    {
         "id": "75d154f2-2cc2-58b2-9862-3ad8e680d56f",
         "name": "Golden State Warriors"
     },
@@ -122,9 +118,5 @@
     {
         "id": "17b71418-17d5-5fe3-859d-7e5fb4bac273",
         "name": "Washington Wizards"
-    },
-    {
-        "id": "c2004d51-f08f-5f05-bf94-d0ca8360081e",
-        "name": "Western All-Stars"
     }
 ]

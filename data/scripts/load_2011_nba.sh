@@ -1,0 +1,1 @@
+python game_loader.py -l ../parsed/nba_teams.json -t ../raw -p http://localhost:8080 -n NBA -s 2011 -r f65226d8-fbf7-5033-a7a0-50de55b57968

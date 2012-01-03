@@ -50,14 +50,16 @@
         </div>
       </div>
     </div>
-    <div id="content">
-      {% block message %}
-      {% if msg %}
-      <p>{{ msg|escape }}</p>
-      {% endif %}
-      {% endblock %}
-      {% block content %}
-      {% endblock %}
+    <div class="container">
+      <div id="content">
+        {% block message %}
+        {% if msg %}
+        <p>{{ msg|escape }}</p>
+        {% endif %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+      </div>
     </div>
     <footer>
       <p>&copy; 2011 Prdict LLC</p>

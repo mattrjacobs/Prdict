@@ -11,37 +11,62 @@
   <p><a class="btn primary large" href="/about">How does it work? &raquo;</a></p>
 </div>
 <div class="row">
-  <div class="span4">
+  <div class="span6">
     <h4>In-Progress Events</h4>
-    <table>
-      {% for event in current_events %}
-        <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
-      {% endfor %}
+    <table class="condensed-table">
+      <tbody>
+        {% for event in current_events %}
+          <tr>
+            <td>
+              <table class="condensed-table">
+                <tbody>
+                  <tr><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small primary">Prdict</a></td></tr>
+                  <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
-  <div class="span4">
+  <div class="span6">
     <h4>Most Recent Events</h4>
-    <table>
-      {% for event in past_events %}
-        <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
-      {% endfor %}
+    <table class="condensed-table">
+      <tbody>
+        {% for event in past_events %}
+          <tr>
+            <td>
+              <table class="condensed-table">
+                <tbody>
+                  <tr></td><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small info">Chat Log</a></td></tr>
+                  <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
   <div class="span4">
     <h4>Upcoming Events</h4>
     <table>
-      {% for event in future_events %}
-        <tr><td>{{ event.nice_start_date_est }}</td><td><a href="/events/{{ event.key }}/chat">{{ event.title|escape }}</a></td></tr>
-      {% endfor %}
+      <tbody>
+        {% for event in future_events %}
+          <tr>
+            <td>
+              <table class="condensed-table">
+                <tbody>
+                  <tr><td width="50%">{{event.away_team.title}}</td><td width="20%">{{event.away_team_score}}</td><td width="30%"><a href="/events/{{ event.key }}/chat" class="btn small primary">Chat</a></td></tr>
+                  <tr><td>{{event.home_team.title}}</td><td>{{event.home_team_score}}</td><td></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
-  </div>
-  <div class="span4">
-    {% if current_user %}
-    <h4>Your Friends</h4>
-      {% for friend in top_friends %}
-        <a href="{{ friend.relative_url }}">{{ friend.username|escape }}</a>
-      {% endfor %}
-    {% endif %}
   </div>
 </div>
 {% endblock %}
