@@ -38,6 +38,28 @@ class BaseService:
     def __init__(self):
         pass
 
+    def get_model(self):
+        raise "Must be implemented by subclasses"
+
+    def get_entry_list_name(self):
+        raise "Must be implemented by subclasses"
+
+    def get_count(self, query):
+        if query:
+            count = db.Query(self.get_model()).filter("%s =" % query[0],query[1]).count()
+        else:
+            count = db.Query(self.get_model()).count()
+        return count
+
+    def get_entries(self, pagination_params, query):
+        if query:
+            entries_query = db.Query(self.get_model()).filter("%s =" % query[0], query[1])
+        else:
+            entries_query = db.Query(self.get_model())
+
+        entries = entries_query.fetch(offset = pagination_params[0], limit = pagination_params[1])
+        return entries
+
     # returns:
     # Boolean - is content type OK?
     # Boolean - are params valid to create a League instance?

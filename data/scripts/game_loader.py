@@ -31,7 +31,7 @@ def get_object_by_uri(prdict_url, uri):
     return json.loads(resp.read())
 
 def get_teams_by_league(prdict_url, league_uri):
-    get_request = urllib2.Request(url = "%s%s/teams?max-results=200" %
+    get_request = urllib2.Request(url = "%s%s/teams" %
                                   (prdict_url, league_uri),
                                   headers = { "Accept" : "application/json" })
     resp = urllib2.urlopen(get_request)
@@ -98,12 +98,13 @@ def authenticated_http(url, data):
             return None
 
 def store_league(prdict_url, league_name, league_ref_id):
-    current_leagues = get_object_by_ref_id(prdict_url, "league", league_ref_id)
+    current_leagues = get_object_by_ref_id(prdict_url, "league", league_ref_id)["leagues"]
     if len(current_leagues) > 0:
+        print current_leagues
         return current_leagues[0]["self"]
     else:
         print "Need to add the ref ID onto the league"
-        leagues_by_name = get_object_by_title(prdict_url, "league", league_name)
+        leagues_by_name = get_object_by_title(prdict_url, "league", league_name)["leagues"]
         if len(leagues_by_name) > 0:
             league = leagues_by_name[0]
             update_with_ref_id = { "ref_id" : league_ref_id,
@@ -149,7 +150,7 @@ def store_teams(teams, prdict_url, league_uri):
         team_location_uri_map[api_team["location"]] = api_team["self"]
         
     for team in teams:
-        current_teams = get_object_by_ref_id(prdict_url, "team", team["id"])
+        current_teams = get_object_by_ref_id(prdict_url, "team", team["id"])["teams"]
         if len(current_teams) > 0:
             print "Found Ref ID for %s at : %s" % (team["name"], current_teams[0]["self"])
             team_ref_id_uri_map[team["id"]] = current_teams[0]["self"]
@@ -245,7 +246,7 @@ def store_games(team_map, league_uri, season_uri, prdict_url):
             away_name = name_pieces[0]
             home_name = name_pieces[1]
                     
-            json_event = get_object_by_ref_id(prdict_url, "event", game_ref_id)
+            json_event = get_object_by_ref_id(prdict_url, "event", game_ref_id)["events"]
             if len(json_event) == 0:
                 print "Did not find event : %s, creating it..." % game_ref_id
                 home_team_uri = _get_uri_by_team(team_map, home_name)

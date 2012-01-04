@@ -11,19 +11,18 @@ class LeaguesHandler(ListHandler):
         ListHandler.__init__(self)
         self.html = "leagues.html"
         self.entry_html = "league.html"
-        self.league_svc = LeagueService()
 
-    def create_param_map(self, user, all_entries, can_write, now):
-        param_map = { 'current_user' : user, 'entries' : all_entries,
-                      'can_write' : can_write, 'now' : now,
-                      'sports' : self.get_all_sports() }
-        return param_map
+    def get_extra_params(self):
+        return { 'sports' : self.get_all_sports() }
 
-    def get_table_name(self):
-        return "League"
+    def get_max_results_allowed(self):
+        return 200
+    
+    def get_default_max_results(self):
+        return 25
 
     def get_sort_key(self):
         return "title"
 
     def get_svc(self):
-        return self.league_svc
+        return LeagueService()

@@ -226,6 +226,31 @@ class AbstractHandler(webapp.RequestHandler):
                 return query_param.split(":", 2)
         return None
 
+    def get_pagination_params(self):
+        start_index_param = self.request.get("start-index")
+        max_results_param = self.request.get("max-results")
+
+        if start_index_param:
+            try:
+                start_index = int(start_index_param)
+            except ValueError:
+                start_index = 0
+        else:
+            start_index = 0
+
+        if max_results_param:
+            try:
+                max_results_requested = int(max_results_param)
+                if max_results_requested > self.get_max_results_allowed():
+                    max_results = self.get_max_results_allowed()
+                else:
+                    max_results = max_results_requested
+            except ValueError:
+                max_results = self.get_default_max_results()
+        else:
+            max_results = self.get_default_max_results()
+    
+        return (start_index, max_results)
     def _etag_matches(self, etag):
         """Determines if given etag matches HTTP Request etag"""
         req_etags = map(lambda s: s.strip(),
@@ -356,6 +381,57 @@ class AbstractHandler(webapp.RequestHandler):
             return parsed_json[field_name]
         else:
             return ""
+
+    def _handle_pagination(self, parent, query):
+        """Use request info to determine which children to return"""
+        offset = 0
+        start = self.request.get('start-index')
+        if start:
+            try:
+                offset = int(start) - 1
+            except ValueError:
+                offset = None
+            if offset is None or offset < 0:
+                msg = "'start-index' parameter must be >= 1\n"
+                self.response.set_status(httplib.BAD_REQUEST)
+                self.set_header('Content-Type', 'text/plain; charset=UTF-8')
+                self.write_message(msg)
+                return (True, None, None, None)
+        limit = self.DEFAULT_LIMIT
+        nresults = self.request.get('max-results')
+        if nresults:
+            try:
+                limit = min(self.DEFAULT_LIMIT, int(nresults))
+            except ValueError:
+                limit = None
+            if limit is None or limit < 1:
+                msg = "'max-results' parameter must be >= 1\n"
+                self.response.set_status(httplib.BAD_REQUEST)
+                self.set_header('Content-Type', 'text/plain; charset=UTF-8')
+                self.write_message(msg)
+                return (True, None, None, None)
+        # the trick is: ask for one more row than you really want; if you
+        # get the extra row then you know you need a next link
+        entries = self.get_entries(parent, query, limit + 1, offset)
+        
+        # calculation of next and prev links
+        prev_start, prev_max, next_start, next_max = \
+                    self._calculate_page_indices(offset, limit, entries)
+        prev_link = next_link = None
+        if prev_start is not None:
+            prev_link = "%s%s?start-index=%d&max-results=%d" % \
+                        (self.baseurl(), self.request.path,
+                         prev_start, prev_max)
+        if next_start is not None:
+            next_link = "%s%s?start-index=%d&max-results=%d" % \
+                        (self.baseurl(), self.request.path,
+                         next_start, next_max)
+            
+        if len(entries) > limit:
+            # pare down to actual rows we want
+            entries = entries[:limit]
+
+        return (False, entries, prev_link, next_link)
 
     def render_json_ok(self):
         self.render_string(json.dumps({ 'status' : 'ok' }))

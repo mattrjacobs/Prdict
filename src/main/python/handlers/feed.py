@@ -149,57 +149,6 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
             return self.render_template(self.entry_html, { 'entry' : new_entry,
                                                            'current_user' : user })
 
-    def _handle_pagination(self, parent, query):
-        """Use request info to determine which children to return"""
-        offset = 0
-        start = self.request.get('start-index')
-        if start:
-            try:
-                offset = int(start) - 1
-            except ValueError:
-                offset = None
-            if offset is None or offset < 0:
-                msg = "'start-index' parameter must be >= 1\n"
-                self.response.set_status(httplib.BAD_REQUEST)
-                self.set_header('Content-Type', 'text/plain; charset=UTF-8')
-                self.write_message(msg)
-                return (True, None, None, None)
-        limit = self.DEFAULT_LIMIT
-        nresults = self.request.get('max-results')
-        if nresults:
-            try:
-                limit = min(self.DEFAULT_LIMIT, int(nresults))
-            except ValueError:
-                limit = None
-            if limit is None or limit < 1:
-                msg = "'max-results' parameter must be >= 1\n"
-                self.response.set_status(httplib.BAD_REQUEST)
-                self.set_header('Content-Type', 'text/plain; charset=UTF-8')
-                self.write_message(msg)
-                return (True, None, None, None)
-        # the trick is: ask for one more row than you really want; if you
-        # get the extra row then you know you need a next link
-        entries = self.get_entries(parent, query, limit + 1, offset)
-
-        # calculation of next and prev links
-        prev_start, prev_max, next_start, next_max = \
-                    self._calculate_page_indices(offset, limit, entries)
-        prev_link = next_link = None
-        if prev_start is not None:
-            prev_link = "%s%s?start-index=%d&max-results=%d" % \
-                        (self.baseurl(), self.request.path,
-                         prev_start, prev_max)
-        if next_start is not None:
-            next_link = "%s%s?start-index=%d&max-results=%d" % \
-                        (self.baseurl(), self.request.path,
-                         next_start, next_max)
-            
-        if len(entries) > limit:
-            # pare down to actual rows we want
-            entries = entries[:limit]
-
-        return (False, entries, prev_link, next_link)
-
     @staticmethod
     def _calculate_page_indices(offset, limit, children):
         """Given offset and limit parameters, determine how to describe

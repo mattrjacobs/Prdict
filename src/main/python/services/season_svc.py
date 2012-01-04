@@ -8,6 +8,12 @@ from models.season import Season
 from services.base_svc import BaseService
 
 class SeasonService(BaseService):
+    def get_model(self):
+        return Season
+
+    def get_entry_list_name(self):
+        return "seasons"
+
     def get_json_params(self, request):
         try:
             parsed_body = json.loads(request.body)

@@ -7,6 +7,12 @@ from models.sport import Sport
 from services.base_svc import BaseService
 
 class SportService(BaseService):
+    def get_model(self):
+        return Sport
+
+    def get_entry_list_name(self):
+        return "sports"
+
     def get_json_params(self, request):
         try:
             parsed_body = json.loads(request.body)

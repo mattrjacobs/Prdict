@@ -9,6 +9,12 @@ from handlers.handler import AbstractHandler
 from services.base_svc import BaseService
 
 class MessageService(BaseService):
+    def get_model(self):
+        return Message
+
+    def get_entry_list_name(self):
+        return "messages"
+
     def get_json_params(self, request):
         try:
             parsed_body = json.loads(request.body)

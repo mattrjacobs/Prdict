@@ -8,18 +8,15 @@ class SportsHandler(ListHandler):
         ListHandler.__init__(self)
         self.html = "sports.html"
         self.entry_html = "sport.html"
-        self.sport_svc = SportService()
 
-    def create_param_map(self, user, all_entries, can_write, now):
-        param_map = { 'current_user' : user, 'entries' : all_entries,
-                      'can_write' : can_write, 'now' : now }
-        return param_map
+    def get_max_results_allowed(self):
+        return 100
 
-    def get_table_name(self):
-        return "Sport"
+    def get_default_max_results(self):
+        return 25
 
     def get_sort_key(self):
         return "title"
 
     def get_svc(self):
-        return self.sport_svc
+        return SportService()

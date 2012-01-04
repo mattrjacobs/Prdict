@@ -10,6 +10,12 @@ from models.team import Team
 from services.base_svc import BaseService
 
 class EventService(BaseService):
+    def get_model(self):
+        return SportsEvent
+
+    def get_entry_list_name(self):
+        return "events"
+
     def get_json_params(self, request):
         try:
             parsed_body = json.loads(request.body)
