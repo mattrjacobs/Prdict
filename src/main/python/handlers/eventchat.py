@@ -21,35 +21,6 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
         self.html = "eventchat.html"
         self.entry_html = "message.html"
 
-    """Handles a request for an event chat resource
-    FeedHandler has logic on request processing
-    EventChatAuthorizationHandler has logic for authorization"""
-    def get_entries(self, parent, query, limit = 1000, offset = 0):
-        """Get chat for the event subject to limit/offset parameters"""
-        if parent:
-            if query:
-                gql_query = db.GqlQuery("SELECT * FROM Message WHERE event = :1 AND %s = :2 ORDER BY created DESC" % query[0], parent.key(), query[1])
-            else:
-                gql_query = db.GqlQuery("SELECT * FROM Message WHERE event = :1 ORDER BY created DESC", parent.key())            
-            return gql_query.fetch(limit, offset)
-        else:
-            return []
-
-    def render_html(self, parent, entries, prev_link=None, next_link=None,
-                    msg = None, user = None):
-         self.render_template('eventchat.html',
-                             { 'current_user' : user,
-                               'event' : parent,
-                               'event_key' : str(parent.key()),
-                               'messages' : entries,
-                               'self_link' : self.request.url,
-                               'prev_link' : prev_link,
-                               'next_link' : next_link,
-                               'msg' : msg})
-
-    def render_atom(self, parent, entries, prev_link=None, next_link=None, msg = None):
-        raise "Not implemented yet"
-
     def handle_post_success(self, parent, new_entry):
         channel_msg = self.get_channel_message(new_entry)
         cache_key = "listeners-%s" % str(parent.key())
@@ -76,8 +47,11 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
     def get_parent_name(self):
         return "event"
 
-    def get_entries_name(self):
-        return "messages"
+    def get_max_results_allowed(self):
+        return 1000
+
+    def get_default_max_results(self):
+        return 100
 
     def get_svc(self):
         return self.message_svc

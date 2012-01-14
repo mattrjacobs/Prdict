@@ -15,7 +15,6 @@ from utils.constants import Constants
 
 class ListHandler(AbstractHandler, BaseAuthorizationHandler):
     """Handles requests for a list resource"""
-    DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
     def __init__(self):
         self.html = "list.html"
@@ -45,7 +44,7 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
             self.render_json(entries, pagination_params, total_count)
         else:
             can_write = self.is_user_authorized_to_write(user, None)
-            now = datetime.utcnow().strftime(ListHandler.DATE_FORMAT)
+            now = datetime.utcnow().strftime(AbstractHandler.DATE_FORMAT)
             param_map = dict(self.create_param_map(user, entries, pagination_params, total_count,
                                                    can_write, now).items() +
                              self.get_extra_params().items())
@@ -90,10 +89,8 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
             json_entry_list = [json.loads(entry.to_json()) for entry in entries]
         else:
             json_entry_list = [ ]
-        json_pagination_map = { 'start-index' : pagination_params[0],
-                                'max-results' : pagination_params[1],
-                                'total-results' : total_count,
-                                self.get_svc().get_entry_list_name() : json_entry_list }
+        json_pagination_map = { self.get_svc().get_entry_list_name() : self.get_pagination_map(json_entry_list, pagination_params, total_count) }
+        
         self.render_string(json.dumps(json_pagination_map))
 
     def render_atom(self):
@@ -116,9 +113,6 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
 
     def get_extra_params(self):
         return {}
-
-    def get_entry_list_name(self):
-        raise "Must be implemented by subclasses"
 
     def get_max_results_allowed(self):
         raise "Must be implemented by subclasses"

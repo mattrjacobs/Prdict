@@ -8,6 +8,7 @@ from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
 from models.event import Event
 from models.league import League
+from models.season import Season
 from models.sport import Sport
 from models.team import Team
 
@@ -51,11 +52,27 @@ class BaseService:
             count = db.Query(self.get_model()).count()
         return count
 
+    def get_count_by_parent(self, parent, query):
+        if query:
+            count = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent).filter("%s =" % query[0], query[1]).count()
+        else:
+            count = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent).count()
+        return count
+
     def get_entries(self, pagination_params, query):
         if query:
             entries_query = db.Query(self.get_model()).filter("%s =" % query[0], query[1])
         else:
             entries_query = db.Query(self.get_model())
+
+        entries = entries_query.fetch(offset = pagination_params[0], limit = pagination_params[1])
+        return entries
+
+    def get_entries_by_parent(self, parent, pagination_params, query):
+        if query:
+            entries_query = db.Query(self.get_model()).filter("%s = " % parent.__class__.__name__.lower(), parent).filter("%s =" % query[0], query[1])
+        else:
+            entries_query = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent)
 
         entries = entries_query.fetch(offset = pagination_params[0], limit = pagination_params[1])
         return entries

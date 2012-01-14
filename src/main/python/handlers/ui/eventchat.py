@@ -19,19 +19,7 @@ from services.message_svc import MessageService
 
 class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
     def __init__(self):
-        self.message_svc = MessageService()
-
-    """Handles a request for an event chat resource
-    FeedHandler has logic on request processing
-    EventChatAuthorizationHandler has logic for authorization"""
-    def get_entries(self, parent, query, limit = 1000, offset = 0):
-        """Get chat for the event subject to limit/offset parameters"""
-        if parent:
-            gql_query = db.GqlQuery("SELECT * FROM Message WHERE event = :1 ORDER BY created DESC",
-                                    parent.key())
-            return gql_query.fetch(limit, offset)
-        else:
-            return []
+        self.html = 'ui_eventchat.html'
 
     def render_html(self, parent, entries, prev_link=None, next_link=None,
                     msg = None, user = None):
@@ -59,7 +47,7 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
         for listener in current_listeners:
             channel.send_message(listener, channel_msg)
 
-        self.render_template('ui_eventchat.html',
+        self.render_template(self.html,
                              { 'current_user' : user,
                                'token' : token,
                                'event' : parent,
@@ -71,13 +59,14 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
                                'build' : self.get_build_number(),
                                'msg' : msg})
 
-    def render_atom(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
-        raise RuntimeError("ATOM not valid for UI Eventchat")
+    def get_max_results_allowed(self):
+        return 1000
+    
+    def get_default_max_results(self):
+        return 100
 
-    def render_json(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
-        raise RuntimeError("JSON not valid for UI EventChat")
+    def get_parent_name(self):
+        return "event"
 
     def get_channel_message(self, user):
         """Create a message stating some user just signed in"""
@@ -94,4 +83,4 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
         return simplejson.dumps(chat_message)
                          
     def get_svc(self):
-        return self.message_svc
+        return MessageService()

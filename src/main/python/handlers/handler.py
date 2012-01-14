@@ -19,6 +19,8 @@ from models import prdict_user
 from utils.constants import Constants
 
 class AbstractHandler(webapp.RequestHandler):
+    DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
     """Handles an HTTP request"""
     def baseurl(self):
         """Return the base URL of webapp: URI scheme + hostname"""
@@ -249,8 +251,15 @@ class AbstractHandler(webapp.RequestHandler):
                 max_results = self.get_default_max_results()
         else:
             max_results = self.get_default_max_results()
-    
+
         return (start_index, max_results)
+
+    def get_pagination_map(self, entries, pagination_params, total_count):
+        return { 'start-index' : pagination_params[0],
+                 'max-results' : pagination_params[1],
+                 'total-results' : total_count,
+                 'items' : entries }
+
     def _etag_matches(self, etag):
         """Determines if given etag matches HTTP Request etag"""
         req_etags = map(lambda s: s.strip(),

@@ -14,41 +14,9 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
     """Handles a request for a user's friends resource
     FeedHandler has logic on request processing
     UserAuthorizationHandler has logic for authorization"""
-    def get_entries(self, parent, query, limit = 25, offset = 0):
-        """Get friends of the user subject to limit/offset parameters"""
-        #ignore the query for now
-        if parent:
-            return [prdict_user.lookup_user(u)
-                    for u in parent.friends[offset:offset+limit]]
-        else:
-            return []
 
     def get_parent_name(self):
         return "user"
-
-    def get_entries_name(self):
-        return "friends"
-
-    def render_html(self, parent, entries, prev_link=None, next_link=None,
-                    msg = None, user = None):
-        self.render_template('friends.html',
-                             { 'current_user' : user,
-                               'user' : parent,
-                               'friends' : entries,
-                               'self_link' : self.request.url,
-                               'prev_link' : prev_link,
-                               'next_link' : next_link,
-                               'msg' : msg})
-
-    def render_atom(self, parent, entries, prev_link=None, next_link=None,
-                    msg=None):
-        self.render_template('xml/friends_atom.xml',
-                             { 'user' : parent,
-                               'friends' : entries,
-                               'self_link' : self.xml_escape(self.request.url),
-                               'base_url' : self.baseurl(),
-                               'prev_link' : self.xml_escape(prev_link),
-                               'next_link' : self.xml_escape(next_link) })
 
     def is_post_data_valid(self, parent):
         """Checks if request parameters contain a valid user to add"""
@@ -94,3 +62,9 @@ class UserFriendsHandler(FeedHandler, UserAuthorizationHandler):
             if 'email' in parsed_body:
                 email = parsed_body['email']
         return email
+
+    def get_max_results_allowed(self):
+        return 100
+
+    def get_default_max_results(self):
+        return 50

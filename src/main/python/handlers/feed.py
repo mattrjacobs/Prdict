@@ -1,5 +1,6 @@
 """Abtract class for handling a request for a resource of a list of objects:
 User's friends"""
+from datetime import datetime
 import dateutil
 import hashlib
 import httplib
@@ -23,40 +24,33 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         self.html = "parent.html"
         self.entry_html = "entry.html"
 
-    def get_entries(self, parent, query = None, limit = DEFAULT_LIMIT, offset = 0):
-        """Returns the child entries of a parent,
-        starting at offset and a max of limit."""
-        raise Exception("Must be overridden by subclasses")
+    def get_paginated_list(self, parent, pagination_params, query):
+        total_count = self.get_svc().get_count_by_parent(parent, query)
+        entries = self.get_svc().get_entries_by_parent(parent, pagination_params, query)
+        return (total_count, entries)
 
-    def render_html(self, parent, entries, prev_link=None,
-                    next_link=None, msg=None, user=None):
-        """Given a parent object and a list of entries related to the
-        parent, render an HTML view.  If pagination links are provided,
-        use them in the view."""
-        raise Exception("Must be overridden by subclasses")
-
-    def render_atom(self, parent, entries, prev_link=None,
-                    next_link=None, msg=None):
+    def render_atom(self, parent, entries, pagination_params):
         """Given a parent object and a list of entries related to the
         parent, render an ATOM view.  If pagination links are provided,
         use them in the view."""
-        raise Exception("Must be overridden by subclasses")
+        raise Exception("Not implemented yet")
 
-    def render_json(self, parent, entries):
+    def render_json(self, parent, entries, pagination_params, total_count):
         """Given a parent object and a list of entries related to the
         parent, render a JSON view.  If pagination links are provided,
         use them in the view."""
         parent_json = parent.to_json()
-        entry_json = [json.loads(entry.to_json()) for entry in entries]
+        if entries and len(entries) > 0:
+            json_entry_list = [json.loads(entry.to_json()) for entry in entries]
+        else:
+            json_entry_list = [ ]
+        json_pagination_map = self.get_pagination_map(json_entry_list, pagination_params, total_count)
         self.render_string(json.dumps({ self.get_parent_name() :
                                         json.loads(parent_json),
-                                        self.get_entries_name() :
-                                        entry_json }))
+                                        self.get_svc().get_entry_list_name() :
+                                        json_pagination_map }))
 
     def get_parent_name(self):
-        raise "Must be implemented by subclasses"
-
-    def get_entries_name(self):
         raise "Must be implemented by subclasses"
 
     def render_entry_html(self, entry):
@@ -71,10 +65,8 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         if not parent_entry:
             return
         query = self.get_query()
-        (error_found, entries, prev_link, next_link) = \
-                      self._handle_pagination(parent_entry, query)
-        if error_found:
-            return
+        pagination_params = self.get_pagination_params()
+        (total_count, entries) = self.get_paginated_list(parent_entry, pagination_params, query)
         feed_etag = self._calculate_etag(parent_entry, entries)
         self.set_header("Etag", feed_etag)
         feed_lmdate = self._calculate_lmdate(parent_entry, entries)
@@ -89,14 +81,21 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
             self.set_header("Vary","Accept")
         if content_type == "atom":
             self.set_header("Content-Type", Constants.XML_ENCODING)
-            self.render_atom(parent_entry, entries, prev_link, next_link)
+            self.render_atom(parent_entry, entries, pagination_params, total_count)
             return
         elif content_type == "json":
             self.set_header("Content-Type", Constants.JSON_ENCODING)
-            self.render_json(parent_entry, entries)
+            self.render_json(parent_entry, entries, pagination_params, total_count)
             return
         elif content_type == "html":
-            self.render_html(parent_entry, entries, prev_link, next_link, None, user)
+            can_write = self.is_user_authorized_to_write(user, parent_entry)
+            now = datetime.utcnow().strftime(AbstractHandler.DATE_FORMAT)
+            param_map = { 'current_user' : user,
+                          'can_write' : can_write,
+                          'now' : now,
+                          self.get_parent_name() : parent_entry,
+                          self.get_svc().get_entry_list_name() : self.get_pagination_map(entries, pagination_params, total_count) }
+            self.render_template(self.html, param_map)
             return
         else:
             logging.error("Received a content type I can't handle %s" % content_type)
@@ -150,22 +149,6 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
                                                            'current_user' : user })
 
     @staticmethod
-    def _calculate_page_indices(offset, limit, children):
-        """Given offset and limit parameters, determine how to describe
-        a next and previous page of children"""
-        if offset > 0:
-            prev_start = max(0, offset - limit) + 1
-            prev_max = min(limit, offset)
-        else:
-            prev_start = prev_max = None
-        if len(children) > limit:
-            next_start = offset + limit + 1
-            next_max = limit
-        else:
-            next_start = next_max = None
-        return (prev_start, prev_max, next_start, next_max)
-
-    @staticmethod
     def _calculate_etag(parent, entries):
         """ETag for feed is hash of (build number concatenated to parent key,
         parent etag, and all children key/etags)"""
@@ -195,6 +178,12 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
     #This is a hook for post-POST actions.  By default, do nothing
     def handle_post_success(self, parent_entry, new_entry):
         pass
+
+    def get_max_results_allowed(self):
+        raise "Must be implemented by subclasses"
+    
+    def get_default_max_results(self):
+        raise "Must be implemented by subclasses"
 
     def get_svc(self):
         raise "Must be implemented by subclasses"

@@ -39,11 +39,11 @@ class TestFeedHandler(BaseMockHandlerTest):
     def testHtmlGetNoUser(self):
         self.remove_user()
         self.mock_handler.get_prdict_user().AndReturn(None)
-        self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
-        self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
-                                      None)
+        self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entry_list_name().AndReturn("teams")
+        # DO ASSERT ON RETURNED ENTRIES
+        self.mock_handler.render_template('parent.html', mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.parent_key)
@@ -51,11 +51,11 @@ class TestFeedHandler(BaseMockHandlerTest):
 
     def testHtmlGetWithNonAdminUser(self):
         self.mock_handler.get_prdict_user().AndReturn(self.user)
-        self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
-        self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
-                                      mox.IgnoreArg())
+        self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entry_list_name().AndReturn("teams")
+        # DO ASSERT ON RETURNED ENTRIES
+        self.mock_handler.render_template('parent.html', mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.parent_key)
@@ -64,11 +64,11 @@ class TestFeedHandler(BaseMockHandlerTest):
     def testHtmlGetWithAdminUser(self):
         self.set_user(self.username, True)
         self.mock_handler.get_prdict_user().AndReturn(self.admin_user)
-        self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
-        self.mock_handler.render_html(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg(),
-                                      mox.IgnoreArg())
+        self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entry_list_name().AndReturn("teams")
+        # DO ASSERT ON RETURNED ENTRIES
+        self.mock_handler.render_template('parent.html', mox.IgnoreArg())
         self.mox.ReplayAll()
 
         self.impl.get(self.parent_key)
@@ -78,8 +78,10 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.remove_user()
         self.mock_handler.get_prdict_user().AndReturn(None)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
-        self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entry_list_name().AndReturn("teams")
+        # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -90,8 +92,10 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.set_user(self.username, False)
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
-        self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entry_list_name().AndReturn("teams")
+        # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -102,8 +106,10 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.set_user(self.username, True)
         self.mock_handler.get_prdict_user().AndReturn(self.admin_user)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
-        self.mock_handler.get_entries(mox.Func(self.SameLeagueKey), mox.IgnoreArg(),
-                                      mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entry_list_name().AndReturn("teams")
+        #DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -241,9 +247,6 @@ class MockFeedHandler(FeedHandler, BaseAuthorizationHandler):
         self.handler = handler
         self.svc = svc
 
-    def get_entries(self, parent, query, limit, offset):
-        return self.handler.get_entries(parent, query, limit, offset)
-
     def create_param_map(self, user, all_entries, can_write, now):
         return {}
         
@@ -263,13 +266,16 @@ class MockFeedHandler(FeedHandler, BaseAuthorizationHandler):
         self.handler.handle_post_success(parent_entry, new_entry)
 
     def get_parent_name(self):
-        return "parent"
-
-    def get_entries_name(self):
-        return "children"
+        return "league"
 
     def get_svc(self):
         return self.svc
+
+    def get_max_results_allowed(self):
+        return 10
+
+    def get_default_max_results(self):
+        return 5
 
 if __name__ == '__main__':
     unittest.main()
