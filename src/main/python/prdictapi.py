@@ -5,9 +5,9 @@ from handlers.dev.data_populate import DevDataPopulateHandler
 from handlers.event import EventHandler
 from handlers.eventchat import EventChatHandler
 from handlers.events import EventsHandler
-#from handlers.events_recent import RecentEventsHandler
-#from handlers.events_future import FutureEventsHandler
-#from handlers.events_inprogress import InProgressEventsHandler
+from handlers.events_recent import RecentEventsHandler
+from handlers.events_future import FutureEventsHandler
+from handlers.events_inprogress import InProgressEventsHandler
 from handlers.home import HomeHandler
 from handlers.league import LeagueHandler
 from handlers.leagues import LeaguesHandler
@@ -39,9 +39,9 @@ from google.appengine.dist import use_library
 
 urlmap = [('/', HomeHandler),
           ('/api/events', EventsHandler),
-#          ('/api/events/recent', RecentEventsHandler),
-#          ('/api/events/inprogress', InProgressEventsHandler),
-#          ('/api/events/future', FutureEventsHandler),
+          ('/api/events/recent', RecentEventsHandler),
+          ('/api/events/inprogress', InProgressEventsHandler),
+          ('/api/events/future', FutureEventsHandler),
           (r'/api/events/([^/]+)', EventHandler),
           (r'/api/events/([^/]+)/chat', EventChatHandler),
           ('/api/leagues', LeaguesHandler),

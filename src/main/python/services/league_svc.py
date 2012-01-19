@@ -14,6 +14,15 @@ class LeagueService(BaseService):
     def get_entry_list_name(self):
         return "leagues"
 
+    @staticmethod
+    def get_league_by_name(name):
+        db_query = db.Query(League).filter("title =", name)
+        result = db_query.fetch(1)
+        if result and len(result) == 1:
+            return result[0]
+        else:
+            return None
+
     def get_json_params(self, request):
         try:
             parsed_body = json.loads(request.body)

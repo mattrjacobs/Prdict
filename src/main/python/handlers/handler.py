@@ -181,7 +181,8 @@ class AbstractHandler(webapp.RequestHandler):
         if 'Accept' not in self.request.headers:
             return (False, False)
         accept_hdr = self.request.headers['Accept']
-        if accept_hdr == "application/json":
+        accept_hdrs = [s.strip() for s in accept_hdr.split(",")]
+        if "application/json" in accept_hdrs:
             return (True, False)
         #Implement this later - Accept:Vary header for JSON response
         #hdr = self.request.headers['Accept']

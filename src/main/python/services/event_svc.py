@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import simplejson as json
 
@@ -8,13 +9,63 @@ from models.season import Season
 from models.sports_event import SportsEvent
 from models.team import Team
 from services.base_svc import BaseService
+from services.league_svc import LeagueService
 
 class EventService(BaseService):
+    get_now = lambda foo: datetime.utcnow()
+    RECENT_EVENTS_FILTERS = [["end_date <", get_now]]
+    FUTURE_EVENTS_FILTERS = [["start_date >", get_now]]
+    IN_PROGRESS_PLUS_FILTERS = [["start_date <", get_now]]
+    
     def get_model(self):
         return SportsEvent
 
     def get_entry_list_name(self):
         return "events"
+
+    def _translate_query_into_db_query(self, query):
+        logging.info("QUERY : %s" % query)
+        if query[0] == "league":
+            lookup_league = LeagueService.get_league_by_name(query[1])
+            if lookup_league:
+                return ["league =", lookup_league.key()]
+        return None
+
+    def get_count_of_recent_events(self, query):
+        return self.get_arbitrary_count(self.RECENT_EVENTS_FILTERS, query)
+
+    def get_count_of_future_events(self, query):
+        return self.get_arbitrary_count(self.FUTURE_EVENTS_FILTERS, query)
+    
+    def get_count_of_inprogress_events(self, query):
+        # gets 100 events that have already started
+        list_of_start_in_past = self.get_arbitrary_entry_list(self.IN_PROGRESS_PLUS_FILTERS,
+                                                              query, "-start_date", [0, 100])
+        utcnow = datetime.utcnow()
+        inprogress = 0
+        for start_in_past in list_of_start_in_past:
+            if start_in_past.end_date > utcnow:
+                inprogress = inprogress + 1
+        return inprogress
+
+    def get_recent_events(self, pagination_params, query):
+        return self.get_arbitrary_entry_list(self.RECENT_EVENTS_FILTERS, query,
+                                             "-end_date", pagination_params)
+
+    def get_future_events(self, pagination_params, query):
+        return self.get_arbitrary_entry_list(self.FUTURE_EVENTS_FILTERS, query,
+                                             "start_date", pagination_params)
+
+    def get_inprogress_events(self, pagination_params, query):
+        # gets 100 events that have already started
+        list_of_start_in_past = self.get_arbitrary_entry_list(self.IN_PROGRESS_PLUS_FILTERS,
+                                                              query, "-start_date", [0, 100])
+        utcnow = datetime.utcnow()
+        inprogress = []
+        for start_in_past in list_of_start_in_past:
+            if start_in_past.end_date > utcnow:
+                inprogress.append(start_in_past)
+        return inprogress[pagination_params[0]: pagination_params[0] + pagination_params[1]]
 
     def get_json_params(self, request):
         try:

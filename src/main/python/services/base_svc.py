@@ -45,6 +45,31 @@ class BaseService:
     def get_entry_list_name(self):
         raise "Must be implemented by subclasses"
 
+    def get_arbitrary_query(self, base_query, db_filter_list, api_query):
+        for db_filter in db_filter_list:
+            base_query = base_query.filter(db_filter[0], db_filter[1]("dummy"))
+        if api_query:
+            api_db_query = self._translate_query_into_db_query(api_query)
+            if api_db_query:
+                final_query = base_query.filter(api_db_query[0], api_db_query[1])
+            else:
+                final_query = base_query
+        else:
+            final_query = base_query        
+        return final_query
+
+    def get_arbitrary_count(self, db_filter_list, api_query):
+        base_query = db.Query(self.get_model())
+        final_query = self.get_arbitrary_query(base_query, db_filter_list, api_query)
+        num = final_query.count()
+        logging.info("QUERY returned %d" % num)
+        return num
+
+    def get_arbitrary_entry_list(self, db_filter_list, api_query, order_str, pagination_params):
+        base_query = db.Query(self.get_model()).order(order_str)
+        final_query = self.get_arbitrary_query(base_query, db_filter_list, api_query)
+        return final_query.fetch(offset = pagination_params[0], limit = pagination_params[1])
+
     def get_count(self, query):
         if query:
             count = db.Query(self.get_model()).filter("%s =" % query[0],query[1]).count()
