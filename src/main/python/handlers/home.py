@@ -10,39 +10,7 @@ from auth import http_basic_auth
 from models import prdict_user
 
 class HomeHandler(AbstractHandler):
-    def get_top_friends(self, user, num):
-        return [prdict_user.lookup_user(u) for u in user.friends[0 : num]] 
-
     @http_basic_auth
     def get(self, user):
-        if user:
-            top_friends = self.get_top_friends(user, 10)
-        else:
-            top_friends = []
-
         self.render_template("home.html",
-                             { 'current_user' : user,
-                               'top_friends' : top_friends,
-                               'past_events' : self.get_past_events(10),
-                               'current_events' : self.get_current_events(10),
-                               'future_events' : self.get_next_events(10) })
-
-    def get_past_events(self, num):
-        query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date < :1 ORDER BY end_date DESC", datetime.datetime.utcnow())
-        return query.fetch(num, 0)
-    
-    def get_current_events(self, num):
-        end_in_future_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE end_date > :1 ORDER BY end_date ASC", datetime.datetime.utcnow())
-        start_in_past_query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date < :1 ORDER BY start_date DESC", datetime.datetime.utcnow())
-        end_in_future = end_in_future_query.fetch(num * 2, 0)
-        start_in_past = start_in_past_query.fetch(num * 2, 0)
-        current_events = []
-        for event in end_in_future:
-            if str(event.key()) in map(lambda event: str(event.key()), start_in_past):
-                current_events.append(event)
-        return current_events
-            
-    def get_next_events(self, num):
-        query = db.GqlQuery("SELECT * FROM SportsEvent WHERE start_date > :1 ORDER BY start_date ASC", datetime.datetime.utcnow())
-        return query.fetch(num, 0)
-        
+                             { 'current_user' : user })
