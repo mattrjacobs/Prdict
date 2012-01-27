@@ -86,9 +86,9 @@ class BaseService:
 
     def get_entries(self, pagination_params, query):
         if query:
-            entries_query = db.Query(self.get_model()).filter("%s =" % query[0], query[1])
+            entries_query = db.Query(self.get_model()).filter("%s =" % query[0], query[1]).order('title')
         else:
-            entries_query = db.Query(self.get_model())
+            entries_query = db.Query(self.get_model()).order('title')
 
         entries = entries_query.fetch(offset = pagination_params[0], limit = pagination_params[1])
         return entries

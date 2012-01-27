@@ -8,8 +8,71 @@ $(function(){
         }
     });
 
+    window.Team = Backbone.Model.extend({
+        validate: function(attrs) {
+            console.info("VALIDATING team : " + attrs);
+        }
+    });
+
+    window.League = Backbone.Model.extend({
+        validate: function(attrs) {
+            console.info("VALIDATING league : " + attrs);
+        }
+    });
+
     window.CollectionGames = Backbone.Collection.extend({
         model: Game,
+    });
+
+    window.CollectionTeams = Backbone.Collection.extend({
+        model: Team,
+
+        initialize: function(options) {
+            console.info("INIT CALLED ON CollectionTeams");
+        },
+    });
+
+    window.CollectionLeagues = Backbone.Collection.extend({
+        model : League,
+    });
+
+    window.TeamsByLeague = Backbone.Model.extend({
+        initialize: function(options) {
+            console.info("INIT CALLED ON TeamsByLeague");
+            this.teams = new CollectionTeams([]);
+        },
+        url: function() {
+            return "/api/leagues/" + this.get("league") + "/teams";
+        }
+    });
+
+    window.LeaguesWrapper = Backbone.Model.extend({
+        initialize: function(options) {
+            console.info("INIT CALLED ON LeaguesWrapper");
+            this.leagues = new CollectionLeagues([]);
+        },
+        url : "/api/leagues",
+        parse: function(response) {
+            if (response["leagues"]) {
+                this.startIndex = response["leagues"]["start-index"];
+                this.maxResults = response["leagues"]["max-results"];
+                this.totalResults = response["leagues"]["max-results"];
+                var rawLeagues = response["leagues"]["items"];
+                var modelLeagues = rawLeagues.map(function(leagueJson) {
+                    return new League({
+                        title : leagueJson["title"],
+                        teams_url : leagueJson["teams"]
+                    });
+                });
+                modelLeagues.reverse();
+                modelLeagues.push(new League({
+                    title : "All",
+                    teams_url : ""
+                }));
+                modelLeagues.reverse();
+                this.leagues.reset(modelLeagues);
+            }
+        }
     });
 
     /**
@@ -55,6 +118,40 @@ $(function(){
     });
     window.WrapperGamesUpcoming = PaginatedGamesWrapper.extend({
         url: "/api/events/future"
+    });
+
+    window.TeamFilterView = Backbone.View.extend({
+        initialize: function(options) {
+            console.info("INIT CALLED ON TeamFilterView")
+
+            _(this).bindAll('change');
+            this.model.bind('change', this.change);
+        },
+        
+        change: function(league) {
+            console.info("CHANGE called on TeamFilterView");
+            console.info("INPUT : " + JSON.stringify(league));
+        }
+    });
+
+    window.LeagueFilterView = Backbone.View.extend({
+        initialize: function(options) {
+            console.info("INIT CALLED ON LeagueFilterView")
+
+            _(this).bindAll('change');
+            this.model.bind('change', this.change);
+
+            this._collectionView = new UpdatingCollectionView({
+                collection: this.model.leagues,
+                childViewConstructor: options.childViewConstructor,
+                el : options.el
+            });
+        },
+        
+        change: function(wrappedLeagues) {
+            console.info("CHANGE CALLED ON LeagueFilterView")
+            console.info("INPUT : " + JSON.stringify(wrappedLeagues));
+        }
     });
 
     window.UpdatingWrapperView = Backbone.View.extend({
@@ -168,6 +265,20 @@ $(function(){
         }
     });
 
+    window.LeagueView = Backbone.View.extend({
+        tagName: "option",
+        className: "leagueOption",
+        template: _.template($('#league-option-template').html()),
+
+        render: function() {
+            $(this.el).html(this.template({
+                title: this.model.get("title"),
+                teams_url : this.model.get("teams_url")
+            }));
+            return this;
+        }
+    });
+
     window.UpdatingGameView = GameView.extend({
         initialize: function(options) {
             this.render = _.bind(this.render, this);
@@ -177,6 +288,14 @@ $(function(){
             this._buttonText =  options.buttonText;
             this._buttonClass = options.buttonClass;
             this._showScore =   options.showScore;
+        }
+    });
+
+    window.UpdatingLeagueView = LeagueView.extend({
+        initialize: function(options) {
+            this.render = _.bind(this.render, this);
+            this.model.bind('change', this.render);
+            this.model.bind('add', this.render);
         }
     });
 
@@ -190,9 +309,6 @@ $(function(){
         // the App already present in the HTML.
         el: $("#allgames"),
         
-        // Our template for the line of statistics at the bottom of the app.
-        //statsTemplate: _.template($('#stats-template').html()),
-        
         events: {
             "change #league_filter": "selectLeague",
             "click #refresh": "refreshAll"
@@ -201,6 +317,9 @@ $(function(){
         initialize: function() {
             console.info("INIT The Appview!!!!");
 
+            console.info("TEAMS BY LEAGUE : " + JSON.stringify(this.model.teamsByLeague));
+            console.info("TEAMS BY LEAGUE URL : " + this.model.teamsByLeague.url());
+            
             this._gamesInProgressView = new UpdatingWrapperView({
                 model : this.model.gamesInProgress,
                 childViewConstructor : UpdatingGameView,
@@ -227,7 +346,19 @@ $(function(){
                 showScore: true,
                 el : $('#recent')[0]
             });
-            
+
+            this._leagueFilterView = new LeagueFilterView({
+                model : this.model.leagues,
+                childViewConstructor : UpdatingLeagueView,
+                el : $('#league_filter')[0]
+            });
+
+            this._teamFilterView = new TeamFilterView({
+                model : this.model.teamsByLeague,
+                el : $('#team_filter')[0]
+            });
+
+            this.fetchLeagues();
             this.fetchAll();
         },
         
@@ -241,18 +372,27 @@ $(function(){
             this.model.gamesRecent.fetch({dataType: "json"});
         },
 
+        fetchLeagues: function() {
+            console.info("FETCHING ALL LEAGUES");
+            this.model.leagues.fetch({dataType: "json"});
+        },
+
         fetchByLeague: function(league_name) {
             console.info("FETCHING BY LEAGUE : " + league_name);
-            this._current_query = {"league" : league_name};
-            var ajaxParams = {
-                dataType: "json",
-                data: {
-                    league: league_name
-                }
-            };
-            this.model.gamesInProgress.fetch(ajaxParams);
-            this.model.gamesUpcoming.fetch(ajaxParams);
-            this.model.gamesRecent.fetch(ajaxParams);
+            if (league_name == "All") {
+                this.fetchAll();
+            } else {
+                this._current_query = {"league" : league_name};
+                var ajaxParams = {
+                    dataType: "json",
+                    data: {
+                        league: league_name
+                    }
+                };
+                this.model.gamesInProgress.fetch(ajaxParams);
+                this.model.gamesUpcoming.fetch(ajaxParams);
+                this.model.gamesRecent.fetch(ajaxParams);
+            }
         },
 
         refreshAll: function() {
@@ -270,14 +410,24 @@ $(function(){
         },
 
         selectLeague: function(e) {
-            this.fetchByLeague(e.currentTarget.value);
+            var leagueName = e.currentTarget.value;
+            this.fetchByLeague(leagueName);
+            this.model.teamsByLeague.set({"league" : leagueName});
+            console.info("TEAMS BY LEAGUE URL : " + this.model.teamsByLeague.url());
+            if (leagueName == "All") {
+                $("#team_filter_span").hide();
+            } else {
+                $("#team_filter_span").show()
+            }
         }
     });
     
     // Finally, we kick things off by creating the **App**.
     window.App = new AppView({model: {'gamesInProgress' : new WrapperGamesInProgress,
                                       'gamesUpcoming'   : new WrapperGamesUpcoming,
-                                      'gamesRecent'     : new WrapperGamesRecent }});
+                                      'gamesRecent'     : new WrapperGamesRecent,
+                                      'leagues'         : new LeaguesWrapper, 
+                                      'teamsByLeague'   : new TeamsByLeague }});
     
 });
 

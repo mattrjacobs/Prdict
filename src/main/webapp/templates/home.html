@@ -32,18 +32,20 @@
   <p/>
 </script>
 
+<script type="text/template" id="league-option-template">
+  <option title="<%= teams_url %>"><%= title %></option>
+</script>
+
 <div id="allgames">
   <div class="row">
     <div class="span3">
       <button class="btn" id="refresh">Refresh</button>
     </div>
     <div class="span3">
-      <h5>Game Filter</h5>
+      <h5>League Filter</h5>
       <form>
         <select class="small" name="league" id="league_filter">
-          <option>All</option>
-          <option>NFL</option>
-          <option>NBA</option>
+          <option></option>
         </select>
       </form>
     </div>
