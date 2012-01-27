@@ -16,6 +16,9 @@ class LeagueTeamsHandler(FeedHandler, BaseAuthorizationHandler):
     def get_parent_name(self):
         return "league"
 
+    def get_sort_order(self):
+        return "location"
+
     def get_max_results_allowed(self):
         return 100
 

@@ -33,7 +33,11 @@
 </script>
 
 <script type="text/template" id="league-option-template">
-  <option title="<%= teams_url %>"><%= title %></option>
+  <option id="<%= teams_url %>"><%= title %></option>
+</script>
+
+<script type="text/template" id="team-option-template">
+  <option><%= location %> <%= title %></option>
 </script>
 
 <div id="allgames">
@@ -53,7 +57,7 @@
       <span class="hidden" id="team_filter_span">
         <h5>Team Filter</h5>
         <form>
-          <select class="small" name="team" id="team_filter">
+          <select name="team" id="team_filter">
             <option></option>
           </select>
         </form>

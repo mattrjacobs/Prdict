@@ -39,24 +39,38 @@ $(function(){
     window.TeamsByLeague = Backbone.Model.extend({
         initialize: function(options) {
             console.info("INIT CALLED ON TeamsByLeague");
-            this.teams = new CollectionTeams([]);
+            this.collection = new CollectionTeams([]);
         },
         url: function() {
-            return "/api/leagues/" + this.get("league") + "/teams";
+            return this.get("teamsUrl");
+        },
+
+        parse: function(response) {
+            if (response["teams"]) {
+                this.startIndex = response["teams"]["start-index"];
+                this.maxResults = response["teams"]["max-results"];
+                this.totalResults = response["teams"]["total-results"];
+                var rawTeams = response["teams"]["items"];
+                var modelTeams = rawTeams.map(function(teamJson) {
+                    return new Team({location : teamJson["location"],
+                                     title : teamJson["title"]});
+                });
+                this.collection.reset(modelTeams);
+            }
         }
     });
 
     window.LeaguesWrapper = Backbone.Model.extend({
         initialize: function(options) {
             console.info("INIT CALLED ON LeaguesWrapper");
-            this.leagues = new CollectionLeagues([]);
+            this.collection = new CollectionLeagues([]);
         },
         url : "/api/leagues",
         parse: function(response) {
             if (response["leagues"]) {
                 this.startIndex = response["leagues"]["start-index"];
                 this.maxResults = response["leagues"]["max-results"];
-                this.totalResults = response["leagues"]["max-results"];
+                this.totalResults = response["leagues"]["total-results"];
                 var rawLeagues = response["leagues"]["items"];
                 var modelLeagues = rawLeagues.map(function(leagueJson) {
                     return new League({
@@ -70,7 +84,7 @@ $(function(){
                     teams_url : ""
                 }));
                 modelLeagues.reverse();
-                this.leagues.reset(modelLeagues);
+                this.collection.reset(modelLeagues);
             }
         }
     });
@@ -126,11 +140,17 @@ $(function(){
 
             _(this).bindAll('change');
             this.model.bind('change', this.change);
+
+            this._collectionView = new UpdatingCollectionView({
+                collection: this.model.collection,
+                childViewConstructor: options.childViewConstructor,
+                el: options.el
+            });
         },
         
-        change: function(league) {
+        change: function(teamsUrl) {
             console.info("CHANGE called on TeamFilterView");
-            console.info("INPUT : " + JSON.stringify(league));
+            console.info("INPUT : " + JSON.stringify(teamsUrl));
         }
     });
 
@@ -142,7 +162,7 @@ $(function(){
             this.model.bind('change', this.change);
 
             this._collectionView = new UpdatingCollectionView({
-                collection: this.model.leagues,
+                collection: this.model.collection,
                 childViewConstructor: options.childViewConstructor,
                 el : options.el
             });
@@ -184,7 +204,7 @@ $(function(){
             _(this).bindAll('add', 'reset', 'remove');
  
             if (!options.childViewConstructor) throw "no child view constructor provided";
- 
+
             this._childViewConstructor = options.childViewConstructor;
             this._buttonText =           options.buttonText;
             this._buttonClass =          options.buttonClass;
@@ -279,6 +299,20 @@ $(function(){
         }
     });
 
+    window.TeamView = Backbone.View.extend({
+        tagName: "option",
+        className: "teamOption",
+        template: _.template($('#team-option-template').html()),
+        
+        render: function() {
+            $(this.el).html(this.template({
+                title: this.model.get("title"),
+                location: this.model.get("location")
+            }));
+            return this;
+        }
+    });
+
     window.UpdatingGameView = GameView.extend({
         initialize: function(options) {
             this.render = _.bind(this.render, this);
@@ -292,6 +326,14 @@ $(function(){
     });
 
     window.UpdatingLeagueView = LeagueView.extend({
+        initialize: function(options) {
+            this.render = _.bind(this.render, this);
+            this.model.bind('change', this.render);
+            this.model.bind('add', this.render);
+        }
+    });
+
+    window.UpdatingTeamView = TeamView.extend({
         initialize: function(options) {
             this.render = _.bind(this.render, this);
             this.model.bind('change', this.render);
@@ -316,9 +358,6 @@ $(function(){
         
         initialize: function() {
             console.info("INIT The Appview!!!!");
-
-            console.info("TEAMS BY LEAGUE : " + JSON.stringify(this.model.teamsByLeague));
-            console.info("TEAMS BY LEAGUE URL : " + this.model.teamsByLeague.url());
             
             this._gamesInProgressView = new UpdatingWrapperView({
                 model : this.model.gamesInProgress,
@@ -355,6 +394,7 @@ $(function(){
 
             this._teamFilterView = new TeamFilterView({
                 model : this.model.teamsByLeague,
+                childViewConstructor : UpdatingTeamView,
                 el : $('#team_filter')[0]
             });
 
@@ -410,10 +450,13 @@ $(function(){
         },
 
         selectLeague: function(e) {
-            var leagueName = e.currentTarget.value;
+            var selectedIndex = e.currentTarget.selectedIndex;
+            var selectedChild = e.currentTarget.children[selectedIndex].children[0];
+            var leagueName = selectedChild.value;
+            var teamsUrl = selectedChild.id;
             this.fetchByLeague(leagueName);
-            this.model.teamsByLeague.set({"league" : leagueName});
-            console.info("TEAMS BY LEAGUE URL : " + this.model.teamsByLeague.url());
+            this.model.teamsByLeague.set({"teamsUrl" : teamsUrl});
+            this.model.teamsByLeague.fetch({ dataType : "json" });
             if (leagueName == "All") {
                 $("#team_filter_span").hide();
             } else {

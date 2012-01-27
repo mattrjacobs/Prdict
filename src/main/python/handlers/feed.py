@@ -24,9 +24,9 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         self.html = "parent.html"
         self.entry_html = "entry.html"
 
-    def get_paginated_list(self, parent, pagination_params, query):
+    def get_paginated_list(self, parent, pagination_params, query, sort):
         total_count = self.get_svc().get_count_by_parent(parent, query)
-        entries = self.get_svc().get_entries_by_parent(parent, pagination_params, query)
+        entries = self.get_svc().get_entries_by_parent(parent, pagination_params, query, sort)
         return (total_count, entries)
 
     def render_atom(self, parent, entries, pagination_params):
@@ -57,6 +57,9 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         """Given a created entry, render it to HTML."""
         raise Exception("Must be overridden by subclasses")
 
+    def get_sort_order(self):
+        return None
+
     @http_basic_auth
     def get(self, user, key):
         """Handles an HTTP GET by checking if user is authorized then
@@ -66,7 +69,8 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
             return
         query = self.get_query()
         pagination_params = self.get_pagination_params()
-        (total_count, entries) = self.get_paginated_list(parent_entry, pagination_params, query)
+        (total_count, entries) = self.get_paginated_list(parent_entry, pagination_params, query,
+                                                         self.get_sort_order())
         feed_etag = self._calculate_etag(parent_entry, entries)
         self.set_header("Etag", feed_etag)
         feed_lmdate = self._calculate_lmdate(parent_entry, entries)

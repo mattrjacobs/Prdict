@@ -15,6 +15,9 @@ class LeaguesHandler(ListHandler):
     def get_extra_params(self):
         return { 'sports' : self.get_all_sports() }
 
+    def get_sort_order(self):
+        return "title"
+
     def get_max_results_allowed(self):
         return 200
     

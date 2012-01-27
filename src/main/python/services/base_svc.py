@@ -84,20 +84,24 @@ class BaseService:
             count = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent).count()
         return count
 
-    def get_entries(self, pagination_params, query):
+    def get_entries(self, pagination_params, query, sort):
         if query:
-            entries_query = db.Query(self.get_model()).filter("%s =" % query[0], query[1]).order('title')
+            entries_query = db.Query(self.get_model()).filter("%s =" % query[0], query[1])
         else:
-            entries_query = db.Query(self.get_model()).order('title')
+            entries_query = db.Query(self.get_model())
+        if sort:
+            entries_query = entries_query.order(sort)
 
         entries = entries_query.fetch(offset = pagination_params[0], limit = pagination_params[1])
         return entries
 
-    def get_entries_by_parent(self, parent, pagination_params, query):
+    def get_entries_by_parent(self, parent, pagination_params, query, sort):
         if query:
             entries_query = db.Query(self.get_model()).filter("%s = " % parent.__class__.__name__.lower(), parent).filter("%s =" % query[0], query[1])
         else:
             entries_query = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent)
+        if sort:
+            entries_query = entries_query.order(sort)
 
         entries = entries_query.fetch(offset = pagination_params[0], limit = pagination_params[1])
         return entries

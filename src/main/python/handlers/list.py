@@ -20,10 +20,13 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
         self.html = "list.html"
         self.entry_html = "entry.html"
 
-    def get_paginated_list(self, pagination_params, query):
+    def get_paginated_list(self, pagination_params, query, sort):
         total_count = self.get_svc().get_count(query)
-        entries = self.get_svc().get_entries(pagination_params, query)
+        entries = self.get_svc().get_entries(pagination_params, query, sort)
         return (total_count, entries)
+
+    def get_sort_order(self):
+        return None
 
     @http_basic_auth
     def get(self, user):
@@ -33,7 +36,8 @@ class ListHandler(AbstractHandler, BaseAuthorizationHandler):
         (content_type, vary) = self.get_read_content_type()
         query = self.get_query()
         pagination_params = self.get_pagination_params()
-        (total_count, entries) = self.get_paginated_list(pagination_params, query)
+        (total_count, entries) = self.get_paginated_list(pagination_params, query,
+                                                         self.get_sort_order())
         if vary:
             self.set_header("Vary", "Accept")
         if content_type == "atom":
