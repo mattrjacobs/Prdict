@@ -32,12 +32,15 @@ from handlers.userfriends import UserFriendsHandler
 from handlers.users import UsersHandler
 from handlers.version import VersionHandler
 
+from handlers.temporary import TempTeamsAddHandler
+
 #from gae_mini_profiler import profiler
 
 import os
 from google.appengine.dist import use_library
 
 urlmap = [('/', HomeHandler),
+          ('/temp/teams-add', TempTeamsAddHandler),
           ('/api/events', EventsHandler),
           ('/api/events/recent', RecentEventsHandler),
           ('/api/events/inprogress', InProgressEventsHandler),

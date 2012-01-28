@@ -49,6 +49,7 @@ class SportsEvent(Event):
     away_team = db.ReferenceProperty(required=True,
                                      collection_name='away_team',
                                      reference_class=Team)
+    teams = db.ListProperty(db.Key, required = True)
     completed = db.BooleanProperty(required=True, default=False)
     cancelled = db.BooleanProperty(required=True, default=False)
     home_team_score = db.IntegerProperty(required=False)
