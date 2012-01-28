@@ -453,7 +453,10 @@ $(function(){
             console.info("REFRESH ALL views");
             if (this._current_query) {
                 league_name = this._current_query.league;
-                if (league_name) {
+                team_name = this._current_query.team;
+                if (team_name) {
+                    this.fetchByTeam(team_name);
+                } else if (league_name) {
                     this.fetchByLeague(league_name);
                 } else {
                     this.fetchAll();
