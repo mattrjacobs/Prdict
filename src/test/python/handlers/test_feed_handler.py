@@ -40,7 +40,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.remove_user()
         self.mock_handler.get_prdict_user().AndReturn(None)
         self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
-        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None, None).AndReturn([self.team_1, self.team_2])
         self.mock_svc.get_entry_list_name().AndReturn("teams")
         # DO ASSERT ON RETURNED ENTRIES
         self.mock_handler.render_template('parent.html', mox.IgnoreArg())
@@ -52,7 +52,7 @@ class TestFeedHandler(BaseMockHandlerTest):
     def testHtmlGetWithNonAdminUser(self):
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
-        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None, None).AndReturn([self.team_1, self.team_2])
         self.mock_svc.get_entry_list_name().AndReturn("teams")
         # DO ASSERT ON RETURNED ENTRIES
         self.mock_handler.render_template('parent.html', mox.IgnoreArg())
@@ -65,7 +65,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.set_user(self.username, True)
         self.mock_handler.get_prdict_user().AndReturn(self.admin_user)
         self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
-        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None, None).AndReturn([self.team_1, self.team_2])
         self.mock_svc.get_entry_list_name().AndReturn("teams")
         # DO ASSERT ON RETURNED ENTRIES
         self.mock_handler.render_template('parent.html', mox.IgnoreArg())
@@ -79,7 +79,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_prdict_user().AndReturn(None)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
-        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None, None).AndReturn([self.team_1, self.team_2])
         self.mock_svc.get_entry_list_name().AndReturn("teams")
         # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
@@ -93,7 +93,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_prdict_user().AndReturn(self.user)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
-        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None, None).AndReturn([self.team_1, self.team_2])
         self.mock_svc.get_entry_list_name().AndReturn("teams")
         # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
@@ -107,7 +107,7 @@ class TestFeedHandler(BaseMockHandlerTest):
         self.mock_handler.get_prdict_user().AndReturn(self.admin_user)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_svc.get_count_by_parent(mox.Func(self.SameLeagueKey), None).AndReturn(2)
-        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None).AndReturn([self.team_1, self.team_2])
+        self.mock_svc.get_entries_by_parent(mox.Func(self.SameLeagueKey), (0, 5), None, None).AndReturn([self.team_1, self.team_2])
         self.mock_svc.get_entry_list_name().AndReturn("teams")
         #DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())

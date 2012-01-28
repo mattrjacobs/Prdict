@@ -10,6 +10,7 @@ from models.sports_event import SportsEvent
 from models.team import Team
 from services.base_svc import BaseService
 from services.league_svc import LeagueService
+from services.team_svc import TeamService
 
 class EventService(BaseService):
     get_now = lambda foo: datetime.utcnow()
@@ -23,12 +24,23 @@ class EventService(BaseService):
     def get_entry_list_name(self):
         return "events"
 
-    def _translate_query_into_db_query(self, query):
-        logging.info("QUERY : %s" % query)
-        if query[0] == "league":
-            lookup_league = LeagueService.get_league_by_name(query[1])
-            if lookup_league:
-                return ["league =", lookup_league.key()]
+    def _translate_query_into_db_filter(self, api_query):
+        league_name = team_name = None
+        for (key, value) in api_query:
+            if key == "league":
+                league_name = value
+            if key == "team":
+                team_name = value
+
+        if league_name:
+            if team_name:
+                lookup_league = LeagueService.get_league_by_name(league_name)
+                lookup_team = TeamService.get_team_by_league_and_team_name(lookup_league.key(), team_name)
+                return ["teams =", lookup_team.key()]
+            else:
+                lookup_league = LeagueService.get_league_by_name(league_name)
+                if lookup_league:
+                    return ["league =", lookup_league.key()]
         return None
 
     def get_count_of_recent_events(self, query):

@@ -79,7 +79,7 @@ class TestListHandler(BaseMockHandlerTest):
     def testHtmlGetNoUser(self):
         self.remove_user()
         self.mock_svc.get_count(None).AndReturn(3)
-        self.mock_svc.get_entries((0, 5), None).AndReturn([])
+        self.mock_svc.get_entries((0, 5), None, None).AndReturn([])
         self.mock_handler.render_template("list.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -88,7 +88,7 @@ class TestListHandler(BaseMockHandlerTest):
 
     def testHtmlGetWithNonAdminUser(self):
         self.mock_svc.get_count(None).AndReturn(3)
-        self.mock_svc.get_entries((0, 5), None).AndReturn([])
+        self.mock_svc.get_entries((0, 5), None, None).AndReturn([])
         self.mock_handler.render_template("list.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -98,7 +98,7 @@ class TestListHandler(BaseMockHandlerTest):
     def testHtmlGetWithAdminUser(self):
         self.set_user(self.username, True)
         self.mock_svc.get_count(None).AndReturn(3)
-        self.mock_svc.get_entries((0, 5), None).AndReturn([])
+        self.mock_svc.get_entries((0, 5), None, None).AndReturn([])
         self.mock_handler.render_template("list.html", mox.IgnoreArg())
         self.mox.ReplayAll()
 
@@ -109,7 +109,7 @@ class TestListHandler(BaseMockHandlerTest):
         self.remove_user()
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_svc.get_count(None).AndReturn(3)
-        self.mock_svc.get_entries((0, 5), None).AndReturn([])
+        self.mock_svc.get_entries((0, 5), None, None).AndReturn([])
         self.mock_svc.get_entry_list_name().AndReturn("items")
         # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
@@ -122,7 +122,7 @@ class TestListHandler(BaseMockHandlerTest):
         self.set_user(self.username, False)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_svc.get_count(None).AndReturn(3)
-        self.mock_svc.get_entries((0, 5), None).AndReturn([])
+        self.mock_svc.get_entries((0, 5), None, None).AndReturn([])
         self.mock_svc.get_entry_list_name().AndReturn("items")
         # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
@@ -135,7 +135,7 @@ class TestListHandler(BaseMockHandlerTest):
         self.set_user(self.username, True)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json")
         self.mock_svc.get_count(None).AndReturn(3)
-        self.mock_svc.get_entries((0, 5), None).AndReturn([])
+        self.mock_svc.get_entries((0, 5), None, None).AndReturn([])
         self.mock_svc.get_entry_list_name().AndReturn("items")
         # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())
@@ -148,7 +148,7 @@ class TestListHandler(BaseMockHandlerTest):
         self.set_user(self.username, False)
         self.impl.request = self.reqWithQuery("", "GET", "q=refId:item-id")
         self.mock_svc.get_count(["refId", "item-id"]).AndReturn(1)
-        self.mock_svc.get_entries((0, 5), ["refId", "item-id"]).AndReturn([])
+        self.mock_svc.get_entries((0, 5), ["refId", "item-id"], None).AndReturn([])
         # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_template("list.html", mox.IgnoreArg())
         self.mox.ReplayAll()
@@ -160,7 +160,7 @@ class TestListHandler(BaseMockHandlerTest):
         self.set_user(self.username, False)
         self.impl.request = self.reqWithQuery("", "GET", "alt=json&q=refId:item-id")
         self.mock_svc.get_count(["refId", "item-id"]).AndReturn(1)
-        self.mock_svc.get_entries((0, 5), ["refId", "item-id"]).AndReturn([])
+        self.mock_svc.get_entries((0, 5), ["refId", "item-id"], None).AndReturn([])
         self.mock_svc.get_entry_list_name().AndReturn("items")
         # DO ASSERT ON RETURNED JSON
         self.mock_handler.render_string(mox.IgnoreArg())

@@ -49,9 +49,9 @@ class BaseService:
         for db_filter in db_filter_list:
             base_query = base_query.filter(db_filter[0], db_filter[1]("dummy"))
         if api_query:
-            api_db_query = self._translate_query_into_db_query(api_query)
-            if api_db_query:
-                final_query = base_query.filter(api_db_query[0], api_db_query[1])
+            api_db_filter = self._translate_query_into_db_filter(api_query)
+            if api_db_filter:
+                final_query = base_query.filter(api_db_filter[0], api_db_filter[1])
             else:
                 final_query = base_query
         else:

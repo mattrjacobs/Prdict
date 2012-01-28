@@ -16,9 +16,16 @@ class TeamService(BaseService):
 
     def get_teams_by_league_name(self, league_name):
         query = db.GqlQuery("SELECT * FROM Team where league.name = :1 ORDER BY title", league_name)
-        foo = query.fetch(100, 0)
-        logging.error("TEAMS : %s" % foo)
-        return foo
+        return query.fetch(100, 0)
+
+    @staticmethod
+    def get_team_by_league_and_team_name(league_key, team_name):
+        query = db.GqlQuery("SELECT * From Team where league = :1 AND title = :2 ORDER BY location", league_key, team_name)
+        team_list = query.fetch(1, 0)
+        if len(team_list) == 1:
+            return team_list[0]
+        else:
+            return None
 
     def get_json_params(self, request):
         try:
