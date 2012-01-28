@@ -24,13 +24,14 @@ class TempTeamsAddHandler(AbstractHandler):
             found = query.fetch(step_size, current_index)
             logging.info("Got %d" % len(found))
             for event in found:
-                logging.info("Updating game : %s" % event.title)
-                logging.info("HOME Team : %s" % event.home_team.title)
-                logging.info("AWAY Team : %s" % event.away_team.title)
-                teams = [event.home_team.key(), event.away_team.key()]
-                event.teams = teams
-                event.put()
-                logging.info("SAVED, new teams : %s" % event.teams)
+                if len(event.teams) == 0:
+                    logging.info("Updating game : %s" % event.title)
+                    logging.info("HOME Team : %s" % event.home_team.title)
+                    logging.info("AWAY Team : %s" % event.away_team.title)
+                    teams = [event.home_team.key(), event.away_team.key()]
+                    event.teams = teams
+                    event.put()
+                    logging.info("SAVED, new teams : %s" % event.teams)
             if (len(found)) == 0:
                 keep_going = False
             else:
