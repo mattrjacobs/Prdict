@@ -410,7 +410,7 @@ $(function(){
 
         fetchByLeague: function(league_name) {
             console.info("FETCHING BY LEAGUE : " + league_name);
-            if (league_name == "All") {
+            if (league_name === "All") {
                 this.fetchAll();
             } else {
                 this._current_query = {"league" : league_name};
@@ -428,14 +428,11 @@ $(function(){
 
         fetchByTeam: function(team_name) {
             console.info("FETCHING BY TEAM : " + team_name);
-            console.info("CURRENT QUERY : " +  JSON.stringify(this._current_query));
-            if (team_name == "All") {
+            if (team_name === "All") {
                 delete this._current_query.team;
-                console.info("CURRENT QUERY : " +  JSON.stringify(this._current_query));
                 this.fetchByLeague(this._current_query.league);
             } else {
                 this._current_query["team"] = team_name;
-                console.info("CURRENT QUERY : " +  JSON.stringify(this._current_query));
                 var ajaxParams = {
                     dataType: "json",
                     data: {
@@ -474,7 +471,7 @@ $(function(){
             this.fetchByLeague(leagueName);
             this.model.teamsByLeague.set({"teamsUrl" : teamsUrl});
             this.model.teamsByLeague.fetch({ dataType : "json" });
-            if (leagueName == "All") {
+            if (leagueName === "All") {
                 $("#team_filter_span").hide();
             } else {
                 $("#team_filter_span").show()
@@ -489,6 +486,8 @@ $(function(){
         }
     });
     
+    $("#team_filter_span").hide();
+
     // Finally, we kick things off by creating the **App**.
     window.App = new AppView({model: {'gamesInProgress' : new WrapperGamesInProgress,
                                       'gamesUpcoming'   : new WrapperGamesUpcoming,
