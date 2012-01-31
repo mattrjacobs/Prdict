@@ -17,7 +17,7 @@ class TempTeamsAddHandler(AbstractHandler):
         logging.info("Starting the teams add process...")
         query = SportsEvent.all()
         step_size = 20
-        current_index = 0
+        current_index = 2100
         keep_going = True
         while keep_going:
             logging.info("Fetching range %d-%d" % (current_index, current_index + step_size))
