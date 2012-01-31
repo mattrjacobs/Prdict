@@ -140,21 +140,88 @@ $(function(){
         url: "/api/events/future"
     });
 
+    window.TeamListView = Backbone.View.extend({
+        initialize: function(options) {
+            _(this).bindAll('reset');
+            this._childViewConstructor = options.childViewConstructor;
+            this._childViews = [];
+            this.collection.bind('reset', this.reset);
+        },
+        
+        add: function(item) {
+            var childView = new this._childViewConstructor({
+                model: item
+            });
+            
+            this._childViews.push(childView);
+            
+            if (this._rendered) {
+                $(this.el).append(childView.render().el);
+            }
+        },
+
+        reset: function(newCollection) {
+            this._childViews = [];
+            var that = this;
+            newCollection.each(function(item) {
+                that.add(item);
+            });
+            this.render();
+        },
+        
+        render: function() {
+            var that = this;
+            this._rendered = true;
+            
+            $(this.el).empty();
+            
+            _(this._childViews).each(function(childView) {
+                $(that.el).append(childView.render().el);
+            });
+        }
+    });
+
     window.TeamFilterView = Backbone.View.extend({
         initialize: function(options) {
             console.info("INIT CALLED ON TeamFilterView")
 
-            this._collectionView = new UpdatingCollectionView({
+            _(this).bindAll('change');
+            this.model.bind('change', this.change);
+
+            this._collectionView = new TeamListView({
                 collection: this.model.collection,
                 childViewConstructor: options.childViewConstructor,
-                el: options.el
+                el: options.form_el
             });
+
+            this.el = options.el;
+            
+            $(this.el).hide();
         },
+
+        change: function(data) {
+            console.info("CHANGE called on TeamFilterView");
+            if (data.selectedLeague === "All") {
+                $(this.el).hide();
+            } else {
+                this.model.fetch({ dataType : "json" });
+                this.render();
+            }
+        },
+        
+        render: function() {
+            console.info("Rendering team filter view!!!");
+            $(this.el).show();
+            return this;
+        }
     });
 
     window.LeagueFilterView = Backbone.View.extend({
         initialize: function(options) {
             console.info("INIT CALLED ON LeagueFilterView")
+
+            _(this).bindAll('change');
+            this.model.bind('change', this.change);
 
             this._collectionView = new UpdatingCollectionView({
                 collection: this.model.collection,
@@ -162,6 +229,15 @@ $(function(){
                 el : options.el
             });
         },
+
+        change: function(data) {
+            console.info("CHANGE called on LeagueFilterView");
+        },
+
+        render: function() {
+            console.info("Rendering league filter view!!!");
+            return this;
+        }
     });
 
     window.UpdatingWrapperView = Backbone.View.extend({
@@ -199,7 +275,8 @@ $(function(){
             this._buttonText =           options.buttonText;
             this._buttonClass =          options.buttonClass;
             this._showScore =            options.showScore;
- 
+            this._form_el =              options.form_el;
+
             this._childViews = [];
  
             _(this.collection).each(this.add);
@@ -214,7 +291,8 @@ $(function(){
                 model :      item,
                 buttonText:  this._buttonText,
                 buttonClass: this._buttonClass,
-                showScore:   this._showScore
+                showScore:   this._showScore,
+                form_el:     this._form_el
             });
             
             this._childViews.push(childView);
@@ -339,7 +417,7 @@ $(function(){
         
         // Instead of generating a new element, bind to the existing skeleton of
         // the App already present in the HTML.
-        el: $("#allgames"),
+        el: $(".container-fluid"),
         
         events: {
             "change #league_filter" : "selectLeague",
@@ -386,18 +464,19 @@ $(function(){
             this._teamFilterView = new TeamFilterView({
                 model : this.model.teamsByLeague,
                 childViewConstructor : UpdatingTeamView,
-                el : $('#team_filter')[0]
+                el : $('#team_filter_span')[0],
+                form_el : $('#team_filter')[0]
             });
 
             this.fetchLeagues();
-            this.fetchAll();
+            this.fetchAllGames();
         },
         
         render: function() {
             console.info("RENDER AT TOPLEVEL (nothing to do)!!!!");
         },
 
-        fetchAll: function() {
+        fetchAllGames: function() {
             this.model.gamesInProgress.fetch({dataType: "json"});
             this.model.gamesUpcoming.fetch({dataType: "json"});
             this.model.gamesRecent.fetch({dataType: "json"});
@@ -411,7 +490,7 @@ $(function(){
         fetchByLeague: function(league_name) {
             console.info("FETCHING BY LEAGUE : " + league_name);
             if (league_name === "All") {
-                this.fetchAll();
+                this.fetchAllGames();
             } else {
                 this._current_query = {"league" : league_name};
                 var ajaxParams = {
@@ -469,13 +548,9 @@ $(function(){
             var leagueName = selectedChild.value;
             var teamsUrl = selectedChild.id;
             this.fetchByLeague(leagueName);
-            this.model.teamsByLeague.set({"teamsUrl" : teamsUrl});
-            this.model.teamsByLeague.fetch({ dataType : "json" });
-            if (leagueName === "All") {
-                $("#team_filter_span").hide();
-            } else {
-                $("#team_filter_span").show()
-            }
+            this.model.leagues.set({"selectedLeague" : leagueName});
+            this.model.teamsByLeague.set({ "teamsUrl" : teamsUrl,
+                                           "selectedLeague" : leagueName});
         },
 
         selectTeam: function(e) {
@@ -486,8 +561,6 @@ $(function(){
         }
     });
     
-    $("#team_filter_span").hide();
-
     // Finally, we kick things off by creating the **App**.
     window.App = new AppView({model: {'gamesInProgress' : new WrapperGamesInProgress,
                                       'gamesUpcoming'   : new WrapperGamesUpcoming,

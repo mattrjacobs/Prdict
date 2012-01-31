@@ -5,6 +5,35 @@
 {% endblock %}
 
 {% block sidebar %}
+<script type="text/template" id="league-option-template">
+  <option id="<%= teams_url %>"><%= title %></option>
+</script>
+
+<script type="text/template" id="team-option-template">
+  <option id="<%= title %>"><%= location %> <%= title %></option>
+</script>
+
+<div class="row">
+  <button class="btn" id="refresh">Refresh</button>
+</div>
+<div class="row">
+  <h5>League Filter</h5>
+  <form>
+    <select class="small" name="league" id="league_filter">
+      <option></option>
+    </select>
+  </form>
+</div>
+<div class="row">
+  <span id="team_filter_span">
+    <h5>Team Filter</h5>
+    <form>
+      <select name="team" id="team_filter">
+        <option></option>
+      </select>
+    </form>
+  </span>
+</div>
 {% endblock %}
 
 {% block content %}
@@ -32,38 +61,7 @@
   <p/>
 </script>
 
-<script type="text/template" id="league-option-template">
-  <option id="<%= teams_url %>"><%= title %></option>
-</script>
-
-<script type="text/template" id="team-option-template">
-  <option id="<%= title %>"><%= location %> <%= title %></option>
-</script>
-
 <div id="allgames">
-  <div class="row">
-    <div class="span3">
-      <button class="btn" id="refresh">Refresh</button>
-    </div>
-    <div class="span3">
-      <h5>League Filter</h5>
-      <form>
-        <select class="small" name="league" id="league_filter">
-          <option></option>
-        </select>
-      </form>
-    </div>
-    <div class="span3">
-      <span class="hidden" id="team_filter_span">
-        <h5>Team Filter</h5>
-        <form>
-          <select name="team" id="team_filter">
-            <option></option>
-          </select>
-        </form>
-      </span>
-    </div>
-  </div>
   <div class="row">
     <div class="span5">
       <h3>In-Progress</h3>
