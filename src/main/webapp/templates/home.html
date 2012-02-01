@@ -4,36 +4,7 @@
 <meta name="google-site-verification" content="a05vvuun0ZefRCjWBBC-QZCqo6JoJ-Y-Ezl50nDwNJ8" />
 {% endblock %}
 
-{% block sidebar %}
-<script type="text/template" id="league-option-template">
-  <option id="<%= teams_url %>"><%= title %></option>
-</script>
-
-<script type="text/template" id="team-option-template">
-  <option id="<%= title %>"><%= location %> <%= title %></option>
-</script>
-
-<div class="row">
-  <button class="btn" id="refresh">Refresh</button>
-</div>
-<div class="row">
-  <h5>League Filter</h5>
-  <form>
-    <select class="small" name="league" id="league_filter">
-      <option></option>
-    </select>
-  </form>
-</div>
-<div class="row">
-  <span id="team_filter_span">
-    <h5>Team Filter</h5>
-    <form>
-      <select name="team" id="team_filter">
-        <option></option>
-      </select>
-    </form>
-  </span>
-</div>
+{% block noncontainer %}
 {% endblock %}
 
 {% block content %}
@@ -42,42 +13,77 @@
   <p>Prdict lets you match wits with your friends during every game and win prizes for coming out on top.</p> 
   <p><a class="btn primary large" href="/about">How does it work? &raquo;</a></p>
 </div>
-
-<script type="text/template" id="game-template">
-  <div class="row">
-    <div class="span2">
-      <div class="row"><%= away_title %></div>
-      <div class="row"><%= home_title %></div>
-    </div>
-  <% if (show_score) { %>
-    <div class="span1">
-      <div class="row"><%= away_score %></div>
-      <div class="row"><%= home_score %></div>
-    </div>
-  <% } %>
-    <div class="span2"><a href="/events/<%= event_key %>/chat" class="btn <%= button_class %>"><%= button_text %></a>
-    </div>
-  </div>
-  <p/>
-</script>
-
 <div id="allgames">
+  <script type="text/template" id="league-option-template">
+    <option id="<%= teams_url %>"><%= title %></option>
+  </script>
+  
+  <script type="text/template" id="team-option-template">
+    <option id="<%= title %>"><%= location %> <%= title %></option>
+  </script>
+  
+  <script type="text/template" id="game-template">
+    <div class="row">
+      <div class="span2">
+        <div class="row"><%= away_title %></div>
+        <div class="row"><%= home_title %></div>
+      </div>
+      <% if (show_score) { %>
+      <div class="span1">
+        <div class="row"><%= away_score %></div>
+        <div class="row"><%= home_score %></div>
+      </div>
+      <% } %>
+      <div class="span2"><a href="/events/<%= event_key %>/chat" class="btn <%= button_class %>"><%= button_text %></a>
+      </div>
+    </div>
+    <p/>
+  </script>
   <div class="row">
-    <div class="span5">
+    <div class="span4">
+      <h5>League Filter</h5>
+      <form>
+        <select class="small" name="league" id="league_filter">
+          <option></option>
+        </select>
+      </form>
+    </div> <!-- span4 -->
+    <div class="span6">
+      <span id="team_filter_span">
+        <h5>Team Filter</h5>
+        <form>
+          <select name="team" id="team_filter">
+            <option></option>
+          </select>
+        </form>
+      </span>
+    </div> <!-- span6 -->
+  </div><!-- row -->
+  <div class="row">
+    <div class="span4">
+      <button class="btn" id="refresh">Refresh</button>
+    </div> <!-- span4 -->
+  </div> <!-- row -->
+  <div class="row">
+    <div class="span12">
       <h3>In-Progress</h3>
       <div class="game_list" id="inprogress">
-      </div>
-    </div>
-    <div class="span4">
+      </div> <!-- game_list -->
+    </div> <!-- span12 -->
+  </div> <!-- row -->
+  <div class="row">
+    <div class="span12">
       <h3>Upcoming</h3>
       <div class="game_list" id="upcoming">
-      </div>
-    </div>
-    <div class="span5">
+      </div> <!-- game_list -->
+    </div> <!-- span12 -->
+  </div> <!-- row -->
+  <div class="row">
+    <div class="span12">
       <h3>Most Recent</h3>
       <div class="game_list" id="recent">
-      </div>
-    </div>
-  </div>
-</div>
+      </div> <!-- game_list -->
+    </div> <!-- span12 -->
+  </div> <!-- row -->
+</div> <!-- allgames -->
 {% endblock %}

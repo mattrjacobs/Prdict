@@ -201,7 +201,7 @@ $(function(){
 
         change: function(data) {
             console.info("CHANGE called on TeamFilterView");
-            if (data.selectedLeague === "All") {
+            if (data.get("selectedLeague") === "All") {
                 $(this.el).hide();
             } else {
                 this.model.fetch({ dataType : "json" });
@@ -417,7 +417,7 @@ $(function(){
         
         // Instead of generating a new element, bind to the existing skeleton of
         // the App already present in the HTML.
-        el: $(".container-fluid"),
+        el: $("#allgames"),
         
         events: {
             "change #league_filter" : "selectLeague",
@@ -535,10 +535,10 @@ $(function(){
                 } else if (league_name) {
                     this.fetchByLeague(league_name);
                 } else {
-                    this.fetchAll();
+                    this.fetchAllGames();
                 }
             } else {
-                this.fetchAll();
+                this.fetchAllGames();
             }
         },
 
