@@ -432,7 +432,7 @@ $(function(){
                 model : this.model.gamesInProgress,
                 childViewConstructor : UpdatingGameView,
                 buttonText : "Prdict!",
-                buttonClass : "primary",
+                buttonClass : "btn-primary",
                 showScore: true,
                 el : $('#inprogress')[0]
             });
@@ -441,7 +441,7 @@ $(function(){
                 model : this.model.gamesUpcoming,
                 childViewConstructor : UpdatingGameView,
                 buttonText : "Chat",
-                buttonClass : "small info",
+                buttonClass : "btn-small btn-info",
                 showScore: false,
                 el : $('#upcoming')[0]
             });
@@ -450,7 +450,7 @@ $(function(){
                 model : this.model.gamesRecent,
                 childViewConstructor : UpdatingGameView,
                 buttonText : "Replay",
-                buttonClass : "small info",
+                buttonClass : "btn-small btn-info",
                 showScore: true,
                 el : $('#recent')[0]
             });

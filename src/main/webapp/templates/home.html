@@ -11,7 +11,7 @@
 <div class="hero-unit" id="home-hero">
   <h1>Think you know sports?</h1>
   <p>Prdict lets you match wits with your friends during every game and win prizes for coming out on top.</p> 
-  <p><a class="btn primary large" href="/about">How does it work? &raquo;</a></p>
+  <p><a class="btn btn-primary btn-large" href="/about">How does it work? &raquo;</a></p>
 </div>
 <div id="allgames">
   <script type="text/template" id="league-option-template">
@@ -23,8 +23,8 @@
   </script>
   
   <script type="text/template" id="game-template">
-    <div class="row">
-      <div class="span2">
+    <div class="row-fluid">
+      <div class="span1">
         <div class="row"><%= away_title %></div>
         <div class="row"><%= home_title %></div>
       </div>
@@ -34,21 +34,22 @@
         <div class="row"><%= home_score %></div>
       </div>
       <% } %>
-      <div class="span2"><a href="/events/<%= event_key %>/chat" class="btn <%= button_class %>"><%= button_text %></a>
+      <div class="span1">
+        <a href="/events/<%= event_key %>/chat" class="btn <%= button_class %>"><%= button_text %></a>
       </div>
     </div>
     <p/>
   </script>
-  <div class="row">
-    <div class="span4">
+  <div class="row-fluid">
+    <div class="span3">
       <h5>League Filter</h5>
       <form>
         <select class="small" name="league" id="league_filter">
           <option></option>
         </select>
       </form>
-    </div> <!-- span4 -->
-    <div class="span6">
+    </div> <!-- span3 -->
+    <div class="span5">
       <span id="team_filter_span">
         <h5>Team Filter</h5>
         <form>
@@ -57,33 +58,33 @@
           </select>
         </form>
       </span>
-    </div> <!-- span6 -->
-  </div><!-- row -->
-  <div class="row">
-    <div class="span4">
+    </div> <!-- span5 -->
+  </div><!-- row-fluid -->
+  <div class="row-fluid">
+    <div class="span3">
       <button class="btn" id="refresh">Refresh</button>
-    </div> <!-- span4 -->
-  </div> <!-- row -->
-  <div class="row">
+    </div> <!-- span3 -->
+  </div> <!-- row-fluid -->
+  <div class="row-fluid">
     <div class="span12">
       <h3>In-Progress</h3>
       <div class="game_list" id="inprogress">
       </div> <!-- game_list -->
     </div> <!-- span12 -->
-  </div> <!-- row -->
-  <div class="row">
+  </div> <!-- row-fluid -->
+  <div class="row-fluid">
     <div class="span12">
       <h3>Upcoming</h3>
       <div class="game_list" id="upcoming">
       </div> <!-- game_list -->
     </div> <!-- span12 -->
-  </div> <!-- row -->
-  <div class="row">
+  </div> <!-- row-fluid -->
+  <div class="row-fluid">
     <div class="span12">
       <h3>Most Recent</h3>
       <div class="game_list" id="recent">
       </div> <!-- game_list -->
     </div> <!-- span12 -->
-  </div> <!-- row -->
+  </div> <!-- row-fluid -->
 </div> <!-- allgames -->
 {% endblock %}
