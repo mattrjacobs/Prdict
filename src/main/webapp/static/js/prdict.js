@@ -112,12 +112,14 @@ $(function(){
                 var rawGames = response["events"]["items"];
                 var modelGames = rawGames.map(function(gameJson) {
                     modelGame = new Game({
-                        home_team_name : gameJson["home_team"]["title"],
+                        home_team_name     : gameJson["home_team"]["title"],
                         home_team_location : gameJson["home_team"]["location"],
-                        home_team_score : gameJson["home_team"]["score"],
-                        away_team_name : gameJson["away_team"]["title"],
+                        home_team_logo_url : gameJson["home_team"]["logo_url"],
+                        home_team_score    : gameJson["home_team"]["score"],
+                        away_team_name     : gameJson["away_team"]["title"],
                         away_team_location : gameJson["away_team"]["location"],
-                        away_team_score : gameJson["away_team"]["score"],
+                        away_team_logo_url : gameJson["away_team"]["logo_url"],
+                        away_team_score    : gameJson["away_team"]["score"],
                         key : gameJson["key"],
                         cancelled : gameJson["cancelled"],
                         start_date : gameJson["start_date"]
@@ -344,6 +346,8 @@ $(function(){
                 away_title:   this.model.get("away_team_name"),
                 home_score:   this.model.get("home_team_score"),
                 away_score:   this.model.get("away_team_score"),
+                home_logo:    this.model.get("home_team_logo_url"),
+                away_logo:    this.model.get("away_team_logo_url"),
                 event_key:    this.model.get("key"),
                 button_text:  this._buttonText,
                 button_class: this._buttonClass,

@@ -87,64 +87,94 @@ class DevDataPopulateHandler(AbstractHandler):
     def create_nba_teams(self, nba):
         nba_teams = []
         nba_teams.append(Team(title = "Bulls", location = "Chicago",
+                              logo_url = "/img/logos/nba/chicago_bulls.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Heat", location = "Miami",
+                              logo_url = "/img/logos/nba/miami_heat.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Celtics", location = "Boston",
+                              logo_url = "/img/logos/nba/boston_celtics.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Magic", location = "Orlando",
+                              logo_url = "/img/logos/nba/orlando_magic.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Hawks", location = "Atlanta",
+                              logo_url = "/img/logos/nba/atlanta_hawks.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Knicks", location = "New York",
+                              logo_url = "/img/logos/nba/newyork_knicks.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "76ers", location = "Philadelphia",
+                              logo_url = "/img/logos/nba/philadelphia_76ers.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Pacers", location = "Indiana",
+                              logo_url = "/img/logos/nba/indiana_pacers.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Bucks", location = "Milwaukee",
+                              logo_url = "/img/logos/nba/milwaukee_bucks.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Bobcats", location = "Charlotte",
+                              logo_url = "/img/logos/nba/charlotte_bobcats.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Pistons", location = "Detroit",
+                              logo_url = "/img/logos/nba/detroit_pistons.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Nets", location = "New Jersey",
+                              logo_url = "/img/logos/nba/newjersey_nets.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Wizards", location = "Washington",
+                              logo_url = "/img/logos/nba/washington_wizards.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Raptors", location = "Toronto",
+                              logo_url = "/img/logos/nba/toronto_raptors.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Cavaliers", location = "Cleveland",
+                              logo_url = "/img/logos/nba/cleveland_cavaliers.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Spurs", location = "San Antonio",
+                              logo_url = "/img/logos/nba/sanantonio_spurs.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Lakers", location = "Los Angeles",
+                              logo_url = "/img/logos/nba/losangeles_lakers.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Mavericks", location = "Dallas",
+                              logo_url = "/img/logos/nba/dallas_mavericks.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Thunder", location = "Oklahoma City",
+                              logo_url = "/img/logos/nba/oklahomacity_thunder.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Nuggets", location = "Denver",
+                              logo_url = "/img/logos/nba/denver_nuggets.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Trailblazers", location = "Portland",
+                              logo_url = "/img/logos/nba/portland_trailblazers.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Hornets", location = "New Orleans",
+                              logo_url = "/img/logos/nba/neworleans_hornets.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Grizzlies", location = "Memphis",
+                              logo_url = "/img/logos/nba/memphis_grizzlies.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Rockets", location = "Houston",
+                              logo_url = "/img/logos/nba/houston_rockets.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Suns", location = "Phoenix",
+                              logo_url = "/img/logos/nba/phoenix_suns.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Jazz", location = "Utah",
+                              logo_url = "/img/logos/nba/utah_jazz.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Warriors", location = "Golden State",
+                              logo_url = "/img/logos/nba/goldenstate_warriors.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Clippers", location = "Los Angeles",
+                              logo_url = "/img/logos/nba/losangeles_clippers.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Kings", location = "Sacramento",
+                              logo_url = "/img/logos/nba/sacramento_kings.png",
                               league=nba, parent = nba))
         nba_teams.append(Team(title = "Timberwolves", location = "Minnesota",
+                              logo_url = "/img/logos/nba/minnesota_timberwolves.png",
                               league=nba, parent = nba))
         [team.put() for team in nba_teams]
     

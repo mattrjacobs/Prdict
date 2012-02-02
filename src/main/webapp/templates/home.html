@@ -21,8 +21,52 @@
   <script type="text/template" id="team-option-template">
     <option id="<%= title %>"><%= location %> <%= title %></option>
   </script>
-  
+
   <script type="text/template" id="game-template">
+    <div class="span3">
+      <div class="well">
+        <div class="row show-grid">
+          <div class="span2">
+            <div class="thumbnail">
+              <img src="/static-{{ build }}<%= away_logo %>"/>
+            </div>
+          </div>
+          <div class="span2">
+            <h6 style="text-align:center;">2Q</h6>
+          </div>
+          <div class="span2">
+            <div class="thumbnail">
+              <img src="/static-{{ build }}<%= home_logo %>"/>
+            </div>
+          </div>
+        </div>
+        <div class="row show-grid">
+          <div class="span2">
+            <center><h5><%= away_title %></h5></center>
+          </div>
+          <div class="span2">
+            <h6 style="text-align:center;">3:45</h6>
+          </div>
+          <div class="span2">
+            <center><h5><%= home_title %></h5></center>
+          </div>
+        </div>
+        <div class="row show-grid">
+          <div class="span2">
+            <p style="text-align:center;"><%= away_score %></p>
+          </div>
+          <div class="span2">
+            <a style="text-align:center;" href="/events/<%= event_key %>/chat" class="btn <%= button_class %>"><%= button_text %></a>
+          </div>
+          <div class="span2">
+            <p style="text-align:center;"><%= home_score %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+<!--  <script type="text/template" id="game-template">
     <div class="row-fluid">
       <div class="span1">
         <div class="row"><%= away_title %></div>
@@ -39,52 +83,41 @@
       </div>
     </div>
     <p/>
-  </script>
+  </script>-->
+
   <div class="row-fluid">
-    <div class="span3">
-      <h5>League Filter</h5>
+    <form>
+      <select class="span1" name="league" id="league_filter">
+        <option></option>
+      </select>
+    </form>
+    <span id="team_filter_span">
       <form>
-        <select class="small" name="league" id="league_filter">
+        <select class="span2" name="team" id="team_filter">
           <option></option>
         </select>
       </form>
-    </div> <!-- span3 -->
-    <div class="span5">
-      <span id="team_filter_span">
-        <h5>Team Filter</h5>
-        <form>
-          <select name="team" id="team_filter">
-            <option></option>
-          </select>
-        </form>
-      </span>
-    </div> <!-- span5 -->
+    </span>
   </div><!-- row-fluid -->
   <div class="row-fluid">
-    <div class="span3">
+    <div class="span1">
       <button class="btn" id="refresh">Refresh</button>
-    </div> <!-- span3 -->
+    </div> <!-- span1 -->
   </div> <!-- row-fluid -->
   <div class="row-fluid">
-    <div class="span12">
-      <h3>In-Progress</h3>
-      <div class="game_list" id="inprogress">
-      </div> <!-- game_list -->
-    </div> <!-- span12 -->
+    <h3>In-Progress</h3>
+    <div class="game_list" id="inprogress">
+    </div> <!-- game_list -->
   </div> <!-- row-fluid -->
   <div class="row-fluid">
-    <div class="span12">
-      <h3>Upcoming</h3>
-      <div class="game_list" id="upcoming">
-      </div> <!-- game_list -->
-    </div> <!-- span12 -->
+    <h3>Upcoming</h3>
+    <div class="game_list" id="upcoming">
+    </div> <!-- game_list -->
   </div> <!-- row-fluid -->
   <div class="row-fluid">
-    <div class="span12">
-      <h3>Most Recent</h3>
-      <div class="game_list" id="recent">
-      </div> <!-- game_list -->
-    </div> <!-- span12 -->
+    <h3>Most Recent</h3>
+    <div class="game_list" id="recent">
+    </div> <!-- game_list -->
   </div> <!-- row-fluid -->
 </div> <!-- allgames -->
 {% endblock %}

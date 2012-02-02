@@ -16,6 +16,7 @@ class TeamEncoder(json.JSONEncoder):
         return { 'title' : team.title,
                  'description' : team.description,
                  'location' : team.location,
+                 'logo_url' : team.logo_url,
                  'ref_id' : team.ref_id,
                  'self' : team.relative_url,
                  'league' : team.league.relative_url,
@@ -25,6 +26,8 @@ class TeamEncoder(json.JSONEncoder):
 class Team(AbstractModel):
     league = db.ReferenceProperty(required=True, reference_class=League)
     location = db.StringProperty(required=True, multiline=False)
+    #Make this required later
+    logo_url = db.StringProperty(required=False, multiline=False)
     ref_id = db.StringProperty(required=False)
 
     #should be something like /api/teams/<key>
