@@ -34,7 +34,7 @@ class ScoreService:
     def get_score(self, event):
         logging.debug("Getting live score for : %s" % event.title)
         url = "http://ffapi.fanfeedr.com/basic/api/events/%s?api_key=%s" % \
-              (event.league.ref_id, event.ref_id, ScoreService.API_KEY)
+              (event.ref_id, ScoreService.API_KEY)
         resp = urlfetch.fetch(url, deadline = 10)
         if resp.status_code == 200:
             json_resp = json.loads(resp.content)
