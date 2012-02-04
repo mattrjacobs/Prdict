@@ -33,6 +33,7 @@ from handlers.users import UsersHandler
 from handlers.version import VersionHandler
 
 from handlers.temporary import TempTeamsAddHandler
+from handlers.temporary2 import TempTeamLogoAdder
 
 #from gae_mini_profiler import profiler
 
@@ -41,6 +42,7 @@ from google.appengine.dist import use_library
 
 urlmap = [('/', HomeHandler),
           ('/temp/teams-add', TempTeamsAddHandler),
+          ('/temp/logos-add', TempTeamLogoAdder),
           ('/api/events', EventsHandler),
           ('/api/events/recent', RecentEventsHandler),
           ('/api/events/inprogress', InProgressEventsHandler),
