@@ -25,8 +25,5 @@ class TempTeamLogoAdder(AbstractHandler):
                     team.location.lower().replace(' ', '').replace('.', ''),
                     team.title.lower().replace(' ', ''))
             logo_url = "/img/logos/%s/%s_%s.png" % args
-            #logging.info("PROPOSED_LOGO_URL : %s" % logo_url)
-            #logging.info("CURRENT  LOGO URL : %s" % team.logo_url)
-            if logo_url != team.logo_url:
-                logging.info("PROPOSED_LOGO_URL : %s" % logo_url)
-                logging.info("CURRENT  LOGO URL : %s" % team.logo_url)
+            team.logo_url = logo_url
+            team.put()
