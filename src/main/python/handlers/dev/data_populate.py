@@ -26,9 +26,11 @@ class DevDataPopulateHandler(AbstractHandler):
             baseball = sport.Sport(title = 'Baseball')
             basketball = sport.Sport(title = 'Basketball')
             football = sport.Sport(title = 'Football')
+            hockey = sport.Sport(title = 'Hockey')
             baseball.put()
             basketball.put()
             football.put()
+            hockey.put()
 
             nba = league.League(title = "NBA", sport = basketball,
                                 parent = basketball)
@@ -42,12 +44,15 @@ class DevDataPopulateHandler(AbstractHandler):
                                 parent = football)
             cfl = league.League(title = "CFL", sport = football,
                                 parent = football)
+            nhl = league.League(title = "NHL", sport = hockey,
+                                parent = hockey)
             nba.put()
             nbdl.put()
             mlb.put()
             aaa.put()
             nfl.put()
             cfl.put()
+            nhl.put()
 
             self.create_nba_teams(nba)
             self.create_nbdl_teams(nbdl)
@@ -55,6 +60,7 @@ class DevDataPopulateHandler(AbstractHandler):
             self.create_aaa_teams(aaa)
             self.create_nfl_teams(nfl)
             self.create_cfl_teams(cfl)
+            self.create_nhl_teams(nhl)
                         
             for i in range(0, 10):
                 user = prdict_user.PrdictUser(username = "user_%d" % i,
@@ -81,7 +87,7 @@ class DevDataPopulateHandler(AbstractHandler):
         self.render_template("devPopulate.html",
                              { 'users' : new_users,
                                'events' : new_events,
-                               'sports' : [baseball, basketball, football]})
+                               'sports' : [baseball, basketball, football, hockey]})
 
 
     def create_nba_teams(self, nba):
@@ -217,69 +223,99 @@ class DevDataPopulateHandler(AbstractHandler):
     def create_mlb_teams(self, mlb):
         mlb_teams = []
         mlb_teams.append(Team(title = "Yankees", location = "New York",
+                              logo_url="/img/logos/mlb/newyork_yankees.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Blue Jays", location = "Toronto",
+                              logo_url="/img/logos/mlb/toronto_bluejays.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Orioles", location = "Baltimore",
+                              logo_url="/img/logos/mlb/baltimore_orioles.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Rays", location = "Tampa Bay",
+                              logo_url="/img/logos/mlb/tampabay_rays.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Red Sox", location = "Boston",
+                              logo_url="/img/logos/mlb/boston_redsox.png",
                               league = mlb, parent = mlb))
         
         mlb_teams.append(Team(title = "Indians", location = "Cleveland",
+                              logo_url="/img/logos/mlb/cleveland_indians.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Royals", location = "Kansas City",
+                              logo_url="/img/logos/mlb/kansascity_royals.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "White Sox", location = "Chicago",
+                              logo_url="/img/logos/mlb/chicago_whitesox.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Tigers", location = "Detroit",
+                              logo_url="/img/logos/mlb/detroit_tigers.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Twins", location = "Minnesota",
+                              logo_url="/img/logos/mlb/minnesota_twins.png",
                               league = mlb, parent = mlb))
         
         mlb_teams.append(Team(title = "Rangers", location = "Texas",
+                              logo_url="/img/logos/mlb/texas_rangers.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Angels", location = "Los Angeles",
+                              logo_url="/img/logos/mlb/losangeles_angels.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Athletics", location = "Oakland",
+                              logo_url="/img/logos/mlb/oakland_athletics.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Mariners", location = "Seattle",
+                              logo_url="/img/logos/mlb/seattle_mariners.png",
                               league = mlb, parent = mlb))
         
         mlb_teams.append(Team(title = "Phillies", location = "Philadelphia",
+                              logo_url="/img/logos/mlb/philadelphia_phillies.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Marlins", location = "Florida",
+                              logo_url="/img/logos/mlb/florida_marlins.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Nationals", location = "Washington",
+                              logo_url="/img/logos/mlb/washington_nationals.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Braves", location = "Atlanta",
+                              logo_url="/img/logos/mlb/atlanta_braves.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Mets", location = "New York",
+                              logo_url="/img/logos/mlb/newyork_mets.png",
                               league = mlb, parent = mlb))
         
         mlb_teams.append(Team(title = "Reds", location = "Cincinnati",
+                              logo_url="/img/logos/mlb/cincinnati_reds.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Brewers", location = "Milwaukee",
+                              logo_url="/img/logos/mlb/milwaukee_brewers.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Cardinals", location = "St. Louis",
+                              logo_url="/img/logos/mlb/stlouis_cardinals.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Cubs", location = "Chicago",
+                              logo_url="/img/logos/mlb/chicago_cubs.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Pirates", location = "Pittsburgh",
+                              logo_url="/img/logos/mlb/pittsburgh_pirates.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Astros", location = "Houston",
+                              logo_url="/img/logos/mlb/houston_astros.png",
                               league = mlb, parent = mlb))
         
         mlb_teams.append(Team(title = "Rockies", location = "Colorado",
+                              logo_url="/img/logos/mlb/colorado_rockies.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Giants", location = "San Francisco",
+                              logo_url="/img/logos/mlb/sanfrancisco_giants.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Padres", location = "San Diego",
+                              logo_url="/img/logos/mlb/sandiego_padres.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Dodgers", location = "Los Angeles",
+                              logo_url="/img/logos/mlb/losangeles_dodgers.png",
                               league = mlb, parent = mlb))
         mlb_teams.append(Team(title = "Diamondbacks", location = "Arizona",
+                              logo_url="/img/logos/mlb/arizona_diamondbacks.png",
                               league = mlb, parent = mlb))
         [team.put() for team in mlb_teams]
         
@@ -316,109 +352,111 @@ class DevDataPopulateHandler(AbstractHandler):
         [team.put() for team in aaa_teams]
         
     def create_nfl_teams(self, nfl):
-        colts = Team(title = "Colts", location = "Indianapolis",
-                     league = nfl, parent = nfl)
-        colts.put()
-        jaguars = Team(title = "Jaguars", location = "Jacksonville",
-                       league = nfl, parent = nfl)
-        jaguars.put()
-        titans = Team(title = "Titans", location = "Tennessee",
-                      league = nfl, parent = nfl)
-        titans.put()
-        texans = Team(title = "Texans", location = "Houston",
-                      league = nfl, parent = nfl)
-        texans.put()
+        nfl_teams = []
+        nfl_teams.append(Team(title = "Colts", location = "Indianapolis",
+                              logo_url="/img/logos/nfl/indianapolis_colts.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Jaguars", location = "Jacksonville",
+                              logo_url="/img/logos/nfl/jacksonville_jaguars.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Titans", location = "Tennessee",
+                              logo_url="/img/logos/nfl/tennessee_titans.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Texans", location = "Houston",
+                              logo_url="/img/logos/nfl/houston_texans.png",
+                              league = nfl, parent = nfl))
         
-        chiefs = Team(title = "Chiefs", location = "Kansas City",
-                      league = nfl, parent = nfl)
-        chiefs.put()
-        raiders = Team(title = "Raiders", location = "Oakland",
-                       league = nfl, parent = nfl)
-        raiders.put()
-        broncos = Team(title = "Broncos", location = "Denver",
-                       league = nfl, parent = nfl)
-        broncos.put()
-        chargers = Team(title = "Chargers", location = "San Diego",
-                        league = nfl, parent = nfl)
-        chargers.put()
+        nfl_teams.append(Team(title = "Chiefs", location = "Kansas City",
+                              logo_url="/img/logos/nfl/kansascity_chiefs.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Raiders", location = "Oakland",
+                              logo_url="/img/logos/nfl/oakland_raiders.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Broncos", location = "Denver",
+                              logo_url="/img/logos/nfl/denver_broncos.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Chargers", location = "San Diego",
+                              logo_url="/img/logos/nfl/sandiego_chargers.png",
+                              league = nfl, parent = nfl))
         
-        patriots = Team(title = "Patriots", location = "New England",
-                        league = nfl, parent = nfl)
-        patriots.put()
-        jets = Team(title = "Jets", location = "New York",
-                    league = nfl, parent = nfl)
-        jets.put()
-        dolphins = Team(title = "Dolphins", location = "Miami",
-                        league = nfl, parent = nfl)
-        dolphins.put()
-        bills = Team(title = "Bills", location = "Buffalo",
-                     league = nfl, parent = nfl)
-        bills.put()
+        nfl_teams.append(Team(title = "Patriots", location = "New England",
+                              logo_url="/img/logos/nfl/newengland_patriots.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Jets", location = "New York",
+                              logo_url="/img/logos/nfl/newyork_jets.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Dolphins", location = "Miami",
+                              logo_url="/img/logos/nfl/miami_dolphins.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Bills", location = "Buffalo",
+                              logo_url="/img/logos/nfl/buffalo_bills.png",
+                              league = nfl, parent = nfl))
         
-        bengals = Team(title = "Bengals", location = "Cincinnati",
-                       league = nfl, parent = nfl)
-        bengals.put()
-        browns = Team(title = "Browns", location = "Cleveland",
-                      league = nfl, parent = nfl)
-        browns.put()
-        steelers = Team(title = "Steelers", location = "Pittsburgh",
-                        league = nfl, parent = nfl)
-        steelers.put()
-        ravens = Team(title = "Ravens", location = "Baltimore",
-                      league = nfl, parent = nfl)
-        ravens.put()
+        nfl_teams.append(Team(title = "Bengals", location = "Cincinnati",
+                              logo_url="/img/logos/nfl/cincinnati_bengals.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Browns", location = "Cleveland",
+                              logo_url="/img/logos/nfl/cleveland_browns.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Steelers", location = "Pittsburgh",
+                              logo_url="/img/logos/nfl/pittsburgh_steelers.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Ravens", location = "Baltimore",
+                              logo_url="/img/logos/nfl/baltimore_ravens.png",
+                              league = nfl, parent = nfl))
         
-        redskins = Team(title = "Redskins", location = "Washington",
-                        league = nfl, parent = nfl)
-        redskins.put()
-        cowboys = Team(title = "Cowboys", location = "Dallas",
-                       league = nfl, parent = nfl)
-        cowboys.put()
-        giants = Team(title = "Giants", location = "New York",
-                      league = nfl, parent = nfl)
-        giants.put()
-        eagles = Team(title = "Eagles", location = "Philadelphia",
-                      league = nfl, parent = nfl)
-        eagles.put()
+        nfl_teams.append(Team(title = "Redskins", location = "Washington",
+                              logo_url="/img/logos/nfl/washington_redskins.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Cowboys", location = "Dallas",
+                              logo_url="/img/logos/nfl/dallas_cowboys.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Giants", location = "New York",
+                              logo_url="/img/logos/nfl/newyork_giants.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Eagles", location = "Philadelphia",
+                              logo_url="/img/logos/nfl/philadelphia_eagles.png",
+                              league = nfl, parent = nfl))
 
-        vikings = Team(title = "Vikings", location = "Minnesota",
-                       league = nfl, parent = nfl)
-        vikings.put()
-        lions = Team(title = "Lions", location = "Detroit",
-                     league = nfl, parent = nfl)
-        lions.put()
-        bears = Team(title = "Bears", location = "Chicago",
-                     league = nfl, parent = nfl)
-        bears.put()
-        packers = Team(title = "Packers", location = "Green Bay",
-                       league = nfl, parent = nfl)
-        packers.put()
-    
-        fortyniners = Team(title = "49ers", location = "San Francisco",
-                           league = nfl, parent = nfl)
-        fortyniners.put()
-        seahawks = Team(title = "Seahawks", location = "Seattle",
-                        league = nfl, parent = nfl)
-        seahawks.put()
-        rams = Team(title = "Rams", location = "St. Louis",
-                    league = nfl, parent = nfl)
-        rams.put()
-        cardinals = Team(title = "Cardinals", location = "Arizona",
-                         league = nfl, parent = nfl)
-        cardinals.put()
+        nfl_teams.append(Team(title = "Vikings", location = "Minnesota",
+                              logo_url="/img/logos/nfl/minnesota_vikings.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Lions", location = "Detroit",
+                              logo_url="/img/logos/nfl/detroit_lions.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Bears", location = "Chicago",
+                              logo_url="/img/logos/nfl/chicago_bears.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Packers", location = "Green Bay",
+                              logo_url="/img/logos/nfl/greenbay_packers.png",
+                              league = nfl, parent = nfl))
         
-        saints = Team(title = "Saints", location = "New Orleans",
-                      league = nfl, parent = nfl)
-        saints.put()
-        falcons = Team(title = "Falcons", location = "Atlanta",
-                       league = nfl, parent = nfl)
-        falcons.put()
-        bucs = Team(title = "Buccaneers", location = "Tampa Bay",
-                    league = nfl, parent = nfl)
-        bucs.put()
-        panthers = Team(title = "Panthers", location = "Carolina",
-                        league = nfl, parent = nfl)
-        panthers.put()
+        nfl_teams.append(Team(title = "49ers", location = "San Francisco",
+                              logo_url="/img/logos/nfl/sanfrancisco_49ers.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Seahawks", location = "Seattle",
+                              logo_url="/img/logos/nfl/seattle_seahawks.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Rams", location = "St. Louis",
+                              logo_url="/img/logos/nfl/stlouis_rams.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Cardinals", location = "Arizona",
+                              logo_url="/img/logos/nfl/arizona_cardinals.png",
+                              league = nfl, parent = nfl))
+        
+        nfl_teams.append(Team(title = "Saints", location = "New Orleans",
+                              logo_url="/img/logos/nfl/neworleans_saints.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Falcons", location = "Atlanta",
+                              logo_url="/img/logos/nfl/atlanta_falcons.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Buccaneers", location = "Tampa Bay",
+                              logo_url="/img/logos/nfl/tampabay_buccaneers.png",
+                              league = nfl, parent = nfl))
+        nfl_teams.append(Team(title = "Panthers", location = "Carolina",
+                              logo_url="/img/logos/nfl/carolina_panthers.png",
+                              league = nfl, parent = nfl))
+        [team.put() for team in nfl_teams]
         
     def create_cfl_teams(self, cfl):
         cfl_teams = []
@@ -439,4 +477,104 @@ class DevDataPopulateHandler(AbstractHandler):
         cfl_teams.append(Team(title = "Blue Bombers", location = "Winnipeg",
                               league = cfl, parent = cfl))
         [team.put() for team in cfl_teams]
+
+    def create_nhl_teams(self, nhl):
+        nhl_teams = []
+        nhl_teams.append(Team(title = "Rangers", location = "New York",
+                              logo_url = "/img/logos/nhl/newyork_rangers.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Flyers", location = "Philadelphia",
+                              logo_url = "/img/logos/nhl/philadelphia_flyers.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Penguins", location = "Pittsburgh",
+                              logo_url = "/img/logos/nhl/pittsburgh_penguins.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Devils", location = "New Jersey",
+                              logo_url = "/img/logos/nhl/newjersey_devils.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Islanders", location = "New York",
+                              logo_url = "/img/logos/nhl/newyork_islanders.png",
+                              league = nhl, parent = nhl))
+
+        nhl_teams.append(Team(title = "Bruins", location = "Boston",
+                              logo_url = "/img/logos/nhl/boston_bruins.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Senators", location = "Ottawa",
+                              logo_url = "/img/logos/nhl/ottawa_senators.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Maple Leafs", location = "Toronto",
+                              logo_url = "/img/logos/nhl/toronto_mapleleafs.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Sabres", location = "Buffalo",
+                              logo_url = "/img/logos/nhl/buffalo_sabres.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Canadiens", location = "Montreal",
+                              logo_url = "/img/logos/nhl/montreal_canadiens.png",
+                              league = nhl, parent = nhl))
+
+        nhl_teams.append(Team(title = "Panthers", location = "Florida",
+                              logo_url = "/img/logos/nhl/florida_panthers.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Capitals", location = "Washington",
+                              logo_url = "/img/logos/nhl/washington_capitals.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Jets", location = "Winnipeg",
+                              logo_url = "/img/logos/nhl/winnipeg_jets.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Lightning", location = "Tampa Bay",
+                              logo_url = "/img/logos/nhl/tampabay_lightning.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Hurricanes", location = "Carolina",
+                              logo_url = "/img/logos/nhl/carolina_hurricanes.png",
+                              league = nhl, parent = nhl))
+
+        nhl_teams.append(Team(title = "Red Wings", location = "Detroit",
+                              logo_url = "/img/logos/nhl/detroit_redwings.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Predators", location = "Nashville",
+                              logo_url = "/img/logos/nhl/nashville_predators.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Blues", location = "St. Louis",
+                              logo_url = "/img/logos/nhl/stlouis_blues.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Blackhawks", location = "Chicago",
+                              logo_url = "/img/logos/nhl/chicago_blackhawks.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Blue Jackets", location = "Columbus",
+                              logo_url = "/img/logos/nhl/columbus_bluejackets.png",
+                              league = nhl, parent = nhl))
+
+        nhl_teams.append(Team(title = "Canucks", location = "Vancouver",
+                              logo_url = "/img/logos/nhl/vancouver_canucks.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Wild", location = "Minnesota",
+                              logo_url = "/img/logos/nhl/minnesota_wild.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Avalanche", location = "Colorado",
+                              logo_url = "/img/logos/nhl/colorado_avalanche.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Flames", location = "Calgary",
+                              logo_url = "/img/logos/nhl/calgary_flames.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Oilers", location = "Edmonton",
+                              logo_url = "/img/logos/nhl/edmonton_oilers.png",
+                              league = nhl, parent = nhl))
+
+        nhl_teams.append(Team(title = "Sharks", location = "San Jose",
+                              logo_url = "/img/logos/nhl/sanjose_sharks.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Kings", location = "Los Angeles",
+                              logo_url = "/img/logos/nhl/losangeles_kings.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Stars", location = "Dallas",
+                              logo_url = "/img/logos/nhl/dallas_stars.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Coyotes", location = "Phoenix",
+                              logo_url = "/img/logos/nhl/phoenix_coyotes.png",
+                              league = nhl, parent = nhl))
+        nhl_teams.append(Team(title = "Mighty Ducks", location = "Anaheim",
+                              logo_url = "/img/logos/nhl/anaheim_mightyducks.png",
+                              league = nhl, parent = nhl))
         
+        
+        [team.put() for team in nhl_teams]

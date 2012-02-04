@@ -1,0 +1,1 @@
+python game_loader.py -l ../parsed/mlb_teams.json -t ../raw/mlb/2012 -p http://localhost:8080 -n MLB -s 2012 -r 20f0857f-3c43-5f50-acfc-879f838ee853
