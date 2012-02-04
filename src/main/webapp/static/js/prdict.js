@@ -111,6 +111,7 @@ $(function(){
                 this.totalResults = response["events"]["total-results"];
                 var rawGames = response["events"]["items"];
                 var modelGames = rawGames.map(function(gameJson) {
+                    startDateFromJson = gameJson["start_date"];
                     modelGame = new Game({
                         home_team_name     : gameJson["home_team"]["title"],
                         home_team_location : gameJson["home_team"]["location"],
@@ -120,9 +121,11 @@ $(function(){
                         away_team_location : gameJson["away_team"]["location"],
                         away_team_logo_url : gameJson["away_team"]["logo_url"],
                         away_team_score    : gameJson["away_team"]["score"],
-                        key : gameJson["key"],
-                        cancelled : gameJson["cancelled"],
-                        start_date : gameJson["start_date"]
+                        key                : gameJson["key"],
+                        cancelled          : gameJson["cancelled"],
+                        completed          : gameJson["completed"],
+                        start_date         : startDateFromJson.split()[0],
+                        start_time         : startDateFromJson.split()[1]
                     });
                     return modelGame;
                 });
@@ -349,6 +352,9 @@ $(function(){
                 home_logo:    this.model.get("home_team_logo_url"),
                 away_logo:    this.model.get("away_team_logo_url"),
                 event_key:    this.model.get("key"),
+                start_date:   this.model.get("start_date"),
+                start_time:   this.model.get("start_time"),
+                completed:    this.model.get("completed"),
                 button_text:  this._buttonText,
                 button_class: this._buttonClass,
                 show_score:   this._showScore
@@ -481,9 +487,15 @@ $(function(){
         },
 
         fetchAllGames: function() {
-            this.model.gamesInProgress.fetch({dataType: "json"});
-            this.model.gamesUpcoming.fetch({dataType: "json"});
-            this.model.gamesRecent.fetch({dataType: "json"});
+            var ajaxParams = {
+                dataType: "json",
+                data: {
+                    "max-results": 12
+                }
+            };
+            this.model.gamesInProgress.fetch(ajaxParams);
+            this.model.gamesUpcoming.fetch(ajaxParams);
+            this.model.gamesRecent.fetch(ajaxParams);
         },
 
         fetchLeagues: function() {
@@ -500,7 +512,8 @@ $(function(){
                 var ajaxParams = {
                     dataType: "json",
                     data: {
-                        league: league_name
+                        league: league_name,
+                        "max-results": 12
                     }
                 };
                 this.model.gamesInProgress.fetch(ajaxParams);
@@ -520,7 +533,8 @@ $(function(){
                     dataType: "json",
                     data: {
                         league : this._current_query.league,
-                        team   : team_name
+                        team   : team_name,
+                        "max-results": 12
                     }
                 };
                 this.model.gamesInProgress.fetch(ajaxParams);
@@ -564,7 +578,7 @@ $(function(){
             this.fetchByTeam(teamName);
         }
     });
-    
+
     // Finally, we kick things off by creating the **App**.
     window.App = new AppView({model: {'gamesInProgress' : new WrapperGamesInProgress,
                                       'gamesUpcoming'   : new WrapperGamesUpcoming,

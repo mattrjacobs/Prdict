@@ -32,8 +32,12 @@
             </div>
           </div>
           <div class="span2">
-            <h6 style="text-align:center;">2Q</h6>
-            <h6 style="text-align:center;">3:45</h6>
+            <% if (completed) { %>
+            <h5 style="text-align:center;">Final</h5>
+            <% } else { %>
+            <h6 style="text-align:center;"><%= start_date %></h6>
+            <h6 style="text-align:center;"><%= start_time %></h6>
+            <% } %>
           </div>
           <div class="span3">
             <div class="thumbnail">
@@ -43,37 +47,26 @@
         </div>
         <div class="row show-grid">
           <div class="span3">
+            <% if (show_score) { %>
             <h3 style="text-align:center;"><%= away_score %></h3>
+            <% } else { %>
+            <h3 style="text-align:center; visibility:hidden"><%= away_score %></h3>
+            <% } %>
           </div>
           <div class="span2">
             <a style="text-align:center;" href="/events/<%= event_key %>/chat" class="btn <%= button_class %>"><%= button_text %></a>
           </div>
           <div class="span3">
+            <% if (show_score) { %>
             <h3 style="text-align:center;"><%= home_score %></h3>
+            <% } else { %>
+            <h3 style="text-align:center; visibility:hidden"><%= home_score %></h3>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
   </script>
-  
-<!--  <script type="text/template" id="game-template">
-    <div class="row-fluid">
-      <div class="span1">
-        <div class="row"><%= away_title %></div>
-        <div class="row"><%= home_title %></div>
-      </div>
-      <% if (show_score) { %>
-      <div class="span1">
-        <div class="row"><%= away_score %></div>
-        <div class="row"><%= home_score %></div>
-      </div>
-      <% } %>
-      <div class="span1">
-        <a href="/events/<%= event_key %>/chat" class="btn <%= button_class %>"><%= button_text %></a>
-      </div>
-    </div>
-    <p/>
-  </script>-->
 
   <div class="row-fluid">
     <form>
