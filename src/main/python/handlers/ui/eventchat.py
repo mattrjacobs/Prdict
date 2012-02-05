@@ -54,8 +54,6 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
                                'event_key' : str(parent.key()),
                                'messages' : entries,
                                'self_link' : self.request.url,
-                               'prev_link' : prev_link,
-                               'next_link' : next_link,
                                'build' : self.get_build_number(),
                                'msg' : msg})
 
@@ -63,7 +61,7 @@ class EventChatUiHandler(FeedHandler, EventChatAuthorizationHandler):
         return 1000
     
     def get_default_max_results(self):
-        return 100
+        return 50
 
     def get_parent_name(self):
         return "event"

@@ -4,6 +4,13 @@
 <script type="text/javascript" src="/static-{{ build }}/js/prdict_chat.js"></script>
 {% endblock %}
 
+{% block script %}
+<script type="text/javascript">
+  var event_key = '{{ event.key }}';
+</script>
+{% endblock %}
+
+
 {% block content %}
 <div id="allchat">
   <script type="text/template" id="msg-template">
@@ -22,25 +29,25 @@
 
   <div class="row">
     <div class="span4">
-      <h1 style="text-align:center">ROAD TEAM</h1>
+      <h2 style="text-align:center">{{ event.away_team.location}} {{ event.away_team.title }}</h2>
     </div>
     <div class="span2 offset1">
       <h4 style="text-align:center">3:45</h4>
       <h4 style="text-align:center">2Q</h4>
     </div>
     <div class="span4 offset1">
-      <h1 style="text-align:center">HOME TEAM</h1>
+      <h2 style="text-align:center">{{ event.home_team.location }} {{ event.home_team.title }}</h2>
     </div>
   </div> <!-- row -->
   <div class="row">
     <div class="span4">
       <div class="thumbnail">
-        <img src="/static-{{ build }}/img/logos/mlb/chicago_cubs.png"/>
+        <img src="/static-{{ build }}{{ event.away_team.logo_url }}"/>
       </div>
     </div>
     <div class="span4 offset4">
       <div class="thumbnail">
-        <img src="/static-{{ build }}/img/logos/nba/indiana_pacers.png"/>
+        <img src="/static-{{ build }}{{ event.home_team.logo_url }}"/>
       </div>
     </div>
   </div> <!-- row -->

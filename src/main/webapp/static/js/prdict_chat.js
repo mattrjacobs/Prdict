@@ -20,10 +20,10 @@ $(function(){
             this.collection = new CollectionChatMessages([]);
         },
         url: function() {
-            return "/api/events/" + this.get("event_key") + "/chat";
+            return "/api/events/" + window.event_key + "/chat";
         },
         parse: function(response) {
-            console.info("ASKED TO PARSE RESP : " + response);
+            console.info("ASKED TO PARSE RESP : " + JSON.stringify(response));
             /*if (response["events"]) {
                 this.startIndex = response["events"]["start-index"];
                 this.maxResults = response["events"]["max-results"];
