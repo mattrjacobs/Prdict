@@ -1,86 +1,58 @@
-{% extends "base_feed.html" %}
-
-{% block title %}
-Prdict | {{ event.title|escape }}
-{% endblock %}
+{% extends "base.html" %}
 
 {% block scriptinclude %}
-<script type="text/javascript" src="/_ah/channel/jsapi"></script>
-<script type="text/javascript" src="/static-{{ build }}/js/chat.js"></script>
+<script type="text/javascript" src="/static-{{ build }}/js/prdict_chat.js"></script>
 {% endblock %}
 
-{% block script %}
-<script type='text/javascript'>
-  onOpened = function() { }
-  
-  onMessage = function(msg) {
-    jsonMsg = JSON.parse(msg.data);
-    var newChatMsg = addChat(jsonMsg)
-  }
+{% block content %}
+<div id="allchat">
+  <script type="text/template" id="msg-template">
+    <div class="row">
+      <div class="span2">
+        <%= username %>
+      </div>
+      <div class="span9">
+        <%= content %>
+      </div>
+      <div class="span1">
+        <h6><%= timestamp %></h6>
+    </div>
+  </script>
 
-  addChat = function(jsonMsg) {
-    var chatWindow = document.getElementById("chatWindow")
 
-    var chatDiv = document.createElement("div");
-    chatDiv.setAttribute("id", "chatMessage");
-    if (jsonMsg.hasOwnProperty('author_link')) {
-      chatDiv.innerHTML = jsonMsg.message_time + " | <a href='" + jsonMsg.author_link + "'>" + jsonMsg.author + "</a> | " + jsonMsg.message;
-    } else {
-      chatDiv.innerHTML = jsonMsg.message_time + " | " + jsonMsg.author + " | " + jsonMsg.message;
-    }
-    if (chatWindow.hasChildNodes()) {
-      chatWindow.insertBefore(chatDiv, chatWindow.firstChild);
-    } else {
-      chatWindow.appendChild(chatDiv);
-    }
-  }
-
-  openChannel = function() {
-    var token = '{{ token }}';
-    var channel = new goog.appengine.Channel(token);
-    var handler = {
-      'onopen' : onOpened,
-      'onmessage' : onMessage,
-      'onerror' : function() {},
-      'onclose' : function() {}
-    };
-    var socket = channel.open(handler);
-    socket.onopen = onOpened;
-    socket.onmessage = onMessage;
-  }
-
-  initialize = function() {
-    openChannel();
-  }
-  setTimeout(initialize, 100);
-</script>
-{% endblock %}
-
-{% block entries %}
-<h1>Event: {{ event.title|escape }}</h1>
-<p>Description : {{ event.description|escape }}</p>
-<p>Start date : {{ event.start_date|escape }}</p>
-<p>End date : {{ event.end_date|escape }}</p>
-<div id="submitMsg">
-  <form action="/api/events/{{ event.key }}/chat" method="post" class="newChatForm">
-    <span class="messageText">
-      <input type="text" maxlength="140" name="content" class="newMsgContent"/>
-      <input type="submit" name="submit" value="Post Comment"/>
-    </span>
-    <span class="messageLoading">
-      <img class="spinner" src="/static-{{ build }}/img/spinner.gif">
-    </span>
-  </form>
-</div>
-<div class="clear"></div>
-<div id="chatWindow">
-{% if messages %}
-{% for message in messages %}
-  <div id="chatMessage">
-    {{ message.created_nice }} | <a href="{{ message.author.relative_url }}">{{ message.author.username }}</a> | {{ message.content|escape }}
-  </div>
-{% endfor %}  
-{% endif %}
+  <div class="row">
+    <div class="span4">
+      <h1 style="text-align:center">ROAD TEAM</h1>
+    </div>
+    <div class="span2 offset1">
+      <h4 style="text-align:center">3:45</h4>
+      <h4 style="text-align:center">2Q</h4>
+    </div>
+    <div class="span4 offset1">
+      <h1 style="text-align:center">HOME TEAM</h1>
+    </div>
+  </div> <!-- row -->
+  <div class="row">
+    <div class="span4">
+      <div class="thumbnail">
+        <img src="/static-{{ build }}/img/logos/mlb/chicago_cubs.png"/>
+      </div>
+    </div>
+    <div class="span4 offset4">
+      <div class="thumbnail">
+        <img src="/static-{{ build }}/img/logos/nba/indiana_pacers.png"/>
+      </div>
+    </div>
+  </div> <!-- row -->
+  <div class="row">
+    <div class="span10">
+      <form class="form-horizontal well">
+        <input type="text" class="span8" placeholder="Chat here...">
+        <button type="submit" class="btn">Submit</button>
+      </form>
+    </div>
+  </div> <!-- row -->
+  <div id="chat_messages">
+  </div> <!-- div chat_messages -->
 </div>
 {% endblock %}
-
