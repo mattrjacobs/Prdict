@@ -247,14 +247,8 @@ class MockFeedHandler(FeedHandler, BaseAuthorizationHandler):
         self.handler = handler
         self.svc = svc
 
-    def create_param_map(self, user, all_entries, can_write, now):
-        return {}
-        
     def get_prdict_user(self):
         return self.handler.get_prdict_user()
-
-    def render_html(self, parent, entries, prev_link, next_link, msg, user):
-        self.handler.render_html(parent, entries, prev_link, next_link, msg, user)
 
     def render_template(self, template, params = None):
         self.handler.render_template(template, params)

@@ -2,30 +2,33 @@
 
 {% block scriptinclude %}
 <script type="text/javascript" src="/static-{{ build }}/js/prdict_chat.js"></script>
+<script type="text/javascript" src="/_ah/channel/jsapi"></script>
 {% endblock %}
 
 {% block script %}
 <script type="text/javascript">
   var event_key = '{{ event.key }}';
+  var token     = '{{ token }}';
 </script>
 {% endblock %}
 
 
 {% block content %}
 <div id="allchat">
+
   <script type="text/template" id="msg-template">
     <div class="row">
-      <div class="span2">
-        <%= username %>
-      </div>
-      <div class="span9">
-        <%= content %>
-      </div>
       <div class="span1">
         <h6><%= timestamp %></h6>
+      </div>
+      <div class="span1">
+        <h5><%= author %></h5>
+      </div>
+      <div class="span8">
+        <%= content %>
+      </div>
     </div>
   </script>
-
 
   <div class="row">
     <div class="span4">
@@ -53,13 +56,15 @@
   </div> <!-- row -->
   <div class="row">
     <div class="span10">
-      <form class="form-horizontal well">
-        <input type="text" class="span8" placeholder="Chat here...">
+      <form class="form-horizontal well" id="chat_submit" onsubmit="return false">
+        <input type="text" class="span8" placeholder="Chat here..." id="chat_input">
         <button type="submit" class="btn">Submit</button>
       </form>
     </div>
   </div> <!-- row -->
-  <div id="chat_messages">
-  </div> <!-- div chat_messages -->
+  <div class="well">
+    <div id="chat_messages">
+    </div> <!-- div chat_messages -->
+  </div>
 </div>
 {% endblock %}

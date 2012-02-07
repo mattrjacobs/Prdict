@@ -42,6 +42,10 @@ class BaseService:
     def get_model(self):
         raise "Must be implemented by subclasses"
 
+    #Default is just a lowercase classname
+    def get_parent_ref(self):
+        return parent.__class__.__name__.lower()
+
     def get_entry_list_name(self):
         raise "Must be implemented by subclasses"
 
@@ -79,9 +83,9 @@ class BaseService:
 
     def get_count_by_parent(self, parent, query):
         if query:
-            count = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent).filter("%s =" % query[0], query[1]).count()
+            count = db.Query(self.get_model()).filter("%s =" % self.get_parent_ref(), parent).filter("%s =" % query[0], query[1]).count()
         else:
-            count = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent).count()
+            count = db.Query(self.get_model()).filter("%s =" % self.get_parent_ref(), parent).count()
         return count
 
     def get_entries(self, pagination_params, query, sort):
@@ -97,9 +101,9 @@ class BaseService:
 
     def get_entries_by_parent(self, parent, pagination_params, query, sort):
         if query:
-            entries_query = db.Query(self.get_model()).filter("%s = " % parent.__class__.__name__.lower(), parent).filter("%s =" % query[0], query[1])
+            entries_query = db.Query(self.get_model()).filter("%s = " % self.get_parent_ref(), parent).filter("%s =" % query[0], query[1])
         else:
-            entries_query = db.Query(self.get_model()).filter("%s =" % parent.__class__.__name__.lower(), parent)
+            entries_query = db.Query(self.get_model()).filter("%s = " % self.get_parent_ref(), parent)
         if sort:
             entries_query = entries_query.order(sort)
 

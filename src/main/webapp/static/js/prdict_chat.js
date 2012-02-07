@@ -23,40 +23,39 @@ $(function(){
             return "/api/events/" + window.event_key + "/chat";
         },
         parse: function(response) {
-            console.info("ASKED TO PARSE RESP : " + JSON.stringify(response));
-            /*if (response["events"]) {
-                this.startIndex = response["events"]["start-index"];
-                this.maxResults = response["events"]["max-results"];
-                this.totalResults = response["events"]["total-results"];
-                var rawGames = response["events"]["items"];
-                var modelGames = rawGames.map(function(gameJson) {
-                    startDateFromJson = gameJson["start_date"];
-                    modelGame = new Game({
-                        home_team_name     : gameJson["home_team"]["title"],
-                        home_team_location : gameJson["home_team"]["location"],
-                        home_team_logo_url : gameJson["home_team"]["logo_url"],
-                        home_team_score    : gameJson["home_team"]["score"],
-                        away_team_name     : gameJson["away_team"]["title"],
-                        away_team_location : gameJson["away_team"]["location"],
-                        away_team_logo_url : gameJson["away_team"]["logo_url"],
-                        away_team_score    : gameJson["away_team"]["score"],
-                        key                : gameJson["key"],
-                        cancelled          : gameJson["cancelled"],
-                        completed          : gameJson["completed"],
-                        start_date         : startDateFromJson.split()[0],
-                        start_time         : startDateFromJson.split()[1]
+            if (response["messages"]) {
+                this.startIndex = response["messages"]["start-index"];
+                this.maxResults = response["messages"]["max-results"];
+                this.totalResults = response["messages"]["total-results"];
+                var rawMessages = response["messages"]["items"];
+                var modelMessages = rawMessages.map(function(messageJson) {
+                    modelMessage = new ChatMessage({
+                        author    : messageJson["author_name"],
+                        content   : messageJson["content"],
+                        timestamp : messageJson["created_nice"]
                     });
-                    return modelGame;
+                    return modelMessage;
                 });
-                this.collection.reset(modelGames);
+                this.collection.reset(modelMessages);
             }
-            }*/
+        },
+        add: function(chatMessage) {
+            this.collection.add(new ChatMessage(chatMessage));
         }
     });
 
     window.ChatSubmit = Backbone.Model.extend({
         initialize: function(options) {
-            console.info("INIT CALLED ON ChatWindow");
+            console.info("INIT CALLED ON ChatSubmit");
+        },
+        url: function() {
+            return "/api/events/" + window.event_key + "/chat";
+        }
+    });
+
+    window.ChatSubmitView = Backbone.View.extend({
+        initialize: function(options) {
+            console.info("INIT CALLED ON ChatSubmitView");
         }
     });
 
@@ -64,21 +63,12 @@ $(function(){
         initialize: function(options) {
             console.info("INIT CALLED ON ChatMessagesWrapperView")
 
-            _(this).bindAll('change');
-            this.model.bind('change', this.change);
-
             this._collectionView = new ChatMessagesView({
                 collection:           this.model.collection,
                 childViewConstructor: options.childViewConstructor,
                 el:                   options.el
             });
         },
-
-        change: function(wrappedCollection) {
-            console.info("CHANGE called on ChatMessagesWrapperView");
-            //var unwrappedCollection  = wrappedCollection.get("events")["items"];
-            //this.model.collection.reset(wrappedCollection);
-        }
     });
 
     window.ChatMessagesView = Backbone.View.extend({
@@ -104,10 +94,10 @@ $(function(){
                 model :      item,
             });
             
-            this._childViews.push(childView);
+            this._childViews.unshift(childView);
  
             if (this._rendered) {
-                $(this.el).append(childView.render().el);
+                $(this.el).prepend(childView.render().el);
             }
         },
  
@@ -149,9 +139,9 @@ $(function(){
 
         render : function() {
             $(this.el).html(this.template({
-                username  : "ME",
-                content   : "TEBOOOOOOOOW!",
-                timestamp : "1:23 PM" 
+                author    : this.model.get("author"),
+                content   : this.model.get("content"),
+                timestamp : this.model.get("timestamp")
             }));
             return this;
         }
@@ -168,7 +158,7 @@ $(function(){
         el: $("#allchat"),
         
         events: {
-            
+            "submit #chat_submit" : "submitMessage"
         },
         
         initialize: function() {
@@ -180,7 +170,14 @@ $(function(){
                 el : $('#chat_messages')
             });
 
+            this._chatSubmitView = new ChatSubmitView({
+                model : this.model.chatSubmit,
+                el : $('#chat_submit')
+            });
+
             this.fetchInitialMessages();
+            this.openChannel();
+            $('#chat_input').focus();
         },
         
         render: function() {
@@ -196,6 +193,42 @@ $(function(){
             };
             this.model.chatMessages.fetch(ajaxParams);
         },
+
+        openChannel: function() {
+            console.info("Opening the GAE Channel!!");
+            var token = window.token;
+            var channel = new goog.appengine.Channel(token);
+            var chatMessageModel = this.model.chatMessages;
+            var handler = {
+                onopen: function() {
+                    console.info("GAE Channel opened!");
+                },
+                onmessage: function(msg) {
+                    jsonMsg = JSON.parse(msg.data);
+                    chatMessageModel.add(jsonMsg);
+                },
+                onerror: function(e) {
+                    console.info("Received channel error : " + JSON.stringify(e));
+                },
+                onclose: function() {
+                    console.info("GAE Channel closed!");
+                }
+            };
+            var socket = channel.open(handler);
+        },
+        
+        submitMessage: function(submitEvent) {
+            var newChatEvent = new ChatMessage({
+                content : submitEvent.currentTarget[0].value
+            });
+            saveErrorHandler = function(e) {
+                console.info("GOT ERROR : " + JSON.stringify(e));
+                //Show modal popup sometime later
+                alert("Unauthorized - log in!");
+            };
+            $('#chat_input').val("");
+            this.model.chatSubmit.save(newChatEvent, { error : saveErrorHandler });
+        }
     });
 
     // Finally, we kick things off by creating the **App**.

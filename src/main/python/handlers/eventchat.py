@@ -33,8 +33,8 @@ class EventChatHandler(FeedHandler, EventChatAuthorizationHandler):
     def get_channel_message(self, message):
         chat_message = { 'author' : message.author.username,
                          'author_link' : message.author.relative_url,
-                         'message' : message.content,
-                         'message_time' : message.created_nice }
+                         'content' : message.content,
+                         'timestamp' : message.created_nice }
         return simplejson.dumps(chat_message)
             
     def create_chat(self, event):

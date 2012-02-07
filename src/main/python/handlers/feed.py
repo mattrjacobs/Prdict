@@ -94,11 +94,10 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         elif content_type == "html":
             can_write = self.is_user_authorized_to_write(user, parent_entry)
             now = datetime.utcnow().strftime(AbstractHandler.DATE_FORMAT)
-            param_map = { 'current_user' : user,
-                          'can_write' : can_write,
-                          'now' : now,
-                          self.get_parent_name() : parent_entry,
-                          self.get_svc().get_entry_list_name() : self.get_pagination_map(entries, pagination_params, total_count) }
+            param_map = dict(self.create_param_map(user, parent_entry, entries,
+                                                   pagination_params, total_count,
+                                                   can_write, now).items() +
+                             self.get_extra_params().items())
             self.render_template(self.html, param_map)
             return
         else:
@@ -151,6 +150,20 @@ class FeedHandler(AbstractHandler, BaseAuthorizationHandler):
         else:
             return self.render_template(self.entry_html, { 'entry' : new_entry,
                                                            'current_user' : user })
+
+    def create_param_map(self, user, parent, entries, pagination_params, total_count, can_write, now):
+        return { 'current_user'  : user,
+                 'start-index'   : pagination_params[0],
+                 'max-results'   : pagination_params[1],
+                 'total-results' : total_count,
+                 'can_write'     : can_write,
+                 'now'           : now,
+                 self.get_parent_name() : parent,
+                 self.get_svc().get_entry_list_name() : entries
+            }
+
+    def get_extra_params(self):
+        return {}
 
     @staticmethod
     def _calculate_etag(parent, entries):

@@ -15,8 +15,10 @@ class MessageEncoder(json.JSONEncoder):
 
         return { 'content' : msg.content,
                  'author' : msg.author.relative_url,
+                 'author_name' : msg.author.username,
                  'event' : msg.event.relative_url,
-                 'created' : msg.isoformat_created }
+                 'created' : msg.isoformat_created,
+                 'created_nice' : msg.created_nice }
 
 class Message(db.Model):
     DATE_FORMAT = "%I:%M:%S"
@@ -69,4 +71,4 @@ class Message(db.Model):
     relative_url = property(get_relative_url)    
 
     def to_json(self):
-        return JsonEncoder(sort_keys=True).encode(self)
+        return MessageEncoder(sort_keys=True).encode(self)
