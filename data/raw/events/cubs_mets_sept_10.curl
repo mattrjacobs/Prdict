@@ -1,1 +1,0 @@
-curl -G http://ffapi.fanfeedr.com/basic/api/leagues/20f0857f-3c43-5f50-acfc-879f838ee853/events/981a3049-7291-52f1-b05b-a918a53d47d6?api_key=hqxv2tyfmmhu68zfn9nfsfsv > mlb_teams.json
