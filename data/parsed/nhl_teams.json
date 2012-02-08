@@ -1,0 +1,122 @@
+[
+  {
+    "id": "7f78cbf8-d8ff-58b8-a869-6a4c17cd7892",
+    "name": "Anaheim Ducks"
+  },
+  {
+    "id": "975c7dc6-f716-5041-ad4b-4939aa611859",
+    "name": "Boston Bruins"
+  },
+  {
+    "id": "2d840196-390c-553a-bf24-ffef2360e67d",
+    "name": "Buffalo Sabres"
+  },
+  {
+    "id": "a36ee424-2e7d-5bcf-81c3-632361527cfa",
+    "name": "Calgary Flames"
+  },
+  {
+    "id": "39540bad-19ed-53a7-9154-6491cd7ce3d1",
+    "name": "Carolina Hurricanes"
+  },
+  {
+    "id": "37da87e9-93c5-5948-a156-4e7c053c215b",
+    "name": "Chicago Blackhawks"
+  },
+  {
+    "id": "92c9cc4a-3850-5b69-973f-893807e3f5b1",
+    "name": "Colorado Avalanche"
+  },
+  {
+    "id": "ecf37f76-0638-5bb7-9d8d-6b7870a2050e",
+    "name": "Columbus Blue Jackets"
+  },
+  {
+    "id": "3447ff93-e4b9-5dee-ba5c-32fc5f22888c",
+    "name": "Dallas Stars"
+  },
+  {
+    "id": "3dbbf9c3-620c-542f-9b60-876769be8432",
+    "name": "Detroit Red Wings"
+  },
+  {
+    "id": "20174427-72d6-58bc-a882-b1cb88ba1574",
+    "name": "Edmonton Oilers"
+  },
+  {
+    "id": "e2ae7386-8999-5011-9e31-58e949251a9c",
+    "name": "Florida Panthers"
+  },
+  {
+    "id": "22dcdd04-db9b-5692-bc73-ff0aaf7d8210",
+    "name": "Los Angeles Kings"
+  },
+  {
+    "id": "7816cd09-d26a-5683-8bdf-c7c339cc30d4",
+    "name": "Minnesota Wild"
+  },
+  {
+    "id": "375b2755-473e-5ca6-822a-393ad6f04723",
+    "name": "Montreal Canadiens"
+  },
+  {
+    "id": "ab2dd932-4a41-552c-b518-06d458717cc0",
+    "name": "Nashville Predators"
+  },
+  {
+    "id": "0eed5392-af34-5b36-809e-d48df2e2d593",
+    "name": "New Jersey Devils"
+  },
+  {
+    "id": "a01e6b24-fa37-5fab-9dc1-c77900550d58",
+    "name": "New York Islanders"
+  },
+  {
+    "id": "351d52f2-ecc1-595a-bf05-62ee5c92cb72",
+    "name": "New York Rangers"
+  },
+  {
+    "id": "469dae87-ff78-54c1-9a4e-42a4ec507952",
+    "name": "Ottawa Senators"
+  },
+  {
+    "id": "972eb6ad-1ba4-5e7a-862f-8d0c21927f79",
+    "name": "Philadelphia Flyers"
+  },
+  {
+    "id": "4386fa70-5582-52fb-95a0-334d7bae39a0",
+    "name": "Phoenix Coyotes"
+  },
+  {
+    "id": "2a63848e-cbfb-572b-9187-f74f90e61545",
+    "name": "Pittsburgh Penguins"
+  },
+  {
+    "id": "8b32cf40-18a9-5ed5-9345-c899d246b088",
+    "name": "San Jose Sharks"
+  },
+  {
+    "id": "7a5443e6-1b45-5735-ad94-6bd918074030",
+    "name": "St Louis Blues"
+  },
+  {
+    "id": "b76525db-8abc-5b09-916c-c9c125aab54b",
+    "name": "Tampa Bay Lightning"
+  },
+  {
+    "id": "165b84f0-e247-5264-b1df-bfc28957ff94",
+    "name": "Toronto Maple Leafs"
+  },
+  {
+    "id": "98d0503e-72d5-5461-85fc-3fee47c20df0",
+    "name": "Vancouver Canucks"
+  },
+  {
+    "id": "a242205b-4c85-577d-98ac-3c901f0ede16",
+    "name": "Washington Capitals"
+  },
+  {
+    "id": "64c97901-f18d-54ff-9632-d2bcec3119ac",
+    "name": "Winnipeg Jets"
+  }
+]
