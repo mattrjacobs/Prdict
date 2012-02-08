@@ -12,7 +12,7 @@ class MessageService(BaseService):
     def get_model(self):
         return Message
 
-    def get_parent_ref(self):
+    def get_parent_ref(self, parent):
         return "event"
 
     def get_entry_list_name(self):
